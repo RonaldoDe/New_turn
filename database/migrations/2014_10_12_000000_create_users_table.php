@@ -35,7 +35,7 @@ class CreateUsersTable extends Migration
             'last_name' => 'General',
             'phone' => '0000000000',
             'address' => 'cll cr nn',
-            'email' => 'administrator@binar10.com',
+            'email' => 'ronaldocamachomeza@hotmail.com',
             'password' => bcrypt('123456'),
             'state_id' => 1
         ]);

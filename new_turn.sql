@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost:3306
--- Tiempo de generación: 22-04-2020 a las 11:11:09
+-- Tiempo de generación: 22-04-2020 a las 18:58:53
 -- Versión del servidor: 5.7.29-0ubuntu0.18.04.1
--- Versión de PHP: 7.2.24-0ubuntu0.18.04.3
+-- Versión de PHP: 7.2.29-1+ubuntu18.04.1+deb.sury.org+1
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
@@ -93,7 +93,8 @@ CREATE TABLE `branch_user` (
 --
 
 INSERT INTO `branch_user` (`id`, `user_id`, `branch_id`, `created_at`, `updated_at`) VALUES
-(1, 1, 1, '2020-04-21 22:47:35', '2020-04-21 22:47:35');
+(1, 1, 1, '2020-04-21 22:47:35', '2020-04-21 22:47:35'),
+(4, 8, 2, '2020-04-22 20:57:47', '2020-04-22 20:57:47');
 
 -- --------------------------------------------------------
 
@@ -272,7 +273,7 @@ CREATE TABLE `oauth_access_tokens` (
 --
 
 INSERT INTO `oauth_access_tokens` (`id`, `user_id`, `client_id`, `name`, `scopes`, `revoked`, `created_at`, `updated_at`, `expires_at`) VALUES
-('9a8724865c521d979d2496028cd847f32ab2968c6b4ca0fff9befcfb5dd897755e3093bfe5f3f6c3', 1, 1, NULL, '[\"*\"]', 0, '2020-04-22 07:10:08', '2020-04-22 07:10:08', '2021-04-22 02:10:08');
+('c9e30696d01369cfd74f351bcc47e6af30e5ecfe4196917930366fa8b3e4e0755ecdae025c0d9743', 1, 1, NULL, '[\"*\"]', 0, '2020-04-22 21:56:45', '2020-04-22 21:56:45', '2021-04-22 16:56:45');
 
 -- --------------------------------------------------------
 
@@ -346,6 +347,7 @@ CREATE TABLE `oauth_refresh_tokens` (
 --
 
 INSERT INTO `oauth_refresh_tokens` (`id`, `access_token_id`, `revoked`, `expires_at`) VALUES
+('b88e592087981fb8e42bf3505c01d744ce139b04a2b334b1e11cb75b431b6bc672026c1c4f0446d3', 'c9e30696d01369cfd74f351bcc47e6af30e5ecfe4196917930366fa8b3e4e0755ecdae025c0d9743', 0, '2021-04-22 16:56:45'),
 ('c5bbcb26d5b4edccfd474f3f430999f2c927ebd8deaa1ad42b7e6afc48872f10c0b8ddfd274dd0f8', '9a8724865c521d979d2496028cd847f32ab2968c6b4ca0fff9befcfb5dd897755e3093bfe5f3f6c3', 0, '2021-04-22 02:10:09'),
 ('d1db18af0aa6ac70e1dbb24d8f793fd0680f280ea3ccfb67fc380971cabbe47f875b302339c1757d', 'e7290c02d0730a0e814a9f9fe86dce82b5d5279133e1bee05b09e265f404522e433dcb816effa535', 0, '2021-03-23 18:51:07');
 
@@ -507,6 +509,7 @@ CREATE TABLE `transcation_log` (
   `payment_id` int(11) NOT NULL,
   `branch_id` int(11) NOT NULL,
   `service_id` int(11) NOT NULL,
+  `action_id` int(11) NOT NULL,
   `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
@@ -539,7 +542,8 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `name`, `last_name`, `phone`, `address`, `email`, `dni`, `email_verified_at`, `password`, `state_id`, `remember_token`, `created_at`, `updated_at`, `phanton_user`) VALUES
-(1, 'Administrator', 'General', '0000000000', 'cll cr nn', ' ronaldocamachomeza@hotmail.com', '1007730321', NULL, '$2y$10$fe.SBIAnguU0UdKx7cn6FOkLAzhkHiC1Raff1bIIv33vn9AA/RjS.', 1, NULL, '2020-03-23 23:36:25', '2020-03-23 23:36:25', 0);
+(1, 'Administrator', 'General', '0000000000', 'cll cr nn', 'ronaldocamachomeza@hotmail.com', '1007730321', NULL, '$2y$10$fe.SBIAnguU0UdKx7cn6FOkLAzhkHiC1Raff1bIIv33vn9AA/RjS.', 1, NULL, '2020-03-23 23:36:25', '2020-03-23 23:36:25', 0),
+(8, 'Ronaldo', 'Camac', '321564215', 'cc ll nn', 'ronal@hotmail.com', '123456789', NULL, '$2y$10$pcwWlAiyjnV0inCHZ5TOGeLXTrnsZTWNVdQYv0tEZwhtwvJt.FWMe', 1, NULL, '2020-04-23 01:57:47', '2020-04-23 03:48:12', 0);
 
 -- --------------------------------------------------------
 
@@ -581,7 +585,8 @@ CREATE TABLE `user_state` (
 --
 
 INSERT INTO `user_state` (`id`, `name`, `description`, `created_at`, `updated_at`) VALUES
-(1, 'Activo', 'Usuario activo', '2020-03-23 23:36:23', '2020-03-23 23:36:23');
+(1, 'Activo', 'Usuario activo', '2020-03-23 23:36:23', '2020-03-23 23:36:23'),
+(2, 'Inactivo', 'Usuario inactivo', '2020-04-22 05:00:00', '2020-04-22 05:00:00');
 
 -- --------------------------------------------------------
 
@@ -756,7 +761,8 @@ ALTER TABLE `transcation_log`
   ADD PRIMARY KEY (`id`),
   ADD KEY `user_id` (`user_id`),
   ADD KEY `payment_id` (`payment_id`),
-  ADD KEY `branch_id` (`branch_id`);
+  ADD KEY `branch_id` (`branch_id`),
+  ADD KEY `action_id` (`action_id`);
 
 --
 -- Indices de la tabla `users`
@@ -807,7 +813,7 @@ ALTER TABLE `branch_state`
 -- AUTO_INCREMENT de la tabla `branch_user`
 --
 ALTER TABLE `branch_user`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 --
 -- AUTO_INCREMENT de la tabla `company`
 --
@@ -892,7 +898,7 @@ ALTER TABLE `transcation_log`
 -- AUTO_INCREMENT de la tabla `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 --
 -- AUTO_INCREMENT de la tabla `user_has_role`
 --
@@ -902,7 +908,7 @@ ALTER TABLE `user_has_role`
 -- AUTO_INCREMENT de la tabla `user_state`
 --
 ALTER TABLE `user_state`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 --
 -- AUTO_INCREMENT de la tabla `user_turn`
 --

@@ -64,6 +64,10 @@ class UserController extends Controller
     {
         $validator=\Validator::make($request->all(),[
             'name' => 'required|max:20',
+            'last_name' => 'required|max:20',
+            'phone' => 'required|max:20',
+            'address' => 'required|max:20',
+            'dni' => 'required|max:20',
             'email' => 'required|email|max:80|email|unique:users',
             'password' => 'required|max:50|min:6',
             'add_array' => 'bail|array',
@@ -73,29 +77,35 @@ class UserController extends Controller
           return response()->json(['response' => ['error' => $validator->errors()->all()]],400);
         }
 
-        DB::on('connectionDB')->beginTransaction();
+        DB::connection('connectionDB')->beginTransaction();
+        DB::beginTransaction();
         try{
             # Create user
-            $user = User::on('connectionDB')->create([
+            $principal_user = User::create([
                 'name' => request('name'),
+                'last_name' => request('last_name'),
+                'phone' => request('phone'),
+                'address' => request('address'),
+                'dni' => request('dni'),
                 'email' => request('email'),
                 'password' => bcrypt(request('password')),
+                'phanton_user' => 0,
                 'state_id' => 1
             ]);
             # Validate if the user was created
-            if($user){
+            if($principal_user){
 
-                if(count(request('add_array')) > 0){
-                    foreach (request('add_array') as $add_array) {
-                        # We need to add the role´s id for each record in the list.
-                        $validate_user_has_role = UserRole::on('connectionDB')->where('user_id', $user->id)->where('role_id', $add_array)->first();
+                $user = 0;
 
-                        if(!$validate_user_has_role){
-                            $user_has_role = UserRole::on('connectionDB')->create([
-                                'user_id' => $user->id,
-                                'role_id' => $add_array,
-                            ]);
-                        }
+                foreach (request('add_array') as $add_array) {
+                    # We need to add the role´s id for each record in the list.
+                    $validate_user_has_role = UserRole::on('connectionDB')->where('user_id', $user->id)->where('role_id', $add_array)->first();
+
+                    if(!$validate_user_has_role){
+                        $user_has_role = UserRole::on('connectionDB')->create([
+                            'user_id' => $user->id,
+                            'role_id' => $add_array,
+                        ]);
                     }
                 }
 
@@ -103,9 +113,11 @@ class UserController extends Controller
                 return response()->json(['response' => ['error' => ['Ususario no encontrado']]], 404);
             }
         }catch(Exception $e){
-            DB::on('connectionDB')->rollback();
+            DB::connection('connectionDB')->rollback();
+            DB::rollback();
         }
-        DB::on('connectionDB')->commit();
+        DB::connection('connectionDB')->commit();
+        DB::commit();
         return response()->json(['response' => 'Success'], 200);
     }
 
@@ -170,7 +182,7 @@ class UserController extends Controller
         $user->name = request('name');
         $user->email = request('email');
 
-        DB::on('connectionDB')->beginTransaction();
+        DB::connection('connectionDB')->beginTransaction();
         try{
             if(count(request('delete_array')) > 0){
                 foreach (request('delete_array') as $delete_array) {
@@ -197,12 +209,12 @@ class UserController extends Controller
                 }
             }
         }catch(Exception $e){
-            DB::on('connectionDB')->rollback();
+            DB::connection('connectionDB')->rollback();
             return response()->json( ['response' => ['error' => ['Error al asignar rol'], 'data' => [$e->getMessage(), $e->getFile(), $e->getLine()]]], 400);
         }
         $user->update();
         # Here we return success.
-        DB::on('connectionDB')->commit();
+        DB::connection('connectionDB')->commit();
         return response()->json(['response' => 'Usuario actualizado con exito.'], 200);
     }
 

@@ -20,8 +20,11 @@ Route::middleware('auth:api')->group(function () {
     Route::apiResource('role', 'Api\Administration\RoleController');
     Route::apiResource('rolePermission', 'Api\Administration\RolePermissionController');
     Route::get('moduleValidator', 'Api\Administration\MenuController@modulegeneral');
-    Route::apiResource('MCompanies', 'Api\Master\MCompanyController');
-    Route::apiResource('MBranchOffices', 'Api\Master\MBranchOfficeController');
+
+    # Master routs
+    Route::apiResource('mCompanies', 'Api\Master\MCompanyController');
+    Route::apiResource('mBranchOffices', 'Api\Master\MBranchOfficeController');
+    Route::apiResource('mUsers', 'Api\Master\MUsersController');
 
 });
 

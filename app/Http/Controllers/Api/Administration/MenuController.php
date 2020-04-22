@@ -11,10 +11,14 @@ use Illuminate\Support\Facades\Auth;
 
 class MenuController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('set_connection');
+    }
     public function modulegeneral(Request $request)
     {
         # Get user
-        $user = User::find(Auth::id());
+        $user = User::on('connectionDB')->find(Auth::id());
 
         # Validate if the user exists
         if(!$user){
@@ -22,7 +26,7 @@ class MenuController extends Controller
         }
 
         # Get the modules with their respective permissions
-        $module_list = Module::select('module.id as module_id', 'module.name as module_name', 'p.id as permission_id', 'p.name as permission_name')
+        $module_list = Module::on('connectionDB')->select('module.id as module_id', 'module.name as module_name', 'p.id as permission_id', 'p.name as permission_name')
         ->join('permission as p', 'module.id', 'p.module_id')
         ->join('role_has_permission as rp', 'p.id', 'rp.permission_id')
         ->join('role as r', 'rp.role_id', 'r.id')

@@ -2,7 +2,11 @@
 
 namespace App\Http\Middleware\Connections;
 
+use App\Models\Master\BranchOffice;
+use App\Models\Master\BranchUser;
+use App\User;
 use Closure;
+use Illuminate\Support\Facades\Auth;
 
 class CheckConnectionMiddleware
 {
@@ -16,12 +20,18 @@ class CheckConnectionMiddleware
     public function handle($request, Closure $next)
     {
 
+        $user = User::find(Auth::id());
+
+        $branch = BranchUser::select('bo.id', 'bo.db_name')
+        ->join('branch_office as bo', 'branch_user.branch_id', 'bo.id')
+        ->where('branch_user.user_id', $user->id)
+        ->first();
 
         $configDb = [
             'driver'      => 'mysql',
             'host'        => env('DB_HOST', '127.0.0.1'),
             'port'        => env('DB_PORT', '3306'),
-            'database'    => '',
+            'database'    => $branch->db_name,
             'username'    => env('DB_USERNAME', 'forge'),
             'password'    => env('DB_PASSWORD', ''),
             'unix_socket' => env('DB_SOCKET', ''),

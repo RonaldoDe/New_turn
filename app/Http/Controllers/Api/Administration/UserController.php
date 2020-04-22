@@ -21,6 +21,9 @@ class UserController extends Controller
         $this->middleware('permission:/create_user')->only('store');
         # the middleware param 3 = Update user
         $this->middleware('permission:/update_user')->only(['update', 'destroy']);
+
+        $this->middleware('set_connection');
+
     }
 
 
@@ -32,13 +35,12 @@ class UserController extends Controller
     public function index()
     {
         # Get users
-        $users = User::where('state_id', 1)->get();
+        $users = User::on('connectionDB')->get();
 
         foreach ($users as $user) {
-
-
             # Get user roles
-            $roles = Role::select('role.id', 'role.name', 'role.description')
+            $roles = Role::on('connectionDB')
+            ->select('role.id', 'role.name', 'role.description')
             ->join('user_has_role as ur', 'role.id', 'ur.role_id')
             ->where('ur.user_id', $user->id)
             ->get();
@@ -70,10 +72,11 @@ class UserController extends Controller
         {
           return response()->json(['response' => ['error' => $validator->errors()->all()]],400);
         }
-        DB::beginTransaction();
+
+        DB::on('connectionDB')->beginTransaction();
         try{
             # Create user
-            $user = User::create([
+            $user = User::on('connectionDB')->create([
                 'name' => request('name'),
                 'email' => request('email'),
                 'password' => bcrypt(request('password')),
@@ -85,10 +88,10 @@ class UserController extends Controller
                 if(count(request('add_array')) > 0){
                     foreach (request('add_array') as $add_array) {
                         # We need to add the role´s id for each record in the list.
-                        $validate_user_has_role = UserRole::where('user_id', $user->id)->where('role_id', $add_array)->first();
+                        $validate_user_has_role = UserRole::on('connectionDB')->where('user_id', $user->id)->where('role_id', $add_array)->first();
 
                         if(!$validate_user_has_role){
-                            $user_has_role = UserRole::create([
+                            $user_has_role = UserRole::on('connectionDB')->create([
                                 'user_id' => $user->id,
                                 'role_id' => $add_array,
                             ]);
@@ -100,9 +103,9 @@ class UserController extends Controller
                 return response()->json(['response' => ['error' => ['Ususario no encontrado']]], 404);
             }
         }catch(Exception $e){
-            DB::rollback();
+            DB::on('connectionDB')->rollback();
         }
-        DB::commit();
+        DB::on('connectionDB')->commit();
         return response()->json(['response' => 'Success'], 200);
     }
 
@@ -116,7 +119,7 @@ class UserController extends Controller
     {
 
         # Get the user by id
-        $user = User::where('state_id', 1)->find($id);
+        $user = User::on('connectionDB')->where('state_id', 1)->find($id);
 
         # Validate if the user exists
         if(!$user){
@@ -124,7 +127,7 @@ class UserController extends Controller
         }
 
         # Get user roles
-        $roles = Role::select('role.id', 'role.name', 'role.description')
+        $roles = Role::on('connectionDB')->select('role.id', 'role.name', 'role.description')
         ->join('user_has_role as ur', 'role.id', 'ur.role_id')
         ->where('ur.user_id', $user->id)
         ->get();
@@ -156,7 +159,7 @@ class UserController extends Controller
         }
 
         # Here we get the instance of an user
-        $user = User::find($id);
+        $user = User::on('connectionDB')->find($id);
 
         # Here we check if the user does not exist
         if(!$user){
@@ -167,12 +170,12 @@ class UserController extends Controller
         $user->name = request('name');
         $user->email = request('email');
 
-        DB::beginTransaction();
+        DB::on('connectionDB')->beginTransaction();
         try{
             if(count(request('delete_array')) > 0){
                 foreach (request('delete_array') as $delete_array) {
                     # We need to remove the role´s id for each record in the list.
-                    $validate_user_has_role = UserRole::where('user_id', $user->id)->where('role_id', $delete_array)->first();
+                    $validate_user_has_role = UserRole::on('connectionDB')->where('user_id', $user->id)->where('role_id', $delete_array)->first();
 
                     if($validate_user_has_role){
                         $validate_user_has_role->delete();
@@ -183,10 +186,10 @@ class UserController extends Controller
             if(count(request('add_array')) > 0){
                 foreach (request('add_array') as $add_array) {
                     # We need to add the role´s id for each record in the list.
-                    $validate_user_has_role = UserRole::where('user_id', $user->id)->where('role_id', $add_array)->first();
+                    $validate_user_has_role = UserRole::on('connectionDB')->where('user_id', $user->id)->where('role_id', $add_array)->first();
 
                     if(!$validate_user_has_role){
-                        $user_has_role = UserRole::create([
+                        $user_has_role = UserRole::on('connectionDB')->create([
                             'user_id' => $user->id,
                             'role_id' => $add_array,
                         ]);
@@ -194,12 +197,12 @@ class UserController extends Controller
                 }
             }
         }catch(Exception $e){
-            DB::rollback();
+            DB::on('connectionDB')->rollback();
             return response()->json( ['response' => ['error' => ['Error al asignar rol'], 'data' => [$e->getMessage(), $e->getFile(), $e->getLine()]]], 400);
         }
         $user->update();
         # Here we return success.
-        DB::commit();
+        DB::on('connectionDB')->commit();
         return response()->json(['response' => 'Usuario actualizado con exito.'], 200);
     }
 
@@ -211,7 +214,7 @@ class UserController extends Controller
      */
     public function destroy($id)
     {
-        $user = User::where('id', '!=', Auth::id())->find($id);
+        $user = User::on('connectionDB')->where('id', '!=', Auth::id())->find($id);
 
         if(!$user){
             return response()->json(['response' => ['error' => ['Ususario no encontrado']]], 404);

@@ -3,18 +3,24 @@
 namespace App\Http\Controllers\Api\Administration;
 
 use App\Http\Controllers\Controller;
+use App\Models\Permission;
 use App\Models\Role;
+use App\Models\RolePermission;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class RoleController extends Controller
 {
 
     public function __construct()
     {
-        # the middleware param 4 = List roles
-        $this->middleware('permission:4')->only(['show', 'index']);
-        # the middleware param 5 = Create, update, delete roles
-        $this->middleware('permission:5')->only(['store', 'update', 'destroy']);
+        # the middleware list permission
+        $this->middleware('permission:/list_role')->only(['show', 'index']);
+        # the middleware create, edit, delete role
+        $this->middleware('permission:/create_role')->only(['store', 'update', 'destroy']);
+
+        $this->middleware('set_connection');
+
     }
     /**
      * Display a listing of the resource.
@@ -24,7 +30,17 @@ class RoleController extends Controller
     public function index()
     {
         # Get roles
-        $roles = Role::get();
+        $roles = Role::on('connectionDB')->get();
+
+        foreach ($roles as $role) {
+            $permissions = Permission::on('connectionDB')
+            ->select('permission.id', 'permission.name', 'permission.description')
+            ->join('role_has_permission as rp', 'permission.id', 'rp.permission_id')
+            ->where('rp.role_id', $role->id)
+            ->get();
+
+            $role->permissions = $permissions;
+        }
 
         return response()->json(['response' => $roles], 200);
     }
@@ -40,6 +56,8 @@ class RoleController extends Controller
         $validator=\Validator::make($request->all(),[
             'name' => 'required|min:1|max:75',
             'description' => 'required',
+            'add_array' => 'bail|array',
+            'add_array.*' => 'bail|integer',
         ]);
         if($validator->fails())
         {
@@ -47,10 +65,31 @@ class RoleController extends Controller
         }
 
         # Create a role
-        $role = Role::create([
+        $role = Role::on('connectionDB')->create([
             'name' => request('name'),
             'description' => request('description')
         ]);
+
+        DB::on('connectionDB')->beginTransaction();
+        try{
+            foreach (request('add_array') as $add_array) {
+                # We need to add the permissions id for each record in the list.
+                $validate_role_permission = RolePermission::on('connectionDB')->where('role_id', $role->id)->where('permission_id', $add_array)->first();
+
+                if(!$validate_role_permission){
+                    $role_has_permission = RolePermission::on('connectionDB')->create([
+                        'role_id' => $role->id,
+                        'permission_id' => $add_array,
+                    ]);
+                }
+            }
+
+        }catch(Exception $e){
+            DB::on('connectionDB')->rollback();
+            return response()->json( ['response' => ['error' => ['Error al agregar permisos al rol'], 'data' => [$e->getMessage(), $e->getFile(), $e->getLine()]]], 400);
+        }
+        # Here we return success.
+        DB::commit();
 
         return response()->json(['response' => 'Rol creado con exito.'], 200);
 
@@ -65,9 +104,18 @@ class RoleController extends Controller
     public function show($id)
     {
         # Get role by id
-        $rol = Role::find($id);
+        $role = Role::on('connectionDB')->find($id);
 
-        return response()->json(['response' => $rol], 200);
+        $permissions = Permission::on('connectionDB')
+        ->select('permission.id', 'permission.name', 'permission.description')
+        ->join('role_has_permission as rp', 'permission.id', 'rp.permission_id')
+        ->where('rp.role_id', $role->id)
+        ->get();
+
+        $role->permissions = $permissions;
+
+
+        return response()->json(['response' => $role], 200);
     }
 
     /**
@@ -82,6 +130,8 @@ class RoleController extends Controller
         $validator=\Validator::make($request->all(),[
             'name' => 'required|min:1|max:75',
             'description' => 'required',
+            'add_array' => 'bail|array',
+            'delete_array' => 'bail|array',
         ]);
         if($validator->fails())
         {
@@ -89,7 +139,7 @@ class RoleController extends Controller
         }
 
         # Get role
-        $role = Role::find($id);
+        $role = Role::on('connectionDB')->find($id);
 
         # Validate if the role exists
         if(!$role){
@@ -100,6 +150,34 @@ class RoleController extends Controller
         $role->name = request('name');
         $role->description = request('description');
 
+        DB::on('connectionDB')->beginTransaction();
+        try{
+            foreach (request('delete_array') as $delete_array) {
+                # We need to remove the permissions id for each record in the list.
+                $validate_role_permission = RolePermission::on('connectionDB')->where('role_id', $role->id)->where('permission_id', $delete_array)->first();
+
+                if($validate_role_permission){
+                    $validate_role_permission->delete();
+                }
+            }
+
+            foreach (request('add_array') as $add_array) {
+                # We need to add the permissions id for each record in the list.
+                $validate_role_permission = RolePermission::on('connectionDB')->where('role_id', $role->id)->where('permission_id', $add_array)->first();
+
+                if(!$validate_role_permission){
+                    $role_has_permission = RolePermission::on('connectionDB')->create([
+                        'role_id' => $role->id,
+                        'permission_id' => $add_array,
+                    ]);
+                }
+            }
+        }catch(Exception $e){
+            DB::on('connectionDB')->rollback();
+            return response()->json( ['response' => ['error' => ['Error al agregar permisos al rol'], 'data' => [$e->getMessage(), $e->getFile(), $e->getLine()]]], 400);
+        }
+        # Here we return success.
+        DB::on('connectionDB')->commit();
         # Update
         $role->update();
 

@@ -6,8 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class MasterCompany extends Model
 {
-    protected $table = 'companies';
+    protected $table = 'company';
     protected $fillable = [
-        'id', 'name', 'description'
+        'id', 'name', 'description', 'nit', 'email', 'type_id', 'state_id'
     ];
 }

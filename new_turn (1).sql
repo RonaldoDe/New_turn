@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost:3306
--- Tiempo de generación: 22-04-2020 a las 18:58:53
+-- Tiempo de generación: 22-04-2020 a las 19:05:59
 -- Versión del servidor: 5.7.29-0ubuntu0.18.04.1
 -- Versión de PHP: 7.2.29-1+ubuntu18.04.1+deb.sury.org+1
 
@@ -598,6 +598,7 @@ CREATE TABLE `user_turn` (
   `id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
   `branch_id` int(11) NOT NULL,
+  `service_type` enum('barber_turn','grooming_contract') COLLATE utf8mb4_unicode_520_ci NOT NULL,
   `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 

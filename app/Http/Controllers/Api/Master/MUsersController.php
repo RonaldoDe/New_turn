@@ -407,14 +407,12 @@ class MUsersController extends Controller
                 $user->dni = request('dni');
                 $user->email = request('email');
 
-                if(count(request('delete_array')) > 0){
-                    foreach (request('delete_array') as $delete_array) {
-                        # We need to remove the role´s id for each record in the list.
-                        $validate_user_has_role = UserRole::where('user_id', $user->id)->where('role_id', $delete_array)->first();
+                foreach (request('delete_array') as $delete_array) {
+                    # We need to remove the role´s id for each record in the list.
+                    $validate_user_has_role = UserRole::where('user_id', $user->id)->where('role_id', $delete_array)->first();
 
-                        if($validate_user_has_role){
-                            $validate_user_has_role->delete();
-                        }
+                    if($validate_user_has_role){
+                        $validate_user_has_role->delete();
                     }
                 }
 

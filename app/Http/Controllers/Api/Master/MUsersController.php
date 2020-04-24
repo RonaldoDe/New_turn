@@ -110,6 +110,17 @@ class MUsersController extends Controller
         }
 
         if(!empty(request('branch_id'))){
+
+            # --------------------- Set connection ------------------------------------#
+            $branch = BranchOffice::where('id', '!=', 1)->find(request('branch_id'));
+
+            if(!$branch){
+                return response()->json(['response' => ['error' => ['Sucursal no encontrada']]], 404);
+            }
+
+            $set_connection = SetConnectionHelper::setByDBName($branch->db_name);
+            # --------------------- Set connection ------------------------------------#
+            DB::connection($branch->db_name)->beginTransaction();
             DB::beginTransaction();
             try{
                 # Create user
@@ -128,19 +139,12 @@ class MUsersController extends Controller
                 if($principal_user){
 
 
-                    # --------------------- Set connection ------------------------------------#
-                    $branch = BranchOffice::where('id', '!=', 1)->find(request('branch_id'));
 
-                    if(!$branch){
-                        return response()->json(['response' => ['error' => ['Sucursal no encontrada']]], 404);
-                    }
 
                     $branch_user = BranchUser::create([
                         'user_id' => $principal_user->id,
                         'branch_id' => request('branch_id')
                     ]);
-                    $set_connection = SetConnectionHelper::setByDBName($branch->db_name);
-                    # --------------------- Set connection ------------------------------------#
 
 
                     $user = CUser::on($branch->db_name)->create([
@@ -172,8 +176,10 @@ class MUsersController extends Controller
                     return response()->json(['response' => ['error' => ['Ususario no encontrado']]], 404);
                 }
             }catch(Exception $e){
+                DB::connection($branch->db_name)->rollback();
                 DB::rollback();
             }
+            DB::connection($branch->db_name)->commit();
             DB::commit();
             return response()->json(['response' => 'Success'], 200);
         }else{

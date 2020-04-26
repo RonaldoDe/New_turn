@@ -138,9 +138,6 @@ class MUsersController extends Controller
                 # Validate if the user was created
                 if($principal_user){
 
-
-
-
                     $branch_user = BranchUser::create([
                         'user_id' => $principal_user->id,
                         'branch_id' => request('branch_id')

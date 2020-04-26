@@ -3,8 +3,15 @@
 namespace App\Http\Controllers\Api\Master;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Helper\NewDatabaseHelper;
+use App\Http\Controllers\Helper\SetConnectionHelper;
+use App\Models\CUser;
 use App\Models\Master\BranchOffice;
+use App\Models\Master\BranchUser;
+use App\Models\UserRole;
+use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class MBranchOfficeController extends Controller
 {
@@ -43,7 +50,7 @@ class MBranchOfficeController extends Controller
             'name' => 'required|min:1|max:125',
             'description' => 'required',
             'nit' => 'required|min:1|max:30',
-            'email' => 'required|email',
+            'email' => 'required|email|unique:users,email',
             'city' => 'required',
             'longitude' => 'required',
             'latitude' => 'required',
@@ -59,7 +66,7 @@ class MBranchOfficeController extends Controller
           return response()->json(['response' => ['error' => $validator->errors()->all()]],400);
         }
 
-        # Here we will generate a code to verify the email
+        # Here we will generate a random code for db name
         while(TRUE){
             $lower = strtolower(request('name'));
             $replace = str_replace(' ', '_', $lower);
@@ -71,26 +78,99 @@ class MBranchOfficeController extends Controller
             }
         }
 
-        $branch = BranchOffice::create([
-            "name" => request('name'),
-            "description" => request('description'),
-            "nit" => request('nit'),
-            "email" => request('email'),
-            "city" => request('city'),
-            "longitude" => request('longitude'),
-            "latitude" => request('latitude'),
-            "address" => request('address'),
-            "phone" => request('phone'),
-            "close" => request('close'),
-            "hours_24" => request('hours_24'),
-            "state_id" => request('state_id'),
-            "db_name" => $db_name,
-            "company_id" => request('company_id'),
-        ]);
-        # CREAR LA BASE DE DATOS
+        DB::beginTransaction();
+        try{
+            $branch = BranchOffice::create([
+                "name" => request('name'),
+                "description" => request('description'),
+                "nit" => request('nit'),
+                "email" => request('email'),
+                "city" => request('city'),
+                "longitude" => request('longitude'),
+                "latitude" => request('latitude'),
+                "address" => request('address'),
+                "phone" => request('phone'),
+                "close" => request('close'),
+                "hours_24" => request('hours_24'),
+                "state_id" => request('state_id'),
+                "db_name" => $db_name,
+                "company_id" => request('company_id'),
+            ]);
 
-        # AGREGAR EL USUARIO ADMIN Y EL USUARIO FANTASMA
+            $principal_user = User::create([
+                'name' => request('name'),
+                'last_name' => request('name'),
+                'phone' => request('phone'),
+                'address' => request('address'),
+                'dni' => request('nit'),
+                'email' => request('email'),
+                'password' => bcrypt('123456'),
+                'phanton_user' => 0,
+                'state_id' => 1
+            ]);
 
+            #Create the phatons users
+
+            $phanton = User::insert([
+                [
+                    'name' => request('name'),
+                    'last_name' => request('name'),
+                    'phone' => request('phone'),
+                    'address' => request('address'),
+                    'dni' => request('nit'),
+                    'email' => request('email'),
+                    'password' => bcrypt('123456'),
+                    'phanton_user' => 0,
+                    'state_id' => 1
+                ]
+            ]);
+
+            $branch_user = BranchUser::create([
+                'user_id' => $principal_user->id,
+                'branch_id' => $branch->id
+            ]);
+
+            # User info
+            $data = array();
+
+            # Create db
+            $new_db = NewDatabaseHelper::newBarberShopDatabase($db_name, $data);
+
+            #Set new connection
+            $set_new_connection = SetConnectionHelper::setByDBName($branch->db_name);
+
+            if($new_db != 1){
+                return response()->json(['response' => ['error' => [$new_db]]], 400);
+            }
+
+            DB::connection($branch->db_name)->beginTransaction();
+            # Add user to company
+            $user = CUser::on($branch->db_name)->create([
+                'name' => request('name'),
+                'last_name' => request('name'),
+                'phone' => request('phone'),
+                'address' => request('address'),
+                'dni' => request('nit'),
+                'email' => request('email'),
+                'phanton_user' => 0,
+                'principal_id' => $principal_user->id,
+                'state_id' => 1
+            ]);
+
+            $user_role = UserRole::on($branch->db_name)->create([
+                'user_id' => $user->id,
+                'role_id' => 1
+            ]);
+
+        }catch(Exception $e){
+            DB::rollback();
+            if($new_db == 1){
+                DB::connection($branch->db_name)->rollback();
+            }
+        }
+
+        DB::connection($branch->db_name)->commit();
+        DB::commit();
         return response()->json(['response' => 'Sucursal creada con exito'], 200);
     }
 

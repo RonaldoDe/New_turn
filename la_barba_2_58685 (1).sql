@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost:3306
--- Tiempo de generación: 24-04-2020 a las 19:08:53
+-- Tiempo de generación: 24-04-2020 a las 20:15:40
 -- Versión del servidor: 5.7.29-0ubuntu0.18.04.1
 -- Versión de PHP: 7.2.30-1+ubuntu18.04.1+deb.sury.org+1
 
@@ -273,7 +273,11 @@ INSERT INTO `user_state` (`id`, `name`, `description`, `created_at`, `updated_at
 -- Indices de la tabla `client_turn`
 --
 ALTER TABLE `client_turn`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `state_id` (`state_id`),
+  ADD KEY `service_id` (`service_id`),
+  ADD KEY `finished_by_id` (`finished_by_id`),
+  ADD KEY `employee_id` (`employee_id`);
 
 --
 -- Indices de la tabla `company_data`
@@ -327,8 +331,7 @@ ALTER TABLE `turn_state`
 ALTER TABLE `users`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `users_email_unique` (`email`),
-  ADD KEY `state_id` (`state_id`),
-  ADD KEY `state_id_2` (`state_id`);
+  ADD KEY `state_id` (`state_id`);
 
 --
 -- Indices de la tabla `user_has_role`
@@ -406,6 +409,14 @@ ALTER TABLE `user_state`
 --
 -- Restricciones para tablas volcadas
 --
+
+--
+-- Filtros para la tabla `client_turn`
+--
+ALTER TABLE `client_turn`
+  ADD CONSTRAINT `client_turn_ibfk_1` FOREIGN KEY (`service_id`) REFERENCES `service_list` (`id`),
+  ADD CONSTRAINT `client_turn_ibfk_2` FOREIGN KEY (`employee_id`) REFERENCES `users` (`id`),
+  ADD CONSTRAINT `client_turn_ibfk_3` FOREIGN KEY (`finished_by_id`) REFERENCES `users` (`id`);
 
 --
 -- Filtros para la tabla `permission`

@@ -55,12 +55,14 @@ class NewDatabaseHelper extends Controller
                     `turns_number` int(11) NOT NULL,
                     `min_turns` int(11) DEFAULT NULL,
                     `current_return` int(11) NOT NULL,
-                    `id_company` int(11) NOT NULL,
+                    `company_id` int(11) NOT NULL,
                     `api_k` varchar(50) DEFAULT NULL,
                     `api_l` varchar(50) DEFAULT NULL,
                     `mer_id` varchar(20) DEFAULT NULL,
                     `acc_id` varchar(20) DEFAULT NULL,
-                    `pay_on_line` tinyint(1) NOT NULL DEFAULT '0'
+                    `pay_on_line` tinyint(1) NOT NULL DEFAULT '0',
+                    `created_at` timestamp NULL DEFAULT NULL,
+                    `updated_at` timestamp NULL DEFAULT NULL
                 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;");
 
                 //Estructura de tabla para la tabla `module

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\Master;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Helper\NewDatabaseHelper;
 use App\Http\Controllers\Helper\SetConnectionHelper;
+use App\Models\CompanyData;
 use App\Models\CUser;
 use App\Models\Master\BranchOffice;
 use App\Models\Master\BranchUser;
@@ -78,6 +79,17 @@ class MBranchOfficeController extends Controller
             }
         }
 
+        # Here we will generate a random code for phantoms users
+        /*while(TRUE){
+            $phaton_exists = User::where('email', '1-'.request('email'))->first();
+            $phaton_2_exists = User::where('email', '2-'.request('email'))->first();
+            $phaton_3_exists = User::where('email', '3-'.request('email'))->first();
+            # If there is not, we exit the loop
+            if (!$phaton_1_exists && !$phaton_2_exists && !$phaton_3_exists){
+                break;
+            }
+        }*/
+        $new_db = 'not-join';
         DB::beginTransaction();
         try{
             $branch = BranchOffice::create([
@@ -109,25 +121,59 @@ class MBranchOfficeController extends Controller
                 'state_id' => 1
             ]);
 
-            #Create the phatons users
-
-            $phanton = User::insert([
-                [
-                    'name' => request('name'),
-                    'last_name' => request('name'),
-                    'phone' => request('phone'),
-                    'address' => request('address'),
-                    'dni' => request('nit'),
-                    'email' => request('email'),
-                    'password' => bcrypt('123456'),
-                    'phanton_user' => 0,
-                    'state_id' => 1
-                ]
+            # Create the phatons users -------------------------------------------
+            $phanto_1 = User::create([
+                'name' => 'First entry',
+                'last_name' => '-',
+                'phone' => request('phone'),
+                'address' => request('address'),
+                'dni' => request('nit'),
+                'email' => '1-'.request('email'),
+                'password' => bcrypt('123456'),
+                'phanton_user' => 1,
+                'state_id' => 1
             ]);
 
-            $branch_user = BranchUser::create([
-                'user_id' => $principal_user->id,
-                'branch_id' => $branch->id
+            $phanto_2 = User::create([
+                'name' => 'Second entry',
+                'last_name' => '-',
+                'phone' => request('phone'),
+                'address' => request('address'),
+                'dni' => request('nit'),
+                'email' => '2-'.request('email'),
+                'password' => bcrypt('123456'),
+                'phanton_user' => 1,
+                'state_id' => 1
+            ]);
+
+            $phanto_3 = User::create([
+                'name' => 'Third entry',
+                'last_name' => '-',
+                'phone' => request('phone'),
+                'address' => request('address'),
+                'dni' => request('nit'),
+                'email' => '3-'.request('email'),
+                'password' => bcrypt('123456'),
+                'phanton_user' => 1,
+                'state_id' => 1
+            ]);
+
+            # /Create the phatons users -------------------------------------------
+
+            $branch_user = BranchUser::insert([
+                [
+                    'user_id' => $principal_user->id,
+                    'branch_id' => $branch->id
+                ],[
+                    'user_id' => $phanto_1->id,
+                    'branch_id' => $branch->id
+                ],[
+                    'user_id' => $phanto_2->id,
+                    'branch_id' => $branch->id
+                ],[
+                    'user_id' => $phanto_3->id,
+                    'branch_id' => $branch->id
+                ],
             ]);
 
             # User info
@@ -157,6 +203,53 @@ class MBranchOfficeController extends Controller
                 'state_id' => 1
             ]);
 
+            $company_data = CompanyData::on($branch->db_name)->create([
+                'turns_number' => 0,
+                'min_turns' => 0,
+                'current_return' => 0,
+                'company_id' => $branch->id,
+                'api_k' => null,
+                'api_l' => null,
+                'mer_id' => null,
+                'acc_id' => null,
+                'pay_on_line' => 0,
+            ]);
+
+            # Add user to company phantons
+            $user_phnton = CUser::on($branch->db_name)->insert([
+                [
+                    'name' => 'First entry',
+                    'last_name' => '-',
+                    'phone' => request('phone'),
+                    'address' => request('address'),
+                    'dni' => request('nit'),
+                    'email' => '1-'.request('email'),
+                    'phanton_user' => 1,
+                    'state_id' => 1,
+                    'principal_id' => $phanto_1->id,
+                ],[
+                    'name' => 'Second entry',
+                    'last_name' => '-',
+                    'phone' => request('phone'),
+                    'address' => request('address'),
+                    'dni' => request('nit'),
+                    'email' => '2-'.request('email'),
+                    'phanton_user' => 1,
+                    'state_id' => 1,
+                    'principal_id' => $phanto_2->id,
+                ],[
+                    'name' => 'Third entry',
+                    'last_name' => '-',
+                    'phone' => request('phone'),
+                    'address' => request('address'),
+                    'dni' => request('nit'),
+                    'email' => '3-'.request('email'),
+                    'phanton_user' => 1,
+                    'state_id' => 1,
+                    'principal_id' => $phanto_3->id,
+                ]
+            ]);
+
             $user_role = UserRole::on($branch->db_name)->create([
                 'user_id' => $user->id,
                 'role_id' => 1
@@ -164,7 +257,9 @@ class MBranchOfficeController extends Controller
 
         }catch(Exception $e){
             DB::rollback();
-            if($new_db == 1){
+            if($new_db != 1 && $new_db != 'not-join'){
+                DB::connection($branch->db_name)->rollback();
+            }else if($new_db == 1){
                 DB::connection($branch->db_name)->rollback();
             }
         }

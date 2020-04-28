@@ -441,4 +441,59 @@ class MUsersController extends Controller
         }
     }
 
+    public function addUserToCompany(Request $request)
+    {
+        $validator=\Validator::make($request->all(),[
+            'user_id' => 'integer|exists:users,id',
+            'branch_id' => 'integer|exists:branch_office,id',
+        ]);
+        if($validator->fails())
+        {
+          return response()->json(['response' => ['error' => $validator->errors()->all()]],400);
+        }
+
+        $branch_user = BranchUser::where('user_id', request('user_id'))->first();
+
+        if($branch_user){
+            return response()->json(['response' => ['error' => ['Este usuario ya se encuentra registrado en una empresa.']]], 400);
+        }
+
+        DB::beginTransaction();
+        try{
+            $create_branch_user = BranchUser::create([
+                'user_id' => request('user_id'),
+                'branch_id' => request('branch_id')
+            ]);
+
+            # --------------------- Set connection ------------------------------------#
+            $branch = BranchOffice::where('id', '!=', 1)->find(request('branch_id'));
+
+            if(!$branch){
+                return response()->json(['response' => ['error' => ['Sucursal no encontrada']]], 404);
+            }
+
+            $set_connection = SetConnectionHelper::setByDBName($branch->db_name);
+            # --------------------- Set connection ------------------------------------#
+
+            $principal_user = User::find(request('user_id'));
+
+            $user = CUser::on($branch->db_name)->create([
+                'name' => $principal_user->name,
+                'last_name' => $principal_user->last_name,
+                'phone' => $principal_user->phone,
+                'address' => $principal_user->address,
+                'dni' => $principal_user->dni,
+                'email' => $principal_user->email,
+                'phanton_user' => $principal_user->phanton_user,
+                'state_id' => $principal_user->state_id,
+                'principal_id' => $principal_user->id
+            ]);
+        }catch(Exception $e){
+            DB::rollback();
+        }
+        DB::commit();
+        return response()->json(['response' => 'Usuario asignado a la empresa.'], 200);
+
+    }
+
 }

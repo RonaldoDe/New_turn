@@ -25,11 +25,10 @@ Route::middleware('auth:api')->group(function () {
     Route::apiResource('mCompanies', 'Api\Master\MCompanyController');
     Route::apiResource('mBranchOffices', 'Api\Master\MBranchOfficeController');
     Route::apiResource('mUsers', 'Api\Master\MUsersController');
+    # Add move user to company
+    Route::post('mMoveUsers', 'Api\Master\MUsersController@addUserToCompany');
+
 
 });
 
-Route::post('position', function(){
-        error_log(json_encode(request('data'), true));
-        return response()->json('hola', 200);
-});
 

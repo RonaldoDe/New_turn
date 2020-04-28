@@ -4,11 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class RolePermission extends Model
+class UserTurn extends Model
 {
-    protected $table = 'role_has_permission';
+    protected $table = 'user_turn';
     public $timestamps=false;
     protected $fillable = [
-        'permission_id', 'role_id'
+        'user_id', 'branch_id', 'service_type', 'created_at'
     ];
 }

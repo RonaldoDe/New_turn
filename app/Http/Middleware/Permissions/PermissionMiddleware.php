@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware\Permissions;
 
+use App\Models\CUser;
 use App\Models\Permission;
 use App\Models\Master\BranchUser;
 use App\User;
@@ -20,16 +21,17 @@ class PermissionMiddleware
     public function handle($request, Closure $next, $permission)
     {
         # Get user by id
-        $user = User::find(Auth::id());
+        $principal_user = User::find(Auth::id());
 
         # Validate if the user exists
-        if(!$user){
-            return response()->json(['response' => ['error' => ['Usuario no encontrado']]], 404);
+        if(!$principal_user){
+            return response()->json(['response' => ['error' => ['Usuario no encontrado']]], 400);
         }
+
 
         $branch = BranchUser::select('bo.id', 'bo.db_name')
         ->join('branch_office as bo', 'branch_user.branch_id', 'bo.id')
-        ->where('branch_user.user_id', $user->id)
+        ->where('branch_user.user_id', $principal_user->id)
         ->first();
 
         $configDb = [
@@ -48,6 +50,15 @@ class PermissionMiddleware
         ];
 
         \Config::set('database.connections.connectionDB', $configDb);
+
+        if($branch->id != 1){
+            $user = CUser::on('connectionDB')->where('principal_id', $principal_user->id)->first();
+            if(!$user){
+                return response()->json(['response' => ['error' => ['El usuario no pertenece a tu empresa.']]], 400);
+            }
+        }else{
+            $user = $principal_user;
+        }
 
 
         # Validate if the user's roles have the requested permission

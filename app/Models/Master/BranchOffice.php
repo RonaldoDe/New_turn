@@ -10,4 +10,11 @@ class BranchOffice extends Model
     protected $fillable = [
         'id', 'name', 'description', 'nit', 'email', 'city', 'longitude', 'latitude', 'address', 'phone', 'db_name', 'close', 'hours_24', 'state_id', 'company_id', 'created_at', 'updated_at'
     ];
+
+    public function scopeName($query, $name)
+    {
+        if(!empty($name)){
+            $query->where('name', 'LIKE', '%'.$name.'%');
+        }
+    }
 }

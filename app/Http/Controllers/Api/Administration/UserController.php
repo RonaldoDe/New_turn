@@ -3,9 +3,12 @@
 namespace App\Http\Controllers\Api\Administration;
 
 use App\Http\Controllers\Controller;
+use App\Models\CUser;
+use App\Models\Master\BranchUser;
 use App\Models\Role;
 use App\Models\UserRole;
 use App\User;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -35,7 +38,9 @@ class UserController extends Controller
     public function index()
     {
         # Get users
-        $users = User::on('connectionDB')->get();
+        $users = CUser::on('connectionDB')
+        ->name(request('name'))
+        ->get();
 
         foreach ($users as $user) {
             # Get user roles
@@ -95,7 +100,24 @@ class UserController extends Controller
             # Validate if the user was created
             if($principal_user){
 
-                $user = 0;
+                $branch_user = BranchUser::where('user_id', Auth::id())->first();
+
+                $create_branch_user = BranchUser::create([
+                    'user_id' => $principal_user->id,
+                    'branch_id' => $branch_user->branch_id
+                ]);
+
+                $user = CUser::on('connectionDB')->create([
+                    'name' => request('name'),
+                    'last_name' => request('last_name'),
+                    'phone' => request('phone'),
+                    'address' => request('address'),
+                    'dni' => request('dni'),
+                    'email' => request('email'),
+                    'phanton_user' => 0,
+                    'principal_id' => $principal_user->id,
+                    'state_id' => 1
+                ]);
 
                 foreach (request('add_array') as $add_array) {
                     # We need to add the role´s id for each record in the list.
@@ -131,7 +153,7 @@ class UserController extends Controller
     {
 
         # Get the user by id
-        $user = User::on('connectionDB')->where('state_id', 1)->find($id);
+        $user = CUser::on('connectionDB')->where('state_id', 1)->find($id);
 
         # Validate if the user exists
         if(!$user){
@@ -160,8 +182,13 @@ class UserController extends Controller
     public function update(Request $request, $id)
     {
         $validator=\Validator::make($request->all(),[
-            'name' => 'bail|required|min:2|max:50',
-            'email' => 'bail|required|min:5|max:75|unique:users,email,'.$id,
+            'name' => 'required|max:20',
+            'last_name' => 'required|max:20',
+            'phone' => 'required|max:20',
+            'address' => 'required|max:20',
+            'dni' => 'required|max:20',
+            'email' => 'required|email|max:80',
+            'state_id' => 'required|integer',
             'add_array' => 'bail|array',
             'delete_array' => 'bail|array',
         ]);
@@ -175,15 +202,45 @@ class UserController extends Controller
 
         # Here we check if the user does not exist
         if(!$user){
-            return response()->json(['response' => ['error' => ['Ususario no encontrado']]], 404);
+            return response()->json(['response' => ['error' => ['Ususario no encontrado']]], 400);
         }
 
-        # Here we update the basic user data
-        $user->name = request('name');
-        $user->email = request('email');
+        $validate_user_email = User::where('email', request('email'))->where('id', '!=', $user->principal_id)->first();
+
+        if($validate_user_email){
+            return response()->json(['response' => ['error' => ['El correo ya se encuentra registrado']]], 400);
+        }
 
         DB::connection('connectionDB')->beginTransaction();
+        DB::beginTransaction();
         try{
+            # Here we update the company user user data
+            $user->name = request('name');
+            $user->last_name = request('last_name');
+            $user->phone = request('phone');
+            $user->address = request('address');
+            $user->dni = request('dni');
+            $user->email = request('email');
+            $user->state_id = request('state_id');
+
+            # Here we get the instance of an principal user
+            $principal_user = User::find($user->principal_id);
+
+            # Here we check if the principal user does not exist
+            if(!$principal_user){
+                return response()->json(['response' => ['error' => ['Ususario no encontrado']]], 404);
+            }
+
+            # Here we update the company user user data
+            $principal_user->name = request('name');
+            $principal_user->last_name = request('last_name');
+            $principal_user->phone = request('phone');
+            $principal_user->address = request('address');
+            $principal_user->dni = request('dni');
+            $principal_user->email = request('email');
+            $principal_user->state_id = request('state_id');
+
+
             if(count(request('delete_array')) > 0){
                 foreach (request('delete_array') as $delete_array) {
                     # We need to remove the role´s id for each record in the list.
@@ -210,11 +267,14 @@ class UserController extends Controller
             }
         }catch(Exception $e){
             DB::connection('connectionDB')->rollback();
-            return response()->json( ['response' => ['error' => ['Error al asignar rol'], 'data' => [$e->getMessage(), $e->getFile(), $e->getLine()]]], 400);
+            DB::rollback();
+            return response()->json( ['response' => ['error' => ['Error'], 'data' => [$e->getMessage(), $e->getFile(), $e->getLine()]]], 400);
         }
         $user->update();
+        $principal_user->update();
         # Here we return success.
         DB::connection('connectionDB')->commit();
+        DB::commit();
         return response()->json(['response' => 'Usuario actualizado con exito.'], 200);
     }
 
@@ -224,20 +284,4 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
-    {
-        $user = User::on('connectionDB')->where('id', '!=', Auth::id())->find($id);
-
-        if(!$user){
-            return response()->json(['response' => ['error' => ['Ususario no encontrado']]], 404);
-        }
-        if($user->state_id == 1){
-            $user->state_id = 2;
-        }else if($user->state_id == 2) {
-            $user->state_id = 1;
-        }
-        $user->update();
-
-        return response()->json(['response' => 'Success'], 200);
-    }
 }

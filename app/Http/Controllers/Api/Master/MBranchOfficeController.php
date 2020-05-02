@@ -34,6 +34,7 @@ class MBranchOfficeController extends Controller
         $branches = BranchOffice::select('branch_office.id', 'branch_office.name', 'branch_office.description', 'branch_office.nit', 'branch_office.email', 'branch_office.city', 'branch_office.longitude', 'branch_office.latitude', 'branch_office.address', 'branch_office.phone', 'branch_office.close', 'branch_office.hours_24', 'branch_office.state_id', 'branch_office.company_id', 'c.name as company_name', 'c.description as company_description', 'c.nit as company_nit')
         ->join('company as c', 'branch_office.company_id', 'c.id')
         ->where('branch_office.id', '!=', 1)
+        ->name(request('name'))
         ->get();
 
         return response()->json(['response' => $branches], 200);
@@ -163,16 +164,24 @@ class MBranchOfficeController extends Controller
             $branch_user = BranchUser::insert([
                 [
                     'user_id' => $principal_user->id,
-                    'branch_id' => $branch->id
+                    'branch_id' => $branch->id,
+                    'created_at' => date('Y-m-d'),
+                    'updated_at' => date('Y-m-d')
                 ],[
                     'user_id' => $phanto_1->id,
-                    'branch_id' => $branch->id
+                    'branch_id' => $branch->id,
+                    'created_at' => date('Y-m-d'),
+                    'updated_at' => date('Y-m-d')
                 ],[
                     'user_id' => $phanto_2->id,
-                    'branch_id' => $branch->id
+                    'branch_id' => $branch->id,
+                    'created_at' => date('Y-m-d'),
+                    'updated_at' => date('Y-m-d')
                 ],[
                     'user_id' => $phanto_3->id,
-                    'branch_id' => $branch->id
+                    'branch_id' => $branch->id,
+                    'created_at' => date('Y-m-d'),
+                    'updated_at' => date('Y-m-d')
                 ],
             ]);
 
@@ -227,6 +236,8 @@ class MBranchOfficeController extends Controller
                     'phanton_user' => 1,
                     'state_id' => 1,
                     'principal_id' => $phanto_1->id,
+                    'created_at' => date('Y-m-d H:i:s'),
+                    'updated_at' => date('Y-m-d H:i:s')
                 ],[
                     'name' => 'Second entry',
                     'last_name' => '-',
@@ -237,6 +248,8 @@ class MBranchOfficeController extends Controller
                     'phanton_user' => 1,
                     'state_id' => 1,
                     'principal_id' => $phanto_2->id,
+                    'created_at' => date('Y-m-d H:i:s'),
+                    'updated_at' => date('Y-m-d H:i:s')
                 ],[
                     'name' => 'Third entry',
                     'last_name' => '-',
@@ -247,6 +260,8 @@ class MBranchOfficeController extends Controller
                     'phanton_user' => 1,
                     'state_id' => 1,
                     'principal_id' => $phanto_3->id,
+                    'created_at' => date('Y-m-d H:i:s'),
+                    'updated_at' => date('Y-m-d H:i:s')
                 ]
             ]);
 
@@ -264,9 +279,16 @@ class MBranchOfficeController extends Controller
             }
         }
 
+        $data = array(
+            'Admin' => $user->email,
+            'firsr_acount' => $phanto_1->email,
+            'second_acount' => $phanto_2->email,
+            'third_acount' => $phanto_3->email,
+        );
+
         DB::connection($branch->db_name)->commit();
         DB::commit();
-        return response()->json(['response' => 'Sucursal creada con exito'], 200);
+        return response()->json(['response' => 'Sucursal creada con exito', 'data' => $data], 200);
     }
 
     /**

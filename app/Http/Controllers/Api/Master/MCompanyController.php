@@ -23,7 +23,8 @@ class MCompanyController extends Controller
      */
     public function index()
     {
-        $companies = MasterCompany::where('id', '!=', 1)->get();
+        $companies = MasterCompany::name(request('name'))
+        ->where('id', '!=', 1)->get();
 
         foreach ($companies as $company) {
             $branches = BranchOffice::where('company_id', $company->id)

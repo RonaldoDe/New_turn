@@ -10,4 +10,11 @@ class MasterCompany extends Model
     protected $fillable = [
         'id', 'name', 'description', 'nit', 'email', 'type_id', 'state_id'
     ];
+
+    public function scopeName($query, $name)
+    {
+        if(!empty($name)){
+            $query->where('branch_office.name', 'LIKE', '%'.$name.'%');
+        }
+    }
 }

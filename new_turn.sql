@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost:3306
--- Tiempo de generación: 22-04-2020 a las 19:05:59
+-- Tiempo de generación: 01-05-2020 a las 23:31:51
 -- Versión del servidor: 5.7.29-0ubuntu0.18.04.1
--- Versión de PHP: 7.2.29-1+ubuntu18.04.1+deb.sury.org+1
+-- Versión de PHP: 7.2.30-1+ubuntu18.04.1+deb.sury.org+1
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
@@ -52,7 +52,8 @@ CREATE TABLE `branch_office` (
 
 INSERT INTO `branch_office` (`id`, `name`, `description`, `nit`, `email`, `city`, `longitude`, `latitude`, `address`, `phone`, `db_name`, `close`, `hours_24`, `state_id`, `company_id`, `created_at`, `updated_at`) VALUES
 (1, 'Master', 'Sucursal para administración master', 123454321, 'admin@gmail.com', 'barranquilla', '111122223', '7776323234', 'cc ll nn', '23132414', 'new_turn', 0, 0, 1, 1, '2020-04-21 21:41:51', '2020-04-22 03:18:39'),
-(2, 'La barba 2', 'La barba 49', 123454321, 'labarba@gmail.com', 'barranquilla', '111122223', '7776323234', 'La 49', '23132414', 'la_barba_2_58685', 0, 0, 1, 2, '2020-04-22 03:09:56', '2020-04-22 03:09:56');
+(26, 'Barber 2', 'La suc 2 de la comp 1', 321564215, 'Labar2@gmail.com', 'Quilla', '012313', '123560', 'cc ll nn', '12543510', 'barber_2_83088', 1, 0, 1, 2, '2020-04-27 03:26:25', '2020-04-27 03:26:25'),
+(28, 'Sucursale', 'Es una sucursal', 215324, 'branch@gmail.com', '1', '132154', '5332154', 'Cll #11122', '3214562', 'sucursal_47446', 1, 1, 1, 2, '2020-05-01 15:54:31', '2020-05-01 16:01:10');
 
 -- --------------------------------------------------------
 
@@ -94,7 +95,16 @@ CREATE TABLE `branch_user` (
 
 INSERT INTO `branch_user` (`id`, `user_id`, `branch_id`, `created_at`, `updated_at`) VALUES
 (1, 1, 1, '2020-04-21 22:47:35', '2020-04-21 22:47:35'),
-(4, 8, 2, '2020-04-22 20:57:47', '2020-04-22 20:57:47');
+(32, 63, 26, '2020-04-26 22:26:25', '2020-04-26 22:26:25'),
+(33, 64, 26, '2020-04-26 22:26:25', '2020-04-26 22:26:25'),
+(34, 65, 26, '2020-04-26 22:26:25', '2020-04-26 22:26:25'),
+(35, 66, 26, '2020-04-26 22:26:25', '2020-04-26 22:26:25'),
+(38, 8, 26, '2020-04-28 03:39:18', '2020-04-28 03:39:18'),
+(44, 72, 28, '2020-05-01 15:54:31', '2020-05-01 15:54:31'),
+(45, 73, 28, '2020-05-01 15:54:31', '2020-05-01 15:54:31'),
+(46, 74, 28, '2020-05-01 15:54:31', '2020-05-01 15:54:31'),
+(47, 75, 28, '2020-05-01 15:54:31', '2020-05-01 15:54:31'),
+(48, 80, 28, '2020-05-01 18:21:38', '2020-05-01 18:21:38');
 
 -- --------------------------------------------------------
 
@@ -120,7 +130,7 @@ CREATE TABLE `company` (
 
 INSERT INTO `company` (`id`, `name`, `description`, `nit`, `email`, `type_id`, `state_id`, `created_at`, `updated_at`) VALUES
 (1, 'Master', 'Es la base de datos principal ', '123456789', 'ronaldocamachomeza@hotmail.com', 1, 1, '2020-04-21 21:21:39', '2020-04-21 21:21:39'),
-(2, 'BarberShop', 'Es una barbería', '123454321', 'barber@gmail.com', 2, 1, '2020-04-22 02:23:30', '2020-04-22 02:32:50');
+(2, 'Companyy', 'Es una empresa', '123654', 'company@gmail.com', 1, 1, '2020-04-22 02:23:30', '2020-05-01 15:05:37');
 
 -- --------------------------------------------------------
 
@@ -273,7 +283,11 @@ CREATE TABLE `oauth_access_tokens` (
 --
 
 INSERT INTO `oauth_access_tokens` (`id`, `user_id`, `client_id`, `name`, `scopes`, `revoked`, `created_at`, `updated_at`, `expires_at`) VALUES
-('c9e30696d01369cfd74f351bcc47e6af30e5ecfe4196917930366fa8b3e4e0755ecdae025c0d9743', 1, 1, NULL, '[\"*\"]', 0, '2020-04-22 21:56:45', '2020-04-22 21:56:45', '2021-04-22 16:56:45');
+('1348c70ba6e9ad923c909e2ea822fbf28e6c781cfcfbbfaa3fdd9ff987742aa596e2494d571a448b', 64, 1, NULL, '[\"*\"]', 0, '2020-04-30 06:14:12', '2020-04-30 06:14:12', '2021-04-30 01:14:12'),
+('18629928d1643bfdbeaf732b26877177cdcbbd9cb9c96caea9d90ce941333cedb9b1837b90ebdc60', 1, 1, NULL, '[\"*\"]', 0, '2020-05-01 23:53:46', '2020-05-01 23:53:46', '2021-05-01 18:53:46'),
+('3774480f3f8fe7a25637242fdd8009d54d77829272dd56602b5a8f671b73344190cfc21425693dac', 72, 1, NULL, '[\"*\"]', 0, '2020-05-01 22:34:00', '2020-05-01 22:34:00', '2021-05-01 17:34:00'),
+('d967cdc917774a84313c7a363d469623b86502b950cbc549c1e90dff1ca5be614b5fa726ca15a33a', 63, 1, NULL, '[\"*\"]', 0, '2020-04-27 09:11:13', '2020-04-27 09:11:13', '2021-04-27 04:11:13'),
+('e4b63b8e84fcba9119bd533606fef2aec798daaa66f729d01a857775c5a151512ede83adcf30fe2b', 67, 1, NULL, '[\"*\"]', 0, '2020-05-01 22:31:08', '2020-05-01 22:31:08', '2021-05-01 17:31:08');
 
 -- --------------------------------------------------------
 
@@ -347,9 +361,16 @@ CREATE TABLE `oauth_refresh_tokens` (
 --
 
 INSERT INTO `oauth_refresh_tokens` (`id`, `access_token_id`, `revoked`, `expires_at`) VALUES
+('106f751696e87647dd1b2fce32ced1e319b68605fe2d963f7c9d0f37570303a4e0db9f447dded430', '18629928d1643bfdbeaf732b26877177cdcbbd9cb9c96caea9d90ce941333cedb9b1837b90ebdc60', 0, '2021-05-01 18:53:46'),
+('5b90a3e1bbb29fa1d7f7062e9a6f9f965118fd69ce4b6509e4a2954ad68e7133088e58029fd5dca9', 'd967cdc917774a84313c7a363d469623b86502b950cbc549c1e90dff1ca5be614b5fa726ca15a33a', 0, '2021-04-27 04:11:13'),
+('74a0caead557d17d784f469977968f624bcdf98a4811c508cb1b48fc2c0debbc43864ba055adfa74', 'ef358486df1952c0054dd23b8e4cd4621da7a3b5c99c8d6f1079f09a4f9fba36b6e41d6776ceb13a', 0, '2021-04-27 04:18:55'),
+('7aa4e670978e8e56add744750d7062b5bf4ce0d912216389dcc6da8745f9acc100d3a0d2a46947d3', '3774480f3f8fe7a25637242fdd8009d54d77829272dd56602b5a8f671b73344190cfc21425693dac', 0, '2021-05-01 17:34:00'),
+('9e4303bb8cd425bc6f852b4d51078de61194477d7507cd82074e305a4b82c2bc7e2414610fa29902', 'e4b63b8e84fcba9119bd533606fef2aec798daaa66f729d01a857775c5a151512ede83adcf30fe2b', 0, '2021-05-01 17:31:08'),
 ('b88e592087981fb8e42bf3505c01d744ce139b04a2b334b1e11cb75b431b6bc672026c1c4f0446d3', 'c9e30696d01369cfd74f351bcc47e6af30e5ecfe4196917930366fa8b3e4e0755ecdae025c0d9743', 0, '2021-04-22 16:56:45'),
 ('c5bbcb26d5b4edccfd474f3f430999f2c927ebd8deaa1ad42b7e6afc48872f10c0b8ddfd274dd0f8', '9a8724865c521d979d2496028cd847f32ab2968c6b4ca0fff9befcfb5dd897755e3093bfe5f3f6c3', 0, '2021-04-22 02:10:09'),
-('d1db18af0aa6ac70e1dbb24d8f793fd0680f280ea3ccfb67fc380971cabbe47f875b302339c1757d', 'e7290c02d0730a0e814a9f9fe86dce82b5d5279133e1bee05b09e265f404522e433dcb816effa535', 0, '2021-03-23 18:51:07');
+('c6ac783d4fe1712700f316383fb82876761b646f6f4ea4c9051acfdcf7c1fed278342f3ca7e4e8a3', '1348c70ba6e9ad923c909e2ea822fbf28e6c781cfcfbbfaa3fdd9ff987742aa596e2494d571a448b', 0, '2021-04-30 01:14:12'),
+('d1db18af0aa6ac70e1dbb24d8f793fd0680f280ea3ccfb67fc380971cabbe47f875b302339c1757d', 'e7290c02d0730a0e814a9f9fe86dce82b5d5279133e1bee05b09e265f404522e433dcb816effa535', 0, '2021-03-23 18:51:07'),
+('de197d1ebbc8896dfb35cf40c6bb867bfe35171cf3005b2fd783be533e51d6f1eac541ebfef9aa74', '19e9397312dbb8987651b7bf2770074590005ae86d9b6e9810591c3812652fb82849117c2269537a', 0, '2021-05-01 13:22:23');
 
 -- --------------------------------------------------------
 
@@ -438,15 +459,16 @@ CREATE TABLE `role` (
   `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `description` text COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `state` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Volcado de datos para la tabla `role`
 --
 
-INSERT INTO `role` (`id`, `name`, `description`, `created_at`, `updated_at`) VALUES
-(1, 'Administrador', 'Permite administrar todo el sitio web.', '2020-03-23 23:36:30', '2020-03-23 23:36:30');
+INSERT INTO `role` (`id`, `name`, `description`, `created_at`, `updated_at`, `state`) VALUES
+(1, 'Administrador', 'Permite administrar todo el sitio web.', '2020-03-23 23:36:30', '2020-03-23 23:36:30', 1);
 
 -- --------------------------------------------------------
 
@@ -509,7 +531,7 @@ CREATE TABLE `transcation_log` (
   `payment_id` int(11) NOT NULL,
   `branch_id` int(11) NOT NULL,
   `service_id` int(11) NOT NULL,
-  `action_id` int(11) NOT NULL,
+  `action_id` enum('Barber','Grooming') COLLATE utf8mb4_unicode_520_ci NOT NULL,
   `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
@@ -543,7 +565,16 @@ CREATE TABLE `users` (
 
 INSERT INTO `users` (`id`, `name`, `last_name`, `phone`, `address`, `email`, `dni`, `email_verified_at`, `password`, `state_id`, `remember_token`, `created_at`, `updated_at`, `phanton_user`) VALUES
 (1, 'Administrator', 'General', '0000000000', 'cll cr nn', 'ronaldocamachomeza@hotmail.com', '1007730321', NULL, '$2y$10$fe.SBIAnguU0UdKx7cn6FOkLAzhkHiC1Raff1bIIv33vn9AA/RjS.', 1, NULL, '2020-03-23 23:36:25', '2020-03-23 23:36:25', 0),
-(8, 'Ronaldo', 'Camac', '321564215', 'cc ll nn', 'ronal@hotmail.com', '123456789', NULL, '$2y$10$pcwWlAiyjnV0inCHZ5TOGeLXTrnsZTWNVdQYv0tEZwhtwvJt.FWMe', 1, NULL, '2020-04-23 01:57:47', '2020-04-23 03:48:12', 0);
+(8, 'Ronaldo', 'Camac', '321564215', 'cc ll nn', 'ronal@hotmail.com', '123456789', NULL, '$2y$10$pcwWlAiyjnV0inCHZ5TOGeLXTrnsZTWNVdQYv0tEZwhtwvJt.FWMe', 1, NULL, '2020-04-23 01:57:47', '2020-04-23 03:48:12', 0),
+(63, 'Barber 2', 'Barber 2', '12543510', 'cc ll nn', 'Labar2@gmail.com', '321564215', NULL, '$2y$10$NxSOd/EnSxhOv.VqfOxQsuXIZHKxBQ18AfuTTbZMd94JIK.8gt6Qm', 1, NULL, '2020-04-27 08:26:25', '2020-04-27 08:26:25', 0),
+(64, 'First entry', '-', '12543510', 'cc ll nn', '1-Labar2@gmail.com', '321564215', NULL, '$2y$10$E28veZ9d/GO0Hl95b0NHC.PHpep/30gCcNxj4P/CcNpO9brmfci3a', 1, NULL, '2020-04-27 08:26:25', '2020-04-27 08:26:25', 1),
+(65, 'Second entry', '-', '12543510', 'cc ll nn', '2-Labar2@gmail.com', '321564215', NULL, '$2y$10$gXCgNxyCAddaipxLyMkfeOLP8aJtSFCL.T9b0Yxkil54JaBc96elS', 1, NULL, '2020-04-27 08:26:25', '2020-04-27 08:26:25', 1),
+(66, 'Third entry', '-', '12543510', 'cc ll nn', '3-Labar2@gmail.com', '321564215', NULL, '$2y$10$J9gyZX.LveOb6dqigsGlgOgmC/iOTTwgozN/C1ZGSLwgmKQmaonUO', 1, NULL, '2020-04-27 08:26:25', '2020-04-27 08:26:25', 1),
+(72, 'Sucursal', 'Sucursal', '3214562', 'Cll #11122', 'branch@gmail.com', '215324', NULL, '$2y$10$LyC3knVR9eHoH4Om4CH0qek8KZQTi46vaMhKjb2Wrn9si0wlY5/ye', 1, NULL, '2020-05-01 20:54:31', '2020-05-01 20:54:31', 0),
+(73, 'First entry', '-', '3214562', 'Cll #11122', '1-branch@gmail.com', '215324', NULL, '$2y$10$Zth3IBoIbbYIqfjWAelB1OcHFb8YSZWL3P10aRg3LikvubX2v6lmm', 1, NULL, '2020-05-01 20:54:31', '2020-05-01 20:54:31', 1),
+(74, 'Second entry', '-', '3214562', 'Cll #11122', '2-branch@gmail.com', '215324', NULL, '$2y$10$KdJ93ZKngfH1NjI6RBffBO4VwqlaUwAoaHjE2IeX/EsigMG0VULXS', 1, NULL, '2020-05-01 20:54:31', '2020-05-01 20:54:31', 1),
+(75, 'Third entry', '-', '3214562', 'Cll #11122', '3-branch@gmail.com', '215324', NULL, '$2y$10$aMsGZVgghJ.Gd70qgV9nEesYl0x0dwDbc8AZDyG/ummh8XUcfkIXu', 1, NULL, '2020-05-01 20:54:31', '2020-05-01 20:54:31', 1),
+(80, 'Ronal2-0', 'Camacho', '11223366', 'CCLL', 'ronal@mail.com', '1234321', NULL, '$2y$10$IfK534vuBo2hW76Uvj9KkuAYh4TuniWQbYT8I/hlePG4IPFaHQjb6', 1, NULL, '2020-05-01 23:21:38', '2020-05-01 23:35:06', 0);
 
 -- --------------------------------------------------------
 
@@ -601,6 +632,19 @@ CREATE TABLE `user_turn` (
   `service_type` enum('barber_turn','grooming_contract') COLLATE utf8mb4_unicode_520_ci NOT NULL,
   `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
+
+--
+-- Volcado de datos para la tabla `user_turn`
+--
+
+INSERT INTO `user_turn` (`id`, `user_id`, `branch_id`, `service_type`, `created_at`) VALUES
+(1, 8, 26, 'barber_turn', '2020-04-28 22:16:58'),
+(3, 1, 26, 'barber_turn', '2020-04-30 00:12:33'),
+(4, 1, 26, 'barber_turn', '2020-04-30 00:13:16'),
+(5, 1, 26, 'barber_turn', '2020-04-30 00:37:28'),
+(6, 1, 26, 'barber_turn', '2020-04-30 00:37:28'),
+(7, 1, 26, 'barber_turn', '2020-04-30 00:37:29'),
+(14, 64, 26, 'barber_turn', '2020-04-30 01:28:20');
 
 --
 -- Índices para tablas volcadas
@@ -804,7 +848,7 @@ ALTER TABLE `user_turn`
 -- AUTO_INCREMENT de la tabla `branch_office`
 --
 ALTER TABLE `branch_office`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
 --
 -- AUTO_INCREMENT de la tabla `branch_state`
 --
@@ -814,12 +858,12 @@ ALTER TABLE `branch_state`
 -- AUTO_INCREMENT de la tabla `branch_user`
 --
 ALTER TABLE `branch_user`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=49;
 --
 -- AUTO_INCREMENT de la tabla `company`
 --
 ALTER TABLE `company`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 --
 -- AUTO_INCREMENT de la tabla `company_state`
 --
@@ -899,7 +943,7 @@ ALTER TABLE `transcation_log`
 -- AUTO_INCREMENT de la tabla `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=81;
 --
 -- AUTO_INCREMENT de la tabla `user_has_role`
 --
@@ -914,7 +958,7 @@ ALTER TABLE `user_state`
 -- AUTO_INCREMENT de la tabla `user_turn`
 --
 ALTER TABLE `user_turn`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 --
 -- Restricciones para tablas volcadas
 --

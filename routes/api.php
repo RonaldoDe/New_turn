@@ -35,6 +35,12 @@ Route::middleware('auth:api')->group(function () {
 
     # Turn administration
     Route::apiResource('clientTurn', 'Api\Turns\TurnsClientController');
+    # Companies list
+    Route::get('companiesList', 'Api\Client\ClientCompanyController@companyList');
+    # Branches list
+    Route::get('branchesList', 'Api\Client\ClientCompanyController@branchesList');
+    # Branch detail
+    Route::get('branchesList/{id}', 'Api\Client\ClientCompanyController@branchDetail');
 
 
 });

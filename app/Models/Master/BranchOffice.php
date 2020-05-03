@@ -17,4 +17,8 @@ class BranchOffice extends Model
             $query->where('name', 'LIKE', '%'.$name.'%');
         }
     }
+
+    protected $hidden = [
+        'created_at', 'updated_at', 'db_name'
+    ];
 }

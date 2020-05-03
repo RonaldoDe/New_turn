@@ -27,7 +27,7 @@ class TurnsClientController extends Controller
      */
     public function index()
     {
-        $user_turn = UserTurn::select('c.name as company_name', 'c.description as company_description', 'bo.id as branch_id', 'bo.name as branch_name', 'bo.description as branch_description', 'ct.name as company_type', 'user_turn.service_type as type_turn', 'user_turn.created_at')
+        $user_turn = UserTurn::select('user_turn.id', 'c.name as company_name', 'c.description as company_description', 'bo.id as branch_id', 'bo.name as branch_name', 'bo.description as branch_description', 'ct.name as company_type', 'user_turn.service_type as type_turn', 'user_turn.created_at')
         ->join('branch_office as bo', 'user_turn.branch_id', 'bo.id')
         ->join('company as c', 'bo.company_id', 'c.id')
         ->join('company_type as ct', 'c.type_id', 'ct.id')
@@ -49,9 +49,9 @@ class TurnsClientController extends Controller
             'branch_id' => 'required|integer|exists:branch_office,id',
             'service_id' => 'required|integer',
             'pay_on_line' => 'bail|integer|required',
-            'payment_data_id' => 'bail|integer|exist:payment_data,id',
+            'payment_data_id' => 'bail|integer',
             'credit_card_number' => 'bail|integer',
-            'credit_card_expiration_date' => 'bail|integer',
+            'credit_card_expiration_date' => 'bail',
             'credit_card_security_code' => 'bail|integer',
             'employee_id' => 'bail|integer',
             'dni' => 'bail|',
@@ -163,8 +163,8 @@ class TurnsClientController extends Controller
         ->join('users as u', 'user_turn.user_id', 'u.id')
         ->join('branch_office as bo', 'user_turn.branch_id', 'bo.id')
         ->where('user_turn.user_id', Auth::id())
-        ->find($id);
-
+        ->where('user_turn.id', $id)
+        ->first();
         if(!$user_turn){
             return response()->json(['response' => ['error' => ['Turno no encontrado.']]], 400);
         }

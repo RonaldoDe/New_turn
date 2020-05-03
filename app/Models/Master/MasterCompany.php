@@ -17,4 +17,8 @@ class MasterCompany extends Model
             $query->where('branch_office.name', 'LIKE', '%'.$name.'%');
         }
     }
+
+    protected $hidden = [
+        'created_at', 'updated_at',
+    ];
 }

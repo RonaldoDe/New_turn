@@ -312,7 +312,8 @@ class NewDatabaseHelper extends Controller
                 $filters = DB::connection('newCompany')->statement("ALTER TABLE `client_turn`
                 ADD CONSTRAINT `client_turn_ibfk_1` FOREIGN KEY (`service_id`) REFERENCES `service_list` (`id`),
                 ADD CONSTRAINT `client_turn_ibfk_2` FOREIGN KEY (`employee_id`) REFERENCES `users` (`id`),
-                ADD CONSTRAINT `client_turn_ibfk_3` FOREIGN KEY (`finished_by_id`) REFERENCES `users` (`id`);");
+                ADD CONSTRAINT `client_turn_ibfk_3` FOREIGN KEY (`finished_by_id`) REFERENCES `users` (`id`),
+                ADD CONSTRAINT `client_turn_ibfk_4` FOREIGN KEY (`state_id`) REFERENCES `turn_state` (`id`);");
 
                 //Filtros para la tabla `permission`
                 $filters = DB::connection('newCompany')->statement("ALTER TABLE `permission`

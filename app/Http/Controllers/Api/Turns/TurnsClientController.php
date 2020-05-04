@@ -193,6 +193,28 @@ class TurnsClientController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $user_turn = UserTurn::select('user_turn.id', 'u.id as user_id', 'bo.id as compnay_id', 'u.name as user_name', 'bo.name as company_name', 'bo.db_name')
+        ->join('users as u', 'user_turn.user_id', 'u.id')
+        ->join('branch_office as bo', 'user_turn.branch_id', 'bo.id')
+        ->where('user_turn.user_id', Auth::id())
+        ->where('user_turn.id', $id)
+        ->first();
+        if(!$user_turn){
+            return response()->json(['response' => ['error' => ['Turno no encontrado.']]], 400);
+        }
+
+        # --------------------- Set connection ------------------------------------#
+        $set_connection = SetConnectionHelper::setByDBName($user_turn->db_name);
+        # --------------------- Set connection ------------------------------------#
+
+        $client_turn = ClientTurn::on($user_turn->db_name)->where('user_id', Auth::id())->where('user_turn_id', $user_turn->id)->where('state_id', 2)->first();
+        if(!$user_turn){
+            return response()->json(['response' => ['error' => ['El turno no pudo ser cancelado.']]], 400);
+        }
+
+        $client_turn->state_id = 3;
+        $client_turn->update();
+
+        return response()->json(['response' => 'Turno cancelado'], 200);
     }
 }

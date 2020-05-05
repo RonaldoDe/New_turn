@@ -39,6 +39,7 @@ class NewDatabaseHelper extends Controller
                     `dni` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
                     `date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
                     `start_at` datetime DEFAULT NULL,
+                    `started_by` int(11) NOT NULL,
                     `finished_at` datetime DEFAULT NULL,
                     `finished_by_id` int(11) DEFAULT NULL,
                     `service_id` int(11) NOT NULL,
@@ -100,7 +101,8 @@ class NewDatabaseHelper extends Controller
                 (4, 'Listar roles', 'Permite listar roles.', '/list_role', '2020-03-23 23:36:36', '2020-03-23 23:36:36', 2),
                 (5, 'Datos de la sucursal', 'Ver información de la sucursal', '/show_branch', '2020-04-24 05:00:00', '2020-04-24 05:00:00', 3),
                 (6, 'Editar datos de la sucursal', 'Puede editar datos de la sucursal.', '/update_branch', '2020-04-24 05:00:00', '2020-04-24 05:00:00', 3),
-                (7, 'Listar turnos', 'Puede listar la información de los turnos.', '/list_turn', '2020-04-24 05:00:00', '2020-04-24 05:00:00', 4);");
+                (7, 'Listar turnos', 'Puede listar la información de los turnos.', '/list_turns', '2020-04-24 05:00:00', '2020-04-24 05:00:00', 4),
+                (8, 'Iniciar turno', 'Empezar un turno.', '/start_turn', '2020-04-24 05:00:00', '2020-04-24 05:00:00', 4);");
 
                 //Estructura de tabla para la tabla `role`
                 $structure = DB::connection('newCompany')->statement("CREATE TABLE `role` (
@@ -114,7 +116,8 @@ class NewDatabaseHelper extends Controller
 
                 // Volcado de datos para la tabla `role`
                 $structure = DB::connection('newCompany')->statement("INSERT INTO `role` (`id`, `name`, `description`, `created_at`, `updated_at`, `state`) VALUES
-                (1, 'Administrador', 'Permite administrar todo el sitio web.', '2020-03-23 23:36:30', '2020-03-23 23:36:30', 1);");
+                (1, 'Administrador', 'Permite administrar todo el sitio web.', '2020-03-23 23:36:30', '2020-03-23 23:36:30', 1),
+                (2, 'Barbero', 'Es un barbero', '2020-05-04 05:00:00', '2020-05-04 05:00:00', 1);");
 
                 //Estructura de tabla para la tabla `role_has_permission
                 $structure = DB::connection('newCompany')->statement("CREATE TABLE `role_has_permission` (
@@ -133,7 +136,8 @@ class NewDatabaseHelper extends Controller
                 (4, 4, 1, '2020-03-23 23:36:38', '2020-03-23 23:36:38'),
                 (5, 5, 1, '2020-04-24 05:00:00', '2020-04-24 05:00:00'),
                 (6, 6, 1, '2020-04-24 05:00:00', '2020-04-24 05:00:00'),
-                (7, 7, 1, '2020-04-24 05:00:00', '2020-04-24 05:00:00');");
+                (7, 7, 1, '2020-04-24 05:00:00', '2020-04-24 05:00:00'),
+                (8, 8, 2, '2020-04-24 05:00:00', '2020-04-24 05:00:00');");
 
                 //Estructura de tabla para la tabla `service_list
                 $structure = DB::connection('newCompany')->statement("CREATE TABLE `service_list` (
@@ -210,7 +214,8 @@ class NewDatabaseHelper extends Controller
                 ADD KEY `state_id` (`state_id`),
                 ADD KEY `service_id` (`service_id`),
                 ADD KEY `finished_by_id` (`finished_by_id`),
-                ADD KEY `employee_id` (`employee_id`);");
+                ADD KEY `employee_id` (`employee_id`),
+                ADD KEY `started_by` (`started_by`);");
 
                 //Indices de la tabla `company_data`
                 $relations = DB::connection('newCompany')->statement("ALTER TABLE `company_data`
@@ -313,7 +318,8 @@ class NewDatabaseHelper extends Controller
                 ADD CONSTRAINT `client_turn_ibfk_1` FOREIGN KEY (`service_id`) REFERENCES `service_list` (`id`),
                 ADD CONSTRAINT `client_turn_ibfk_2` FOREIGN KEY (`employee_id`) REFERENCES `users` (`id`),
                 ADD CONSTRAINT `client_turn_ibfk_3` FOREIGN KEY (`finished_by_id`) REFERENCES `users` (`id`),
-                ADD CONSTRAINT `client_turn_ibfk_4` FOREIGN KEY (`state_id`) REFERENCES `turn_state` (`id`);");
+                ADD CONSTRAINT `client_turn_ibfk_4` FOREIGN KEY (`state_id`) REFERENCES `turn_state` (`id`),
+                ADD CONSTRAINT `client_turn_ibfk_4` FOREIGN KEY (`started_by`) REFERENCES `users` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;");
 
                 //Filtros para la tabla `permission`
                 $filters = DB::connection('newCompany')->statement("ALTER TABLE `permission`

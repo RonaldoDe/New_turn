@@ -34,6 +34,8 @@ Route::middleware('auth:api')->group(function () {
     Route::post('mMoveUsers', 'Api\Master\MUsersController@addUserToCompany');
 
     # Turn administration
+    Route::get('turnsList', 'Api\Administration\TurnsController@turnsList');
+    # Client turn
     Route::apiResource('clientTurn', 'Api\Turns\TurnsClientController');
     # Companies list
     Route::get('companiesList', 'Api\Client\ClientCompanyController@companyList');
@@ -41,6 +43,10 @@ Route::middleware('auth:api')->group(function () {
     Route::get('branchesList', 'Api\Client\ClientCompanyController@branchesList');
     # Branch detail
     Route::get('branchesList/{id}', 'Api\Client\ClientCompanyController@branchDetail');
+    # Services list
+    Route::get('servicesList', 'Api\Client\ComplementsListController@servicesList');
+    # Employees list
+    Route::get('employeesList', 'Api\Client\ComplementsListController@employeesList');
 
 
 });

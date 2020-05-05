@@ -265,9 +265,28 @@ class MBranchOfficeController extends Controller
                 ]
             ]);
 
-            $user_role = UserRole::on($branch->db_name)->create([
-                'user_id' => $user->id,
-                'role_id' => 1
+            $user_role = UserRole::on($branch->db_name)->insert([
+                [
+                    'user_id' => $user->id,
+                    'role_id' => 1,
+                    'created_at' => date('Y-m-d H:i:s'),
+                    'updated_at' => date('Y-m-d H:i:s')
+                ],[
+                    'user_id' => 2,
+                    'role_id' => 1,
+                    'created_at' => date('Y-m-d H:i:s'),
+                    'updated_at' => date('Y-m-d H:i:s')
+                ],[
+                    'user_id' => 3,
+                    'role_id' => 1,
+                    'created_at' => date('Y-m-d H:i:s'),
+                    'updated_at' => date('Y-m-d H:i:s')
+                ],[
+                    'user_id' => 4,
+                    'role_id' => 1,
+                    'created_at' => date('Y-m-d H:i:s'),
+                    'updated_at' => date('Y-m-d H:i:s')
+                ]
             ]);
 
         }catch(Exception $e){

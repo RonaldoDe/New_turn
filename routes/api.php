@@ -47,6 +47,8 @@ Route::middleware('auth:api')->group(function () {
     Route::get('servicesList', 'Api\Client\ComplementsListController@servicesList');
     # Employees list
     Route::get('employeesList', 'Api\Client\ComplementsListController@employeesList');
+    # Change turn
+    Route::post('changeTurn/{id}', 'Api\Administration\TurnsController@changeTurn');
 
 
 });

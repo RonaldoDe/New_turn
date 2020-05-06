@@ -7,13 +7,15 @@ use App\Models\ClientTurn;
 use App\Models\CUser;
 use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class TurnsController extends Controller
 {
     public function __construct()
     {
         # List turn permission
-        $this->middleware('permission:/list_turns')->only(['turnsList']);
+        $this->middleware('permission:/list_turns')->only(['turnsList', 'endTurn']);
         # Get connection
         $this->middleware('set_connection');
 
@@ -75,4 +77,80 @@ class TurnsController extends Controller
 
         return response()->json(['response' => $turns_list], 200);
     }
+
+    public function changeTurn(Request $request, $id)
+    {
+        $validator=\Validator::make($request->all(),[
+            'state_id' => 'bail|integer',
+        ]);
+        if($validator->fails())
+        {
+          return response()->json(['response' => ['error' => $validator->errors()->all()]],400);
+        }
+        $turn = ClientTurn::on('connectionDB')->find($id);
+
+        if(!$turn){
+            return response()->json(['response' => ['error' => ['Turno no encontrado.']]], 400);
+        }
+
+        $user = CUser::on('connectionDB')->where('principal_id', Auth::id())->first();
+
+        if(!$user){
+            return response()->json(['response' => ['error' => ['Usuario no encontrado.']]], 400);
+        }
+
+        $turn_state = DB::connection('connectionDB')->table('turn_state')->where('id', request('state_id'))->first();
+
+        if(!$turn_state){
+            return response()->json(['response' => ['error' => ['Estado de el turno no encontrado.']]], 400);
+        }
+
+        if(request('state_id') == 1){
+            if($turn->state_id == 4){
+                return response()->json(['response' => ['error' => ['El turno ya se encuentra finalizado.']]], 400);
+            }else if($turn->state_id == 3){
+                return response()->json(['response' => ['error' => ['El turno se encuentra cancelado.']]], 400);
+            }else if($turn->state_id == 1){
+                return response()->json(['response' => ['error' => ['El turno ya se encuentra iniciado.']]], 400);
+            }
+
+            $turn->start_at = date('Y-m-d H:i:s');
+            $turn->started_by = $user->id;
+            $turn->state_id = 1;
+            $turn->update();
+
+            return response()->json(['response' => 'Turno iniciado.'], 200);
+
+        }else if(request('state_id') == 3){
+            if($turn->state_id == 3){
+                return response()->json(['response' => ['error' => ['El turno se encuentra cancelado.']]], 400);
+            }else if($turn->state_id == 4){
+                return response()->json(['response' => ['error' => ['El turno se encuentra terminado.']]], 400);
+            }
+
+            $turn->state_id = 3;
+            $turn->update();
+            return response()->json(['response' => 'Turno cancelado.'], 200);
+
+        }else if(request('state_id') == 4){
+            if($turn->state_id == 4){
+                return response()->json(['response' => ['error' => ['El turno ya se encuentra finalizado.']]], 400);
+            }else if($turn->state_id == 3){
+                return response()->json(['response' => ['error' => ['El turno se encuentra cancelado.']]], 400);
+            }else if($turn->state_id == 2){
+                return response()->json(['response' => ['error' => ['El turno aun no se empieza.']]], 400);
+            }
+
+            $turn->finished_at = date('Y-m-d H:i:s');
+            $turn->finished_by_id = $user->id;
+            $turn->state_id = 4;
+            $turn->update();
+
+            return response()->json(['response' => 'Turno finalizado.'], 200);
+        }else if(request('state_id') == 2){
+            return response()->json(['response' => ['error' => ['El turno no se puede poner nuevamente en espera.']]], 400);
+        }
+
+    }
+
 }

@@ -39,7 +39,7 @@ class NewDatabaseHelper extends Controller
                     `dni` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
                     `date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
                     `start_at` datetime DEFAULT NULL,
-                    `started_by` int(11) NOT NULL,
+                    `started_by` int(11)  DEFAULT NULL,
                     `finished_at` datetime DEFAULT NULL,
                     `finished_by_id` int(11) DEFAULT NULL,
                     `service_id` int(11) NOT NULL,

@@ -50,6 +50,10 @@ Route::middleware('auth:api')->group(function () {
     # Change turn
     Route::post('changeTurn/{id}', 'Api\Administration\TurnsController@changeTurn');
 
+    #-------- Grooming ------------
+    # Turn administration
+    Route::get('clientServiceList', 'Api\Administration\Grooming\ClientServiceController@clientServiceList');
+
 
 });
 

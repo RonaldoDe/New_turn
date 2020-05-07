@@ -554,7 +554,6 @@ class NewDatabaseHelper extends Controller
                 $relations = DB::connection('newCompany')->statement("ALTER TABLE `client_service`
                 ADD PRIMARY KEY (`id`),
                 ADD KEY `employee_id` (`employee_id`),
-                ADD KEY `user_id` (`user_id`),
                 ADD KEY `user_service_id` (`user_service_id`),
                 ADD KEY `acepted_by` (`acepted_by`),
                 ADD KEY `service_id` (`service_id`),
@@ -659,7 +658,6 @@ class NewDatabaseHelper extends Controller
                 //Filtros para la tabla `client_service`
                 $filters = DB::connection('newCompany')->statement("ALTER TABLE `client_service`
                 ADD CONSTRAINT `client_service_ibfk_1` FOREIGN KEY (`employee_id`) REFERENCES `users` (`id`),
-                ADD CONSTRAINT `client_service_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
                 ADD CONSTRAINT `client_service_ibfk_3` FOREIGN KEY (`acepted_by`) REFERENCES `users` (`id`),
                 ADD CONSTRAINT `client_service_ibfk_4` FOREIGN KEY (`service_id`) REFERENCES `service_list` (`id`),
                 ADD CONSTRAINT `client_service_ibfk_5` FOREIGN KEY (`state_id`) REFERENCES `service_state` (`id`);");

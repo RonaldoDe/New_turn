@@ -10,6 +10,7 @@ use App\Models\CUser;
 use App\Models\Grooming\GCompanyData;
 use App\Models\Master\BranchOffice;
 use App\Models\Master\BranchUser;
+use App\Models\Master\MasterCompany;
 use App\Models\UserRole;
 use App\User;
 use Illuminate\Http\Request;
@@ -73,7 +74,8 @@ class MBranchOfficeController extends Controller
         while(TRUE){
             $lower = strtolower(request('name'));
             $replace = str_replace(' ', '_', $lower);
-            $db_name = $replace.'_'.rand(1000, 99999);
+            $db_name_rand = $replace.'_'.rand(1000, 99999);
+            $db_name = 'db_'.$db_name_rand;
             $name_exists = BranchOffice::where('db_name', $db_name)->first();
             # If there is not, we exit the loop
             if (!$name_exists){
@@ -123,9 +125,9 @@ class MBranchOfficeController extends Controller
                 'state_id' => 1
             ]);
 
+            $company_type = MasterCompany::find(request('company_id'));
 
-
-            if(request('company_id') == 2){
+            if($company_type->type_id == 2){
 
                 # Create the phatons users -------------------------------------------
                 $phanto_1 = User::create([
@@ -300,7 +302,7 @@ class MBranchOfficeController extends Controller
                     'third_acount' => $phanto_3->email,
                 );
 
-            }else if(request('company_id') == 3){
+            }else if($company_type->type_id == 3){
                 # /Create the phatons users -------------------------------------------
 
                 $branch_user = BranchUser::insert([

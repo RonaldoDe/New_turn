@@ -15,7 +15,7 @@ class TurnsController extends Controller
     public function __construct()
     {
         # List turn permission
-        $this->middleware('permission:/list_turns')->only(['turnsList', 'endTurn']);
+        $this->middleware('permission:/list_turns')->only(['turnsList', 'changeTurn']);
         # Get connection
         $this->middleware('set_connection');
 

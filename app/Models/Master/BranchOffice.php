@@ -14,7 +14,7 @@ class BranchOffice extends Model
     public function scopeName($query, $name)
     {
         if(!empty($name)){
-            $query->where('name', 'LIKE', '%'.$name.'%');
+            $query->where('branch_office.name', 'LIKE', '%'.$name.'%');
         }
     }
 

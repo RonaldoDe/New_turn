@@ -53,6 +53,8 @@ Route::middleware('auth:api')->group(function () {
     #-------- Grooming ------------
     # Turn administration
     Route::get('clientServiceList', 'Api\Administration\Grooming\ClientServiceController@clientServiceList');
+    # Turn administration detail
+    Route::get('clientServiceList/{id}', 'Api\Administration\Grooming\ClientServiceController@clientServiceDetails');
 
 
 });

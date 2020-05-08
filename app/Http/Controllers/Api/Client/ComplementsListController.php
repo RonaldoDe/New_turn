@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Controllers\Helper\SetConnectionHelper;
 use App\Models\CUser;
 use App\Models\Master\BranchOffice;
+use App\Models\Master\MasterCompany;
 use App\Models\Service;
 use Illuminate\Http\Request;
 
@@ -52,15 +53,26 @@ class ComplementsListController extends Controller
             return response()->json(['response' => ['error' => ['Sucursal no encontrada']]], 400);
         }
 
+        $compnay = MasterCompany::find($branch->company_id);
+
         $set_connection = SetConnectionHelper::setByDBName($branch->db_name);
         # --------------------- Set connection ------------------------------------#
 
-        $employees = CUser::on($branch->db_name)->select('users.name', 'users.last_name')
-        ->join('user_has_role as ur', 'users.id', 'ur.user_id')
-        ->where('ur.role_id', 2)
-        ->where('users.phanton_user', 0)
-        ->name(request('name'))
-        ->get();
+        if($compnay->type_id == 1){
+            $employees = CUser::on($branch->db_name)->select('users.name', 'users.last_name')
+            ->join('user_has_role as ur', 'users.id', 'ur.user_id')
+            ->where('ur.role_id', 2)
+            ->where('users.phanton_user', 0)
+            ->name(request('name'))
+            ->get();
+        }else{
+            $employees = CUser::on($branch->db_name)->select('users.name', 'users.last_name')
+            ->join('user_has_role as ur', 'users.id', 'ur.user_id')
+            ->where('ur.role_id', 2)
+            ->name(request('name'))
+            ->get();
+        }
+
 
         return response()->json(['response' => $employees], 200);
     }

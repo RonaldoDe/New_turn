@@ -395,6 +395,7 @@ class NewDatabaseHelper extends Controller
                 //Estructura de tabla para la tabla `company_data`
                 $structure = DB::connection('newCompany')->statement("CREATE TABLE `company_data` (
                     `id` int(11) NOT NULL,
+                    `opening_hours` text,
                     `company_id` int(11) NOT NULL,
                     `api_k` varchar(50) DEFAULT NULL,
                     `api_l` varchar(50) DEFAULT NULL,

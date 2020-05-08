@@ -70,7 +70,7 @@ class TurnsController extends Controller
 
             $turn->employee_asigned = $data['employee'];
             $turn->client = $data['client'];
-            $turn->started_by = $data['started_by'];
+            $turn->started_by_data = $data['started_by'];
             $turn->finished_by = $data['finished_by'];
 
         }

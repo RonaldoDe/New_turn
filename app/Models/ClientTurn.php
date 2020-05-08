@@ -29,7 +29,7 @@ class ClientTurn extends Model
     public function scopeDni($query, $dni)
     {
         if(!empty($dni)){
-            $query->where('dni', $dni);
+            $query->where('dni', 'LIKE', '%'.$dni.'%');
         }
     }
 

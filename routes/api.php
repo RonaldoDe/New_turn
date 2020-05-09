@@ -51,10 +51,18 @@ Route::middleware('auth:api')->group(function () {
     Route::post('changeTurn/{id}', 'Api\Administration\TurnsController@changeTurn');
 
     #-------- Grooming ------------
-    # Turn administration
+    # Administration
+
+    # Service config
+    Route::apiResource('serviceConfig', 'Api\Administration\Grooming\GServiceController');
+
+    # Service administration
     Route::get('clientServiceList', 'Api\Administration\Grooming\ClientServiceController@clientServiceList');
-    # Turn administration detail
+    # Service administration detail
     Route::get('clientServiceList/{id}', 'Api\Administration\Grooming\ClientServiceController@clientServiceDetails');
+
+    # Request service
+    Route::post('requestService', 'Api\Administration\Grooming\RequestServiceController@requestService');
 
 
 });

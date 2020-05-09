@@ -102,7 +102,9 @@ class NewDatabaseHelper extends Controller
                 (5, 'Datos de la sucursal', 'Ver información de la sucursal', '/show_branch', '2020-04-24 05:00:00', '2020-04-24 05:00:00', 3),
                 (6, 'Editar datos de la sucursal', 'Puede editar datos de la sucursal.', '/update_branch', '2020-04-24 05:00:00', '2020-04-24 05:00:00', 3),
                 (7, 'Listar turnos', 'Puede listar la información de los turnos.', '/list_turns', '2020-04-24 05:00:00', '2020-04-24 05:00:00', 4),
-                (8, 'Iniciar turno', 'Empezar un turno.', '/start_turn', '2020-04-24 05:00:00', '2020-04-24 05:00:00', 4);");
+                (8, 'Iniciar turno', 'Empezar un turno.', '/start_turn', '2020-04-24 05:00:00', '2020-04-24 05:00:00', 4),
+                (9, 'Listar configuración de los servicios', 'Lista la configuración de los servicios que ofrece la empresa.', '/list_c_service', '2020-05-08 05:00:00', '2020-05-08 05:00:00', 4),
+                (10, 'Crear y modificar la configuración de los servicios', 'Crear y modificar la configuración de los servicios que ofrece la empresa.', '/create_c_service', '2020-05-08 05:00:00', '2020-05-08 05:00:00', 4);");
 
                 //Estructura de tabla para la tabla `role`
                 $structure = DB::connection('newCompany')->statement("CREATE TABLE `role` (
@@ -442,7 +444,9 @@ class NewDatabaseHelper extends Controller
                 (5, 'Datos de la sucursal', 'Ver información de la sucursal', '/show_branch', '2020-05-06 05:00:00', '2020-05-06 05:00:00', 3),
                 (6, 'Editar datos de la sucursal', 'Puede editar datos de la sucursal.', '/update_branch', '2020-05-06 05:00:00', '2020-05-06 05:00:00', 3),
                 (7, 'Listar servicios', 'Listar y administrar los servicios solicitados', '/list_services', '2020-05-06 05:00:00', '2020-05-06 05:00:00', 4),
-                (8, 'Modificar servicios al clinte', 'Puede cambiar estado de los servicios brindados', '/update_services', '2020-05-06 05:00:00', '2020-05-06 05:00:00', 4);");
+                (8, 'Modificar servicios al clinte', 'Puede cambiar estado de los servicios brindados', '/update_services', '2020-05-06 05:00:00', '2020-05-06 05:00:00', 4),
+                (9, 'Listar configuración de los servicios', 'Lista la configuración de los servicios que ofrece la empresa.', '/list_c_service', '2020-05-08 05:00:00', '2020-05-08 05:00:00', 4),
+                (10, 'Crear y modificar la configuración de los servicios', 'Crear y modificar la configuración de los servicios que ofrece la empresa.', '/create_c_service', '2020-05-08 05:00:00', '2020-05-08 05:00:00', 4);");
 
                 //Estructura de tabla para la tabla `role`
                 $structure = DB::connection('newCompany')->statement("CREATE TABLE `role` (
@@ -486,6 +490,7 @@ class NewDatabaseHelper extends Controller
                     `name` varchar(120) DEFAULT NULL,
                     `description` text,
                     `price_per_hour` varchar(50) NOT NULL,
+                    `unit_per_hour` int(11) NOT NULL,
                     `hours_max` int(11) NOT NULL
                   ) ENGINE=InnoDB DEFAULT CHARSET=latin1;");
 

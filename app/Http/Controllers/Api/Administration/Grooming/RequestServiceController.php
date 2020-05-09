@@ -125,7 +125,7 @@ class RequestServiceController extends Controller
             return response()->json(['response' => ['hours' => $hours, 'minutes' => $minutes, 'test' => $test]], 400);
 
 
-            if($hours_number > $service->hours_max){
+           /* if($hours_number > $service->hours_max){
                 return response()->json(['response' => ['error' => ['Para solicitar este servicio re requiere un maximo de '.$service->hours_max.' horas']]], 400);
             }
 
@@ -142,7 +142,7 @@ class RequestServiceController extends Controller
                 'turn_number' => $turn_number+1,
                 'c_return' => $company_data->current_return,
                 'state_id' => 2,
-                ]);
+                ]);*/
                 return response()->json(['response' => $service_client], 400);
             }catch(Exception $e){
                 DB::rollback();
@@ -152,6 +152,6 @@ class RequestServiceController extends Controller
 
         DB::commit();
         DB::connection($branch->db_name)->commit();
-        return response()->json(['response' => 'Turno reservado con exito', 'turn' => $turn->id], 200);
+        # return response()->json(['response' => 'Turno reservado con exito', 'turn' => $turn->id], 200);
     }
 }

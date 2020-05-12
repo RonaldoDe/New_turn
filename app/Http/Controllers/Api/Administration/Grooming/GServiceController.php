@@ -44,7 +44,9 @@ class GServiceController extends Controller
             'description' => 'required',
             'price_per_hour' => 'bail|integer',
             'unit_per_hour' => 'bail|integer',
-            'hours_max' => 'bail|required|integer'
+            'hours_max' => 'bail|required|integer',
+            'wait_time' => 'bail|required|integer',
+            'opening_hours' => 'bail|required',
         ]);
         if($validator->fails())
         {
@@ -57,7 +59,9 @@ class GServiceController extends Controller
             'description' => request('description'),
             'price_per_hour' => request('price_per_hour'),
             'unit_per_hour' => request('unit_per_hour'),
-            'hours_max' => request('hours_max')
+            'hours_max' => request('hours_max'),
+            'wait_time' => request('wait_time'),
+            'opening_hours' => request('opening_hours'),
         ]);
     }
 

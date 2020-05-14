@@ -42,11 +42,12 @@ class GServiceController extends Controller
         $validator=\Validator::make($request->all(),[
             'name' => 'required',
             'description' => 'required',
-            'price_per_hour' => 'bail|integer',
-            'unit_per_hour' => 'bail|integer',
+            'price_per_hour' => 'bail|required|integer',
+            'unit_per_hour' => 'bail|required|integer',
             'hours_max' => 'bail|required|integer',
             'wait_time' => 'bail|required|integer',
             'opening_hours' => 'bail|required',
+            'state' => 'bail|required',
         ]);
         if($validator->fails())
         {
@@ -54,15 +55,18 @@ class GServiceController extends Controller
         }
 
 
-        $service = Service::create([
+        $service = Service::on('connectionDB')->create([
             'name' => request('name'),
             'description' => request('description'),
             'price_per_hour' => request('price_per_hour'),
             'unit_per_hour' => request('unit_per_hour'),
             'hours_max' => request('hours_max'),
             'wait_time' => request('wait_time'),
-            'opening_hours' => request('opening_hours'),
+            'state' => request('state'),
+            'opening_hours' => json_encode(request('opening_hours')),
         ]);
+
+        return response()->json(['response' => 'Success'], 200);
     }
 
     /**
@@ -73,7 +77,9 @@ class GServiceController extends Controller
      */
     public function show($id)
     {
-        //
+        $service = Service::on('connectionDB')->find($id);
+
+        return response()->json(['response' => $service], 200);
     }
 
     /**
@@ -85,17 +91,39 @@ class GServiceController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $validator=\Validator::make($request->all(),[
+            'name' => 'required',
+            'description' => 'required',
+            'price_per_hour' => 'bail|required|integer',
+            'unit_per_hour' => 'bail|required|integer',
+            'hours_max' => 'bail|required|integer',
+            'wait_time' => 'bail|required|integer',
+            'opening_hours' => 'bail|required',
+            'state' => 'bail|required',
+        ]);
+        if($validator->fails())
+        {
+          return response()->json(['response' => ['error' => $validator->errors()->all()]],400);
+        }
+
+
+        $service = Service::on('connectionDB')->find($id);
+
+        if(!$service){
+            return response()->json(['response' => ['error' => ['El servicio no existe.']]], 400);
+        }
+
+        $service->name = request('name');
+        $service->description = request('description');
+        $service->price_per_hour = request('price_per_hour');
+        $service->unit_per_hour = request('unit_per_hour');
+        $service->hours_max = request('hours_max');
+        $service->wait_time = request('wait_time');
+        $service->opening_hours = json_encode(request('opening_hours'));
+        $service->state = request('state');
+        $service->update();
+
+        return response()->json(['response' => 'Success'], 200);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
-    }
 }

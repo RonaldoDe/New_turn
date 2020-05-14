@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Helper;
 
 use App\Http\Controllers\Controller;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -152,14 +153,17 @@ class NewDatabaseHelper extends Controller
                     `time` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
                     `price` varchar(50) NOT NULL,
                     `opening_hours` text,
+                    `state` int(11) NOT NULL,
+                    `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                    `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
                 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;");
 
                 # Basic opening hours
                 $opening = '[{ "monday": [{ "date_start": "08:00:00", "date_end": "12:30:00" }, { "date_start": "14:00:00", "date_end": "17:30:00" }] }, { "tuesday": [{ "date_start": "08:00:00", "date_end": "12:30:00" }, { "date_start": "14:00:00", "date_end": "17:30:00" }] }, { "wednesday": [{ "date_start": "08:00:00", "date_end": "12:30:00" }, { "date_start": "14:00:00", "date_end": "17:30:00" }] }, { "thursday": [{ "date_start": "08:00:00", "date_end": "12:30:00" }, { "date_start": "14:00:00", "date_end": "17:30:00" }] }, { "friday": [{ "date_start": "08:00:00", "date_end": "12:30:00" }, { "date_start": "14:00:00", "date_end": "17:30:00" }] }, { "saturday": [{ "date_start": "08:00:00", "date_end": "12:30:00" }, { "date_start": "14:00:00", "date_end": "16:30:00" }] }, { "holidays": [{ "date_start": "08:00:00", "date_end": "12:30:00" }] }]';
 
                 // Volcado de datos para la tabla `service_list`
-                $structure = DB::connection('newCompany')->statement("INSERT INTO `service_list` (`id`, `name`, `description`, `time`, `price`, `opening_hours`) VALUES
-                (1, 'General', 'Es un turno para cortarse el cabello.', '45', '10000', $opening);");
+                $structure = DB::connection('newCompany')->statement("INSERT INTO `service_list` (`id`, `name`, `description`, `time`, `price`, `opening_hours`, `state`) VALUES
+                (1, 'General', 'Es un turno para cortarse el cabello.', '45', '10000', '$opening', 1);");
 
                 //Estructura de tabla para la tabla `turn_state
                 $structure = DB::connection('newCompany')->statement("CREATE TABLE `turn_state` (
@@ -328,7 +332,7 @@ class NewDatabaseHelper extends Controller
                 ADD CONSTRAINT `client_turn_ibfk_2` FOREIGN KEY (`employee_id`) REFERENCES `users` (`id`),
                 ADD CONSTRAINT `client_turn_ibfk_3` FOREIGN KEY (`finished_by_id`) REFERENCES `users` (`id`),
                 ADD CONSTRAINT `client_turn_ibfk_4` FOREIGN KEY (`state_id`) REFERENCES `turn_state` (`id`),
-                ADD CONSTRAINT `client_turn_ibfk_4` FOREIGN KEY (`started_by`) REFERENCES `users` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;");
+                ADD CONSTRAINT `client_turn_ibfk_5` FOREIGN KEY (`started_by`) REFERENCES `users` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;");
 
                 //Filtros para la tabla `permission`
                 $filters = DB::connection('newCompany')->statement("ALTER TABLE `permission`
@@ -501,14 +505,17 @@ class NewDatabaseHelper extends Controller
                     `hours_max` int(11) NOT NULL,
                     `wait_time` int(11) NOT NULL,
                     `opening_hours` text,
+                    `state` int(11) NOT NULL,
+                    `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                    `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
                   ) ENGINE=InnoDB DEFAULT CHARSET=latin1;");
 
                    # Basic opening hours
                 $opening = '[{ "monday": [{ "date_start": "08:00:00", "date_end": "12:30:00" }, { "date_start": "14:00:00", "date_end": "17:30:00" }] }, { "tuesday": [{ "date_start": "08:00:00", "date_end": "12:30:00" }, { "date_start": "14:00:00", "date_end": "17:30:00" }] }, { "wednesday": [{ "date_start": "08:00:00", "date_end": "12:30:00" }, { "date_start": "14:00:00", "date_end": "17:30:00" }] }, { "thursday": [{ "date_start": "08:00:00", "date_end": "12:30:00" }, { "date_start": "14:00:00", "date_end": "17:30:00" }] }, { "friday": [{ "date_start": "08:00:00", "date_end": "12:30:00" }, { "date_start": "14:00:00", "date_end": "17:30:00" }] }, { "saturday": [{ "date_start": "08:00:00", "date_end": "12:30:00" }, { "date_start": "14:00:00", "date_end": "16:30:00" }] }, { "holidays": [{ "date_start": "08:00:00", "date_end": "12:30:00" }] }]';
 
                 // Volcado de datos para la tabla `service_list`
-                $structure = DB::connection('newCompany')->statement("INSERT INTO `service_list` (`id`, `name`, `description`, `price_per_hour`, `unit_per_hour`, `hours_max`, `wait_time`, `opening_hours`) VALUES
-                (1, 'General', 'Aseo general.', '20000', 30, 12, 30, $opening);");
+                $structure = DB::connection('newCompany')->statement("INSERT INTO `service_list` (`id`, `name`, `description`, `price_per_hour`, `unit_per_hour`, `hours_max`, `wait_time`, `opening_hours`, `state`) VALUES
+                (1, 'General', 'Aseo general.', '20000', 30, 12, 30, '$opening', 1);");
 
                 //Estructura de tabla para la tabla `service_state
                 $structure = DB::connection('newCompany')->statement("CREATE TABLE `service_state` (

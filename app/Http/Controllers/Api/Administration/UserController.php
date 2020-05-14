@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\Administration;
 
 use App\Http\Controllers\Controller;
 use App\Models\CUser;
+use App\Models\Master\BranchOffice;
 use App\Models\Master\BranchUser;
 use App\Models\Role;
 use App\Models\UserRole;
@@ -278,10 +279,38 @@ class UserController extends Controller
         return response()->json(['response' => 'Usuario actualizado con exito.'], 200);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+    public function userProfile(Request $request)
+    {
+        $user_branch = BranchUser::where('user_id', Auth::id())->first();
+        if(!$user_branch){
+            return response()->json(['response' => ['error' => ['No perteneces a una empresa']]], 400);
+        }
+
+        $branch = BranchOffice::where('id', '!=', 1)->find($user_branch->branch_id);
+
+        if($branch->id != 1){
+            $user = CUser::on('connectionDB')->where('state_id', 1)->where('principal_id', Auth::id())->first();
+        }else{
+            $user = User::on('connectionDB')->where('state_id', 1)->find(Auth::id());
+        }
+
+        # Get the user by id
+
+        # Validate if the user exists
+        if(!$user){
+            return response()->json(['response' => ['error' => ['Ususario no encontrado']]], 404);
+        }
+
+        # Get user roles
+        $roles = Role::on('connectionDB')->select('role.id', 'role.name', 'role.description')
+        ->join('user_has_role as ur', 'role.id', 'ur.role_id')
+        ->where('ur.user_id', $user->id)
+        ->get();
+
+        # Assign roles to json
+        $user->roles = $roles;
+
+        return response()->json(['response' => $user], 200);
+    }
+
 }

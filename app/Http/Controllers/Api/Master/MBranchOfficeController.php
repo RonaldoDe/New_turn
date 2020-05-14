@@ -13,6 +13,7 @@ use App\Models\Master\BranchUser;
 use App\Models\Master\MasterCompany;
 use App\Models\UserRole;
 use App\User;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -204,7 +205,6 @@ class MBranchOfficeController extends Controller
                     return response()->json(['response' => ['error' => [$new_db]]], 400);
                 }
 
-                DB::connection($branch->db_name)->beginTransaction();
                 # Add user to company
                 $user = CUser::on($branch->db_name)->create([
                     'name' => request('name'),
@@ -279,17 +279,17 @@ class MBranchOfficeController extends Controller
                         'updated_at' => date('Y-m-d H:i:s')
                     ],[
                         'user_id' => 2,
-                        'role_id' => 1,
+                        'role_id' => 2,
                         'created_at' => date('Y-m-d H:i:s'),
                         'updated_at' => date('Y-m-d H:i:s')
                     ],[
                         'user_id' => 3,
-                        'role_id' => 1,
+                        'role_id' => 2,
                         'created_at' => date('Y-m-d H:i:s'),
                         'updated_at' => date('Y-m-d H:i:s')
                     ],[
                         'user_id' => 4,
-                        'role_id' => 1,
+                        'role_id' => 2,
                         'created_at' => date('Y-m-d H:i:s'),
                         'updated_at' => date('Y-m-d H:i:s')
                     ]
@@ -326,7 +326,6 @@ class MBranchOfficeController extends Controller
                     return response()->json(['response' => ['error' => [$new_db]]], 400);
                 }
 
-                DB::connection($branch->db_name)->beginTransaction();
                 # Add user to company
                 $user = CUser::on($branch->db_name)->create([
                     'name' => request('name'),
@@ -420,16 +419,8 @@ class MBranchOfficeController extends Controller
             }
         }catch(Exception $e){
             DB::rollback();
-            if($new_db != 1 && $new_db != 'not-join'){
-                DB::connection($branch->db_name)->rollback();
-            }else if($new_db == 1){
-                DB::connection($branch->db_name)->rollback();
-            }
         }
 
-
-
-        DB::connection($branch->db_name)->commit();
         DB::commit();
         return response()->json(['response' => 'Sucursal creada con exito', 'data' => $data], 200);
     }

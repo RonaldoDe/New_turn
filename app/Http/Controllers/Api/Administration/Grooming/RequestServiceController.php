@@ -55,6 +55,17 @@ class RequestServiceController extends Controller
 
         $company_data = GCompanyData::on($branch->db_name)->find(1);
 
+        $service = Service::on($branch->db_name)->find(request('service_id'));
+
+        if(!$service){
+            return response()->json(['response' => ['error' => ['Servicio no encontrado']]], 400);
+        }
+        $weekday = strtolower(date('l'));
+        $opening = json_decode($service->opening_hours);
+
+        # return response()->json(['response' => ['error' => []]],400);
+
+
         DB::beginTransaction();
         DB::connection($branch->db_name)->beginTransaction();
         try{
@@ -88,11 +99,6 @@ class RequestServiceController extends Controller
                         'action_id' => 'Barber'
                     ]);
                 }
-            }
-
-            $service = Service::on($branch->db_name)->find(request('service_id'));
-            if(!$service){
-                return response()->json(['response' => ['error' => ['Servicio no encontrado']]], 400);
             }
 
             if(request('date_end') <= request('date_start')){

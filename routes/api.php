@@ -37,6 +37,8 @@ Route::middleware('auth:api')->group(function () {
     Route::get('turnsList', 'Api\Administration\TurnsController@turnsList');
     # Client turn
     Route::apiResource('clientTurn', 'Api\Turns\TurnsClientController');
+    # Client turn
+    Route::apiResource('service', 'Api\Administration\ServiceController');
     # Companies list
     Route::get('companiesList', 'Api\Client\ClientCompanyController@companyList');
     # Branches list
@@ -64,7 +66,8 @@ Route::middleware('auth:api')->group(function () {
     # Request service
     Route::post('requestService', 'Api\Administration\Grooming\RequestServiceController@requestService');
 
-
+    # Profile
+    Route::get('userProfile', 'Api\Administration\UserController@userProfile');
 });
 
 

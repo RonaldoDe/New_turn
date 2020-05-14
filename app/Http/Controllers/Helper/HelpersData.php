@@ -41,9 +41,9 @@ class HelpersData extends Controller
         }
 
         if(!$pass_start){
-            return 'La fecha de inicio no se encuentra disponible para los días habiles.';
+            return 'La fecha de inicio no se encuentra disponible para las horas habiles.';
         }else if(!$pass_end){
-            return 'La fecha final no se encuentra disponible para los días habiles.';
+            return 'La fecha final no se encuentra disponible para las horas habiles.';
         }
         return 1;
 

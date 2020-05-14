@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\Administration\Grooming;
 
 use App\Helper\PayUHelper;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Helper\HelpersData;
 use App\Http\Controllers\Helper\SetConnectionHelper;
 use App\Models\CUser;
 use App\Models\Grooming\ClientService;
@@ -60,10 +61,12 @@ class RequestServiceController extends Controller
         if(!$service){
             return response()->json(['response' => ['error' => ['Servicio no encontrado']]], 400);
         }
-        $weekday = strtolower(date('l'));
-        $opening = json_decode($service->opening_hours);
 
-        # return response()->json(['response' => ['error' => []]],400);
+        $validate_day = HelpersData::validateDay(request('date_start'), request('date_end'), $service);
+
+        if($validate_day != 1){
+            return response()->json(['response' => ['error' => $validate_day]], 400);
+        }
 
 
         DB::beginTransaction();

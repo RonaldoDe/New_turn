@@ -48,4 +48,37 @@ class HelpersData extends Controller
         return 1;
 
     }
+
+    public static function validateDayBarber($service)
+    {
+        # Day in string Examnple (Monday)
+        $start = strtolower(date('l', strtotime(date('Y-m-d H:i:s'))));
+
+        # Date in hours Example (08:00:00)
+        $start_hout = date('H:i:s', strtotime(date('Y-m-d H:i:s')));
+
+        $opening = json_decode($service->opening_hours);
+
+        $pass_start = 0;
+
+        for ($i=0; $i < 7; $i++) {
+            foreach ($opening[$i] as $key => $value) {
+                if($start == $key){
+                    foreach ($value as $date) {
+
+                        if($start_hout >= $date->date_start && $start_hout <= $date->date_end){
+                           $pass_start = 1;
+                        }
+                    }
+
+                }
+            }
+        }
+
+        if(!$pass_start){
+            return 'La fecha de inicio no se encuentra disponible para las horas habiles.';
+        }
+        return 1;
+
+    }
 }

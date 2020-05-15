@@ -32,7 +32,7 @@ class MenuController extends Controller
 
         $branch_user = BranchUser::where('user_id', $user->id)->first();
         if(!$branch_user){
-            return response()->json(['response' => 'Free-user'], 200);
+            return response()->json(['response' => 'Free-user', 'user' => $user, 'user_type' => 'normal_user'], 200);
         }
 
 

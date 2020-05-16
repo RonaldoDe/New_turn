@@ -9,6 +9,7 @@ use App\Http\Controllers\Helper\SetConnectionHelper;
 use App\Models\ClientTurn;
 use App\Models\CompanyData;
 use App\Models\Master\BranchOffice;
+use App\Models\Master\MasterCompany;
 use App\Models\Master\TransactionLog;
 use App\Models\PaymentData;
 use App\Models\Service;
@@ -79,6 +80,12 @@ class TurnsClientController extends Controller
 
         if(!$branch){
             return response()->json(['response' => ['error' => ['Sucursal no encontrada']]], 400);
+        }
+
+        $company = MasterCompany::find($branch->company_id);
+
+        if($company->type_id != 2){
+            return response()->json(['response' => ['error' => ['No puedes solicitar turnos en estas empresas.']]], 400);
         }
 
         $set_connection = SetConnectionHelper::setByDBName($branch->db_name);

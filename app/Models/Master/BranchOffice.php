@@ -18,6 +18,13 @@ class BranchOffice extends Model
         }
     }
 
+    public function scopeNit($query, $nit)
+    {
+        if(!empty($nit)){
+            $query->where('branch_office.nit', 'LIKE', '%'.$nit.'%');
+        }
+    }
+
     protected $hidden = [
         'created_at', 'updated_at', 'db_name'
     ];

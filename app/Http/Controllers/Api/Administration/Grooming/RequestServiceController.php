@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers\Api\Administration\Grooming;
 
-use App\Helper\PayUHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Helper\HelpersData;
+use App\Http\Controllers\Helper\PayUHelper;
 use App\Http\Controllers\Helper\SetConnectionHelper;
 use App\Models\CUser;
 use App\Models\Grooming\ClientService;
@@ -79,31 +79,6 @@ class RequestServiceController extends Controller
                 'branch_id' => $branch->id,
                 'service_type' => 'grooming_contract',
             ]);
-            if(request('pay_on_line')){
-                if($company_data->pay_on_line){
-                    $payment_data = PaymentData::where('user_id', Auth::id())->where('id', request('payment_data_id'))->first();
-                    if(!$payment_data){
-                        return response()->json(['response' => ['error' => ['Datos de la tarjeta de credito no encontrados']]],400);
-                    }
-
-                    $account_config = array(
-                        'api_k' => $company_data->api_k,
-                        'api_l' => $company_data->api_l,
-                        'mer_id' => $company_data->mer_id,
-                        'acc_id' => $company_data->acc_id
-                    );
-
-                    $service_to_pay = Service::on($branch->db_name)->find(request('service_id'));
-                    $payU = PayUHelper::paymentCredit($account_config, json_decode($payment_data->configuration), $user, request('credit_card_number'), request('credit_card_expiration_date'), request('credit_card_security_code'), $service_to_pay->price_per_hour);
-                    $log = TransactionLog::create([
-                        'user_id' => $user->id,
-                        'payment_id' => $payment_data->id,
-                        'branch_id' => $branch->id,
-                        'service_id' => $service_to_pay->id,
-                        'action_id' => 'Barber'
-                    ]);
-                }
-            }
 
             if(request('date_end') <= request('date_start')){
                 return response()->json(['response' => ['error' => ['La fecha de inicio debe ser menor que la fecha final.']]], 400);
@@ -185,6 +160,33 @@ class RequestServiceController extends Controller
                     }
                 }
 
+            }
+
+            if(request('pay_on_line')){
+                if($company_data->pay_on_line){
+                    $payment_data = PaymentData::where('user_id', Auth::id())->where('id', request('payment_data_id'))->first();
+                    if(!$payment_data){
+                        return response()->json(['response' => ['error' => ['Datos de la tarjeta de credito no encontrados']]],400);
+                    }
+
+                    $account_config = array(
+                        'api_k' => $company_data->api_k,
+                        'api_l' => $company_data->api_l,
+                        'mer_id' => $company_data->mer_id,
+                        'acc_id' => $company_data->acc_id
+                    );
+
+                    $service_to_pay = Service::on($branch->db_name)->find(request('service_id'));
+                    $price = $service_to_pay*$count;
+                    $payU = PayUHelper::paymentCredit($account_config, json_decode($payment_data->data), $user, request('credit_card_number'), request('credit_card_expiration_date'), request('credit_card_security_code'), $price);
+                    $log = TransactionLog::create([
+                        'user_id' => $user->id,
+                        'payment_id' => $payment_data->id,
+                        'branch_id' => $branch->id,
+                        'service_id' => $service_to_pay->id,
+                        'action_id' => 'Grooming'
+                    ]);
+                }
             }
 
 

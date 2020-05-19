@@ -120,7 +120,6 @@ class TurnsClientController extends Controller
             if($validate_day != 1){
                 return response()->json(['response' => ['error' => $validate_day]], 400);
             }
-
             if(request('pay_on_line')){
                 if($company_data->pay_on_line){
                     $payment_data = PaymentData::where('user_id', Auth::id())->where('id', request('payment_data_id'))->first();
@@ -138,7 +137,7 @@ class TurnsClientController extends Controller
                     $service_to_pay = Service::on($branch->db_name)->find(request('service_id'));
 
 
-                    $payU = PayUHelper::paymentCredit($account_config, json_decode($payment_data->configuration), $user, request('credit_card_number'), request('credit_card_expiration_date'), request('credit_card_security_code'), $service_to_pay->price);
+                    $payU = PayUHelper::paymentCredit($account_config, json_decode($payment_data->data), $user, request('credit_card_number'), request('credit_card_expiration_date'), request('credit_card_security_code'), $service_to_pay->price);
                     $log = TransactionLog::create([
                         'user_id' => $user->id,
                         'payment_id' => $payment_data->id,

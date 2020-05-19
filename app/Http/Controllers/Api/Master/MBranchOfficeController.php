@@ -38,6 +38,7 @@ class MBranchOfficeController extends Controller
         ->join('company as c', 'branch_office.company_id', 'c.id')
         ->where('branch_office.id', '!=', 1)
         ->name(request('name'))
+        ->nit(request('nit'))
         ->get();
 
         return response()->json(['response' => $branches], 200);

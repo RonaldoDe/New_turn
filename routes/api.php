@@ -50,6 +50,10 @@ Route::middleware('auth:api')->group(function () {
     Route::get('servicesList', 'Api\Client\ComplementsListController@servicesList');
     # Employees list
     Route::get('employeesList', 'Api\Client\ComplementsListController@employeesList');
+    # List card config
+    Route::get('listPaymentData', 'Api\Client\ComplementsListController@listPaymentData');
+    # Save card config
+    Route::post('paymentData', 'Api\Client\ComplementsListController@paymentData');
     # Change turn
     Route::post('changeTurn/{id}', 'Api\Administration\TurnsController@changeTurn');
 
@@ -75,6 +79,12 @@ Route::middleware('auth:api')->group(function () {
 
     # Profile
     Route::get('userProfile', 'Api\Administration\UserController@userProfile');
+
+
+    # Test routs
+
+    Route::post('testPay', 'Test\TestPay@tets');
+
 });
 
 

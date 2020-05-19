@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Helper;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use GuzzleHttp\Client;
 
 //prueba del path
 require_once public_path('lib/PayU.php');
@@ -12,6 +13,7 @@ class PayUHelper extends Controller
 {
     public static function paymentCredit($account_config, $payer_data, $buyer_data, $card_number, $expiration_date, $card_code, $price)
     {
+
 
         \PayU::$apiKey = $account_config['api_k']; //  Ingrese aquí su propio apiKey.
         \PayU::$apiLogin = $account_config['api_l']; //Ingrese aquí su propio apiLogin.
@@ -114,7 +116,7 @@ class PayUHelper extends Controller
 
         //solicitud de autorización y captura
         $response = \PayUPayments::doAuthorizationAndCapture($parameters);
-
+        # return $response;
         //  -- podrás obtener las propiedades de la respuesta --
 /*        if($response){
             $response->transactionResponse->orderId;
@@ -129,5 +131,26 @@ class PayUHelper extends Controller
             $response->transactionResponse->responseCode;
             $response->transactionResponse->responseMessage;
         }*/
+    }
+
+    public static function paymentApi()
+    {
+        # Fixed headers
+        /*$headers = ['headers' => [
+            'X-VTEX-API-AppToken' => 'VFJCBAONVLQCDEQDYBNHZOFGMXFQMAWKWVNQDCRYZFUCNTFKSTQTEGYHZDPEVXAVOGGIRAAVJOIUTCSTRUYTKCFQWGQZNNDBEZNGMXTSTVKPXENXKWMAZHKMAQMLKAIV',
+            'X-VTEX-API-AppKey' => 'vtexappkey-unidrogas-KAZIWA'
+        ]];*/
+
+
+        $body = ['body' => []];
+
+        # Basic url and maximum execution time
+        $connection = new Client([
+            'base_uri' => 'https://sandbox.api.payulatam.com/payments-api/4.0/',
+            'timeout' => 9.0
+        ]);
+
+        $get_order = $connection->post("service.cgi");
+        $get = json_decode($get_order->getBody()->getContents());
     }
 }

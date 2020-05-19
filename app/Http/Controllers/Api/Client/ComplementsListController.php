@@ -7,8 +7,10 @@ use App\Http\Controllers\Helper\SetConnectionHelper;
 use App\Models\CUser;
 use App\Models\Master\BranchOffice;
 use App\Models\Master\MasterCompany;
+use App\Models\PaymentData;
 use App\Models\Service;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ComplementsListController extends Controller
 {
@@ -75,5 +77,34 @@ class ComplementsListController extends Controller
 
 
         return response()->json(['response' => $employees], 200);
+    }
+
+    public function paymentData(Request $request)
+    {
+        $validator=\Validator::make($request->all(),[
+            'payment_method' => 'bail|required|exists:payment_data,id',
+            'data' => 'bail|required'
+        ]);
+        if($validator->fails())
+        {
+          return response()->json(['response' => ['error' => $validator->errors()->all()]],400);
+        }
+
+        $payment = PaymentData::create([
+            'user_id' => Auth::id(),
+            'payment_method' => request('payment_method'),
+            'data' => json_encode(request('data')),
+            'state' => 1,
+        ]);
+
+        return response()->json(['response' => 'Succes'], 200);
+    }
+
+    public function listPaymentData(Request $request)
+    {
+
+        $payment = PaymentData::where('user_id', Auth::id())->get();
+
+        return response()->json(['response' => $payment], 200);
     }
 }

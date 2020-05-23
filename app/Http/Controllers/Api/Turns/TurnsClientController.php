@@ -168,7 +168,7 @@ class TurnsClientController extends Controller
 
         DB::commit();
         DB::connection($branch->db_name)->commit();
-        return response()->json(['response' => 'Turno reservado con exito', 'turn' => ['turn_id' => $turn->id, 'turn_number' => $turn->turn_number]], 200);
+        return response()->json(['response' => 'Turno reservado con exito', 'turn' => ['turn_id' => $turn->id, 'turn_number' => $turn->turn_number, 'user_turn_id' => $turn_client->id]], 200);
     }
 
     /**

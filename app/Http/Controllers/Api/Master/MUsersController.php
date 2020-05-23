@@ -18,11 +18,11 @@ class MUsersController extends Controller
     public function __construct()
     {
         # the middleware param 1 = List user
-        $this->middleware('permission:/list_user')->only(['show', 'index']);
+        $this->middleware('permission:/m_list_user')->only(['show', 'index']);
         # the middleware param 2 = Create user
-        $this->middleware('permission:/create_user')->only('store');
+        $this->middleware('permission:/m_create_user')->only('store');
         # the middleware param 3 = Update user
-        $this->middleware('permission:/update_user')->only(['update', 'destroy']);
+        $this->middleware('permission:/m_update_user')->only(['update', 'destroy']);
     }
 
     /**

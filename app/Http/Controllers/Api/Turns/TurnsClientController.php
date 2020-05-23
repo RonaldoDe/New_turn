@@ -110,6 +110,7 @@ class TurnsClientController extends Controller
                 'user_id' => $user->id,
                 'branch_id' => $branch->id,
                 'service_type' => 'barber_turn',
+                'state' => 1,
             ]);
 
             $service = Service::on($branch->db_name)->find(request('service_id'));
@@ -232,6 +233,8 @@ class TurnsClientController extends Controller
         }
 
         $client_turn->state_id = 3;
+        $user_turn->state = 0;
+        $user_turn->update();
         $client_turn->update();
 
         return response()->json(['response' => 'Turno cancelado'], 200);

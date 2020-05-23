@@ -22,6 +22,7 @@ class ClientServicesListController extends Controller
         ->join('company as c', 'bo.company_id', 'c.id')
         ->join('company_type as ct', 'c.type_id', 'ct.id')
         ->where('user_turn.user_id', Auth::id())
+        ->where('user_turn.state', 1)
         ->get();
 
 
@@ -36,6 +37,7 @@ class ClientServicesListController extends Controller
         ->join('branch_office as bo', 'user_turn.branch_id', 'bo.id')
         ->where('user_turn.user_id', Auth::id())
         ->where('user_turn.id', $id)
+        ->where('user_turn.state', 1)
         ->first();
 
         if(!$user_turn){

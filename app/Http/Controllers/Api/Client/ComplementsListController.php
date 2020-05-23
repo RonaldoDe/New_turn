@@ -61,14 +61,14 @@ class ComplementsListController extends Controller
         # --------------------- Set connection ------------------------------------#
 
         if($compnay->type_id == 1){
-            $employees = CUser::on($branch->db_name)->select('users.name', 'users.last_name')
+            $employees = CUser::on($branch->db_name)->select('users.id', 'users.name', 'users.last_name')
             ->join('user_has_role as ur', 'users.id', 'ur.user_id')
             ->where('ur.role_id', 2)
             ->where('users.phanton_user', 0)
             ->name(request('name'))
             ->get();
         }else{
-            $employees = CUser::on($branch->db_name)->select('users.name', 'users.last_name')
+            $employees = CUser::on($branch->db_name)->select('users.id','users.name', 'users.last_name')
             ->join('user_has_role as ur', 'users.id', 'ur.user_id')
             ->where('ur.role_id', 2)
             ->name(request('name'))

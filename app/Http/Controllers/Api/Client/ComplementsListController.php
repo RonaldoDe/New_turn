@@ -75,7 +75,6 @@ class ComplementsListController extends Controller
             ->get();
         }
 
-
         return response()->json(['response' => $employees], 200);
     }
 

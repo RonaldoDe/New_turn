@@ -25,7 +25,7 @@ class ClientServicesListController extends Controller
         ->get();
 
 
-        return response()->json(['response' => $user_turn], 400);
+        return response()->json(['response' => $user_turn], 200);
     }
 
     public function servicesListDetail(Request $request, $id)

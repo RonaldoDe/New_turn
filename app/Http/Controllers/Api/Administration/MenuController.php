@@ -84,9 +84,9 @@ class MenuController extends Controller
         ->get();
 
         # Order by the module name
-        $collection = collect($module_list)->sortBy('module_name');
+        $modules = collect($module_list)->sortBy('module_name')->values();
         # Group by the module name
-        $modules = collect($collection)->groupBy('module_name');
+        # $modules = collect($collection)->groupBy('module_name');
 
         return response()->json(['response' => $modules, 'user' => $user, 'user_type' => $data['phanton'], 'user_role' => $role, 'branch_office' => $branch, 'company_type' => $company], 200);
     }

@@ -8,6 +8,7 @@ use App\Models\CUser;
 use App\Models\Master\BranchOffice;
 use App\Models\Master\BranchUser;
 use App\Models\Role;
+use App\Models\UserRole;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;

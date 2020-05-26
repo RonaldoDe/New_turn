@@ -88,6 +88,6 @@ class MenuController extends Controller
         # Group by the module name
         # $modules = collect($collection)->groupBy('module_name');
 
-        return response()->json(['response' => $modules, 'user' => $user, 'user_type' => $data['phanton'], 'user_role' => $role, 'branch_office' => $branch, 'company_type' => $company], 200);
+        return response()->json(['response' => $modules, 'user' => $user, 'user_type' => $data, 'user_role' => $role, 'branch_office' => $branch, 'company_type' => $company], 200);
     }
 }

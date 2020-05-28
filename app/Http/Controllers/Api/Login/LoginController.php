@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\Login;
 
 use App\Http\Controllers\Controller;
+use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -105,5 +106,38 @@ class LoginController extends Controller
       return response()->json(['message' => 'La sesion a sido cerrada con exito'], 200);
 
 
+    }
+
+    public function registerUser(Request $request)
+    {
+        $validator=\Validator::make($request->all(),[
+            'name' => 'bail|required',
+            'last_name' => 'bail|required',
+            'email' => 'required|email|unique:users,email',
+            'dni' => 'required|',
+            'password' => 'required|',
+            'phone' => 'bail|',
+            'address' => 'bail|',
+            'user_type' => 'bail|required',
+        ]);
+        if($validator->fails())
+        {
+          return response()->json(['response' => ['error' => $validator->errors()->all()]],400);
+        }
+
+        $user = User::create([
+            'name' => request('name'),
+            'last_name' => request('last_name'),
+            'phone' => request('phone'),
+            'address' => request('address'),
+            'dni' => request('dni'),
+            'email' => request('email'),
+            'password' => bcrypt(request('password')),
+            'phanton_user' => 0,
+            'state_id' => 1,
+            'user_type' => request('user_type')
+        ]);
+
+        return response()->json(['response' => 'success'], 200);
     }
 }

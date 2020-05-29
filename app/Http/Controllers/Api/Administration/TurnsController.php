@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\Administration;
 use App\Http\Controllers\Controller;
 use App\Models\ClientTurn;
 use App\Models\CUser;
+use App\Models\Service;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -42,24 +43,27 @@ class TurnsController extends Controller
         ->service(request('service_id'))
         ->range(request('date_start'), request('date_end'))
         ->get();
+
         $data = array(
-            'employee' => 0,
-            'client' => 0,
-            'started_by' => 0,
-            'finished_by' => 0,
+            'employee' => [],
+            'client' => [],
+            'started_by' => [],
+            'finished_by' => [],
         );
 
         foreach ($turns_list as $turn) {
             if($turn->employee_id != null){
-                $data['employee'] = CUser::where('id', $turn->employee_id)->first();
+                $data['employee'] = CUser::on('connectionDB')->where('id', $turn->employee_id)->first();
                 /*if(!$employee){
                     return response()->json(['response' => ['error' => ['Empleado no encontrado.']]], 400);
                 }*/
             }
 
-            $client_p = User::find($turn->user_id)->first();
+            $client_p = User::select('id', 'name', 'last_name', 'dni', 'email', 'address', 'phone', 'phanton_user')->find($turn->user_id);
             if($client_p->phanton_user){
                 $data['client'] = CUser::on('connectionDB')->where('principal_id', $client_p->id)->first();
+            }else{
+                $data['client'] = $client_p;
             }
             if($turn->started_by != null){
                 $data['started_by'] = CUser::on('connectionDB')->where('id', $turn->started_by)->first();
@@ -68,10 +72,12 @@ class TurnsController extends Controller
                 $data['finished_by'] = CUser::on('connectionDB')->where('id', $turn->finished_by_id)->first();
             }
 
+
             $turn->employee_asigned = $data['employee'];
             $turn->client = $data['client'];
             $turn->started_by_data = $data['started_by'];
             $turn->finished_by = $data['finished_by'];
+            $turn->service = Service::on('connectionDB')->select('id', 'name', 'description', 'time', 'price')->find($turn->service_id);
 
         }
 

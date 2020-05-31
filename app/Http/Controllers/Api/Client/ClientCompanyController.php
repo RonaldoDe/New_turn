@@ -16,6 +16,7 @@ class ClientCompanyController extends Controller
     {
         $companies = MasterCompany::where('id', '!=', 1)
         ->where('type_id', '!=', 1)
+        ->where('state_id', 1)
         ->get();
 
         return response()->json(['response' => $companies], 200);
@@ -37,9 +38,14 @@ class ClientCompanyController extends Controller
             return response()->json(['response' => ['error' => ['Empresa no encontrada']]], 400);
         }
 
-        $branches = BranchOffice::where('company_id', request('company_id'))
-        ->where('close', 0)
-        ->where('state_id', 1)
+        $branches = BranchOffice::select('branch_office.id', 'branch_office.name', 'branch_office.description', 'branch_office.nit', 'branch_office.email', 'branch_office.city', 'branch_office.longitude',
+        'branch_office.latitude', 'branch_office.address', 'branch_office.phone', 'branch_office.close', 'branch_office.hours_24', 'branch_office.state_id', 'branch_office.company_id', 'branch_office.created_at',
+        'branch_office.updated_at', 'c.name as company_name', 'c.type_id as company_type', 'ct.name as company_type_name', 'ct.description as company_type_descrption')
+        ->join('company as c', 'branch_office.company_id', 'c.id')
+        ->join('company_type as ct', 'c.type_id', 'ct.id')
+        ->where('branch_office.close', 0)
+        ->where('branch_office.state_id', 1)
+        ->where('branch_office.company_id', request('company_id'))
         ->get();
 
         return response()->json(['response' => $branches], 200);

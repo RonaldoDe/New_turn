@@ -159,4 +159,11 @@ class TurnsController extends Controller
 
     }
 
+    public function turnState()
+    {
+        $turn = DB::table('turn_state')->get();
+
+        return response()->json(['response' => $turn], 200);
+    }
+
 }

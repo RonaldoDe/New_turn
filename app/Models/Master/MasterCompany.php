@@ -14,7 +14,7 @@ class MasterCompany extends Model
     public function scopeName($query, $name)
     {
         if(!empty($name)){
-            $query->where('branch_office.name', 'LIKE', '%'.$name.'%');
+            $query->where('company.name', 'LIKE', '%'.$name.'%');
         }
     }
 

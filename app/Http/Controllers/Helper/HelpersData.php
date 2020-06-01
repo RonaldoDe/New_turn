@@ -34,21 +34,22 @@ class HelpersData extends Controller
 
 
                         if($start_hout >= $date->date_start && $start_hout <= $date->date_end){
-                           $pass_start = 1;
+                           $pass_start += 1;
                         }
 
-                        if($end_hout >= $date->date_end && $end_hout <= $date->date_end){
-                            $pass_end = 1;
+                        if($end_hout >= $date->date_start && $end_hout <= $date->date_end){
+                            $pass_end += 1;
                          }
                     }
+
 
                 }
             }
         }
 
-        if(!$pass_start){
+        if($pass_start == 0){
             return 'La fecha de inicio no se encuentra disponible para las horas habiles.';
-        }else if(!$pass_end){
+        }else if($pass_end == 0){
             return 'La fecha final no se encuentra disponible para las horas habiles.';
         }
         return 1;
@@ -75,7 +76,7 @@ class HelpersData extends Controller
                     foreach ($value as $date) {
 
                         if($start_hout >= $date->date_start && $start_hout <= $date->date_end){
-                           $pass_start = 1;
+                           $pass_start += 1;
                         }
                     }
 
@@ -83,7 +84,7 @@ class HelpersData extends Controller
             }
         }
 
-        if(!$pass_start){
+        if($pass_start == 0){
             return 'La fecha de inicio no se encuentra disponible para las horas habiles.';
         }
         return 1;

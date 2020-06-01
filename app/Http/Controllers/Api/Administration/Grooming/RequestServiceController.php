@@ -78,6 +78,7 @@ class RequestServiceController extends Controller
                 'user_id' => $user->id,
                 'branch_id' => $branch->id,
                 'service_type' => 'grooming_contract',
+                'state' => 1,
             ]);
 
             if(request('date_end') <= request('date_start')){

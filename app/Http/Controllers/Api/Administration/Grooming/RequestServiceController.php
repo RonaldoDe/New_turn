@@ -139,7 +139,7 @@ class RequestServiceController extends Controller
                 ->where('cs.employee_id', request('employee_id'))
                 ->whereIn('cs.state_id', [1, 3, 4, 6])
                 ->first();
-
+            }else{
                 if(!$suggested_employee){
                     $suggested_employee = CUser::on($branch->db_name)->select('users.id', 'users.name', 'users.last_name')
                     ->join('user_has_role as ur', 'users.id', 'ur.user_id')
@@ -160,7 +160,6 @@ class RequestServiceController extends Controller
                         return response()->json(['response' => ['error' => ['Todos los empledos están ocupados en estos momentos, un empleado se encuentra disponible a las '.$last_employee]]], 400);
                     }
                 }
-
             }
 
             if(request('pay_on_line')){

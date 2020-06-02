@@ -27,7 +27,7 @@ class RequestServiceController extends Controller
         $validator=\Validator::make($request->all(),[
             'branch_id' => 'required|integer|exists:branch_office,id',
             'service_id' => 'required|integer',
-            'employee_id' => 'bail|integer',
+            #'employee_id' => 'bail|integer',
             'total_minutes' => 'bail|required|integer',
             'date_start' => 'bail|required|date_format:"Y-m-d H:i:s"|date',
             'date_end' => 'bail|required|date_format:"Y-m-d H:i:s"|date',
@@ -45,10 +45,14 @@ class RequestServiceController extends Controller
         $user = User::find(Auth::id());
 
         # --------------------- Set connection ------------------------------------#
-        $branch = BranchOffice::where('id', '!=', 1)->find(request('branch_id'));
+        $branch = BranchOffice::select('branch_office.id', 'branch_office.db_name')
+        ->join('company as c', 'branch_office.company_id', 'c.id')
+        ->where('branch_office.id', '!=', 1)
+        ->where('c.type_id', 3)
+        ->find(request('branch_id'));
 
         if(!$branch){
-            return response()->json(['response' => ['error' => ['Sucursal no encontrada']]], 400);
+            return response()->json(['response' => ['error' => ['Sucursal no encontrada o no es de aseo']]], 400);
         }
 
         $set_connection = SetConnectionHelper::setByDBName($branch->db_name);
@@ -63,11 +67,11 @@ class RequestServiceController extends Controller
         }
 
         # Validate opening hours
-        $validate_day = HelpersData::validateDay(request('date_start'), request('date_end'), $service);
+        /*$validate_day = HelpersData::validateDay(request('date_start'), request('date_end'), $service);
 
         if($validate_day != 1){
             return response()->json(['response' => ['error' => $validate_day]], 400);
-        }
+        }*/
 
 
         DB::beginTransaction();
@@ -97,24 +101,26 @@ class RequestServiceController extends Controller
             $count = 0;
             # Not is a good relation
             $relation = 0;
+
             while(TRUE){
                 $count++;
                 $i += $service->unit_per_hour;
                 if($i == request('total_minutes')){
                     $relation = 1;
                     break;
+
                 }
 
                 if($i > request('total_minutes')){
                     $relation = 0;
                     break;
                 }
+
             }
 
             if(!$relation){
                 return response()->json(['response' => ['error' => ['La relación entre los minutos y el minimo tiempo de el servicio no coinciden.']]], 400);
             }
-
 
             $date_start = new DateTime(request('date_start'));
             $date_end = new DateTime(request('date_end'));
@@ -129,8 +135,31 @@ class RequestServiceController extends Controller
                 return response()->json(['response' => ['error' => ['El total de minutos y el rango de fechas no coinciden.']]], 400);
             }
 
+            $suggested_employee = CUser::on($branch->db_name)->select('users.id', 'users.name', 'users.last_name')
+            ->join('user_has_role as ur', 'users.id', 'ur.user_id')
+            ->join('client_service as cs', 'users.id', 'cs.employee_id')
+            ->where('ur.role_id', 2)
+            ->whereIn('cs.state_id', [1, 3, 4, 6])
+            ->first();
 
-            $suggested_employee = null;
+            if(!$suggested_employee){
+                $last_employee = CUser::on($branch->db_name)->select('users.id', 'users.name', 'users.last_name', 'cs.date_end')
+                ->join('user_has_role as ur', 'users.id', 'ur.user_id')
+                ->join('client_service as cs', 'users.id', 'cs.employee_id')
+                ->where('ur.role_id', 2)
+                ->whereIn('cs.state_id', [2, 5])
+                ->orderBy('date_end', 'DESC')
+                ->max('cs.date_end');
+
+
+                return response()->json(['response' => ['error' => ['Todos los empledos están ocupados en estos momentos, un empleado se encuentra disponible a las '.$last_employee]]], 400);
+            }
+
+
+
+
+
+            /*$suggested_employee = null;
             if(!empty(request('employee_id'))){
                 $suggested_employee = CUser::on($branch->db_name)->select('users.id', 'users.name', 'users.last_name')
                 ->join('user_has_role as ur', 'users.id', 'ur.user_id')
@@ -160,7 +189,7 @@ class RequestServiceController extends Controller
                         return response()->json(['response' => ['error' => ['Todos los empledos están ocupados en estos momentos, un empleado se encuentra disponible a las '.$last_employee]]], 400);
                     }
                 }
-            }
+            }*/
 
             if(request('pay_on_line')){
                 if($company_data->pay_on_line){
@@ -191,7 +220,6 @@ class RequestServiceController extends Controller
 
 
             $solicited_service = ClientService::on($branch->db_name)->create([
-                'employee_id' => $suggested_employee->id,
                 'user_id' => $user->id,
                 'user_service_id' => $service_client->id,
                 'dni' => $user->dni,

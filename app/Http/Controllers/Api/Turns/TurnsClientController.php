@@ -76,7 +76,7 @@ class TurnsClientController extends Controller
         }
 
         # --------------------- Set connection ------------------------------------#
-        $branch = BranchOffice::select('branch_office.id', 'branch_office.db_name')
+        $branch = BranchOffice::select('branch_office.id', 'branch_office.db_name', 'company_id')
         ->join('company as c', 'branch_office.company_id', 'c.id')
         ->where('branch_office.id', '!=', 1)
         ->where('c.type_id', 2)->find(request('branch_id'));

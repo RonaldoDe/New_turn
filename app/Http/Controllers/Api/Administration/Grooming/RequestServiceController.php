@@ -67,11 +67,11 @@ class RequestServiceController extends Controller
         }
 
         # Validate opening hours
-        /*$validate_day = HelpersData::validateDay(request('date_start'), request('date_end'), $service);
+        $validate_day = HelpersData::validateDay(request('date_start'), request('date_end'), $service);
 
         if($validate_day != 1){
             return response()->json(['response' => ['error' => $validate_day]], 400);
-        }*/
+        }
 
 
         DB::beginTransaction();

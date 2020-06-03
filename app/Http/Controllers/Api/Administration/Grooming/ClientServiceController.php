@@ -7,13 +7,16 @@ use App\Models\CUser;
 use App\Models\Grooming\ClientService;
 use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class ClientServiceController extends Controller
 {
     public function __construct()
     {
         # List turn permission
-        $this->middleware('permission:/list_services')->only(['clientServiceList']);
+        $this->middleware('permission:/list_services')->only(['clientServiceList', 'clientServiceDetails']);
+        $this->middleware('permission:/update_services')->only(['modifyService']);
         # Get connection
         $this->middleware('set_connection');
 
@@ -33,7 +36,7 @@ class ClientServiceController extends Controller
           return response()->json(['response' => ['error' => $validator->errors()->all()]],400);
         }
 
-        $services = ClientService::on('connectionDB')->select('client_service.id', 'client_service.employee_id', 'client_service.user_id', 'client_service.user_service_id', 'client_service.dni', 'client_service.start_at', 'client_service.acepted_by', 'client_service.service_id', 'client_service.paid_out', 'client_service.hours', 'client_service.date_start', 'client_service.date_end', 'client_service.state_id', 'sl.name as service_name', 'sl.description as service_description', 'sl.price_per_hour', 'sl.hours_max')
+        $services = ClientService::on('connectionDB')->select('client_service.id', 'client_service.employee_id', 'client_service.user_id', 'client_service.user_service_id', 'client_service.dni', 'client_service.start_at', 'client_service.acepted_by', 'client_service.service_id', 'client_service.paid_out', 'client_service.hours', 'client_service.date_start', 'client_service.date_end', 'client_service.state_id', 'sl.name as service_name', 'sl.description as service_description', 'sl.price_per_hour', 'sl.hours_max', 'client_service.tracking')
         ->join('service_list as sl', 'client_service.service_id', 'sl.id')
         ->state(request('state_id'))
         ->employee(request('employee_id'))
@@ -67,7 +70,7 @@ class ClientServiceController extends Controller
 
     public function clientServiceDetails($id)
     {
-        $service = ClientService::on('connectionDB')->select('client_service.id', 'client_service.employee_id', 'client_service.user_id', 'client_service.user_service_id', 'client_service.dni', 'client_service.start_at', 'client_service.acepted_by', 'client_service.service_id', 'client_service.paid_out', 'client_service.hours', 'client_service.date_start', 'client_service.date_end', 'client_service.state_id', 'sl.name as service_name', 'sl.description as service_description', 'sl.price_per_hour', 'sl.hours_max')
+        $service = ClientService::on('connectionDB')->select('client_service.id', 'client_service.employee_id', 'client_service.user_id', 'client_service.user_service_id', 'client_service.dni', 'client_service.start_at', 'client_service.acepted_by', 'client_service.service_id', 'client_service.paid_out', 'client_service.hours', 'client_service.date_start', 'client_service.date_end', 'client_service.state_id', 'sl.name as service_name', 'sl.description as service_description', 'sl.price_per_hour', 'sl.hours_max', 'client_service.tracking')
         ->join('service_list as sl', 'client_service.service_id', 'sl.id')
         ->state(request('state_id'))
         ->employee(request('employee_id'))
@@ -99,4 +102,56 @@ class ClientServiceController extends Controller
 
         return response()->json(['response' => $service], 200);
     }
+
+    public function modifyServiceClient(Request $request, $id)
+    {
+        $validator=\Validator::make($request->all(),[
+            'state_id' => 'bail|integer|required',
+        ]);
+        if($validator->fails())
+        {
+          return response()->json(['response' => ['error' => $validator->errors()->all()]],400);
+        }
+
+        $state = DB::connection('connectionDB')->table('service_state')->where('id', request('state_id'))->first();
+
+        if(!$state){
+            return response()->json(['response' => ['error' => ['Estado no encontrado.']]], 400);
+        }
+
+        $user = CUser::on('connectionDB')->where('principal_id', Auth::id())->first();
+
+        $service = ClientService::on('connectionDB')
+        ->where('id', $id)
+        ->first();
+
+        if(!$service){
+            return response()->json(['response' => ['error' => ['Servicio no encontrado.']]], 400);
+        }
+
+        $new_state = DB::connection('connectionDB')->table('service_state')->where('id', $service->state_id)->first();
+
+
+        if($service->tracking == null){
+            $tracking = array();
+        }else{
+            $tracking = json_decode($service->tracking);
+
+        }
+
+        array_push($tracking, array(
+            'user_id' => $user->id,
+            'user_name' => $user->name.' '.$user->last_name,
+            'last_state' => $new_state->name,
+            'new_state' => $state->name,
+            'updated_at' => date('Y-m-d H:i:s')
+        ));
+
+        $service->state_id = request('state_id');
+        $service->tracking = json_encode($tracking);
+        $service->update();
+
+        return response()->json(['response' => 'Success'], 400);
+    }
+
 }

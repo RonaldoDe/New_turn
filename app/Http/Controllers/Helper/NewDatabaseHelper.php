@@ -402,6 +402,7 @@ class NewDatabaseHelper extends Controller
                     `date_start` datetime DEFAULT NULL,
                     `date_end` datetime DEFAULT NULL,
                     `state_id` int(11) NOT NULL,
+                    `tracking` text DEFAULT NULL,
                     `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
                     `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
                   ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");

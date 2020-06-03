@@ -68,6 +68,8 @@ Route::middleware('auth:api')->group(function () {
     Route::get('clientServiceList', 'Api\Administration\Grooming\ClientServiceController@clientServiceList');
     # Service administration detail
     Route::get('clientServiceList/{id}', 'Api\Administration\Grooming\ClientServiceController@clientServiceDetails');
+    # Service administration detail
+    Route::put('modifyServiceClient/{id}', 'Api\Administration\Grooming\ClientServiceController@modifyServiceClient');
 
     # Request service
     Route::post('requestService', 'Api\Administration\Grooming\RequestServiceController@requestService');

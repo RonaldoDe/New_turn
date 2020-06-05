@@ -66,12 +66,12 @@ class RequestServiceController extends Controller
             return response()->json(['response' => ['error' => ['Servicio no encontrado']]], 400);
         }
 
-        /*# Validate opening hours
+        # Validate opening hours
         $validate_day = HelpersData::validateDay(request('date_start'), request('date_end'), $service);
 
         if($validate_day != 1){
             return response()->json(['response' => ['error' => $validate_day]], 400);
-        }*/
+        }
 
 
         DB::beginTransaction();
@@ -242,6 +242,11 @@ class RequestServiceController extends Controller
         DB::commit();
         DB::connection($branch->db_name)->commit();
         return response()->json(['response' => 'Servicio solicitado con exito.', 'servicio' => $solicited_service->id], 200);
+    }
+
+    public function cancelService(Request $request, $id)
+    {
+
     }
 
 }

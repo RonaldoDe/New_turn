@@ -246,7 +246,40 @@ class RequestServiceController extends Controller
 
     public function cancelService(Request $request, $id)
     {
+        $user_turn = UserTurn::select('user_turn.id', 'u.id as user_id', 'bo.id as company_id', 'u.name as user_name', 'bo.name as company_name', 'user_turn.service_type')
+        ->join('users as u', 'user_turn.user_id', 'u.id')
+        ->join('branch_office as bo', 'user_turn.branch_id', 'bo.id')
+        ->where('user_turn.user_id', Auth::id())
+        ->where('user_turn.id', $id)
+        ->where('user_turn.state', 1)
+        ->first();
 
+
+        if(!$user_turn){
+            return response()->json(['response' => ['error' => ['Turno no encontrado.']]], 400);
+        }
+
+
+        $branch = BranchOffice::find($user_turn->company_id);
+
+        # --------------------- Set connection ------------------------------------#
+        $set_connection = SetConnectionHelper::setByDBName($branch->db_name);
+        # --------------------- Set connection ------------------------------------#
+
+        $client_service = ClientService::on($branch->db_name)->select('id', 'state_id')
+        ->where('client_service.user_id', $user_turn->user_id)
+        ->where('client_service.user_service_id', $user_turn->id)
+        ->whereIn('client_service.state_id', [1, 4])
+        ->first();
+
+        if(!$client_service){
+            return response()->json(['response' => ['error' => ['El servicio no fue encontrado']]], 400);
+        }
+
+        $client_service->state_id = 3;
+        $client_service->update();
+
+        return response()->json(['response' => 'Success'], 200);
     }
 
 }

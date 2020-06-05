@@ -77,6 +77,9 @@ Route::middleware('auth:api')->group(function () {
     # Request service
     Route::post('requestService', 'Api\Administration\Grooming\RequestServiceController@requestService');
 
+    # Cancel service
+    Route::post('cancelService/{id}', 'Api\Administration\Grooming\RequestServiceController@cancelService');
+
     # Client services
     Route::get('clientServices', 'Api\Client\ClientServicesListController@servicesList');
 

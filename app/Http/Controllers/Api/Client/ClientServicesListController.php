@@ -40,6 +40,7 @@ class ClientServicesListController extends Controller
         ->where('user_turn.state', 1)
         ->first();
 
+
         if(!$user_turn){
             return response()->json(['response' => ['error' => ['Turno no encontrado.']]], 400);
         }
@@ -53,16 +54,36 @@ class ClientServicesListController extends Controller
 
         if($user_turn->service_type == 'grooming_contract'){
 
-            $client_service = ClientService::on($branch->db_name)->select('client_service.id', 'client_service.employee_id', 'u.name as employee_name', 'u.last_name as employee_last_name',
-            'client_service.user_id', 'client_service.user_service_id', 'client_service.dni','client_service.start_at', 'client_service.acepted_by', 'client_service.service_id', 'sl.name as service_name',
-            'sl.description as service_description', 'sl.price_per_hour', 'sl.unit_per_hour', 'sl.hours_max',
-            'client_service.paid_out', 'client_service.hours', 'client_service.date_start', 'client_service.date_end', 'client_service.state_id', 'client_service.created_at', 'client_service.updated_at')
-            ->join('service_list as sl', 'client_service.service_id', 'sl.id')
-            ->join('users as u', 'client_service.employee_id', 'u.id')
+            $employee_id = ClientService::on($branch->db_name)->select('employee_id')
             ->where('client_service.user_id', $user_turn->user_id)
             ->where('client_service.user_service_id', $user_turn->id)
             ->whereIn('client_service.state_id', [1, 2, 4, 5])
             ->first();
+
+            if($employee_id->employee_id == null){
+                $client_service = ClientService::on($branch->db_name)->select('client_service.id', 'client_service.employee_id',
+                'client_service.user_id', 'client_service.user_service_id', 'client_service.dni','client_service.start_at', 'client_service.acepted_by', 'client_service.service_id', 'sl.name as service_name',
+                'sl.description as service_description', 'sl.price_per_hour', 'sl.unit_per_hour', 'sl.hours_max',
+                'client_service.paid_out', 'client_service.hours', 'client_service.date_start', 'client_service.date_end', 'client_service.state_id', 'client_service.created_at', 'client_service.updated_at')
+                ->join('service_list as sl', 'client_service.service_id', 'sl.id')
+                ->where('client_service.user_id', $user_turn->user_id)
+                ->where('client_service.user_service_id', $user_turn->id)
+                ->whereIn('client_service.state_id', [1, 2, 4, 5])
+                ->first();
+            }else{
+                $client_service = ClientService::on($branch->db_name)->select('client_service.id', 'client_service.employee_id', 'u.name as employee_name', 'u.last_name as employee_last_name',
+                'client_service.user_id', 'client_service.user_service_id', 'client_service.dni','client_service.start_at', 'client_service.acepted_by', 'client_service.service_id', 'sl.name as service_name',
+                'sl.description as service_description', 'sl.price_per_hour', 'sl.unit_per_hour', 'sl.hours_max',
+                'client_service.paid_out', 'client_service.hours', 'client_service.date_start', 'client_service.date_end', 'client_service.state_id', 'client_service.created_at', 'client_service.updated_at')
+                ->join('service_list as sl', 'client_service.service_id', 'sl.id')
+                ->join('users as u', 'client_service.employee_id', 'u.id')
+                ->where('client_service.user_id', $user_turn->user_id)
+                ->where('client_service.user_service_id', $user_turn->id)
+                ->whereIn('client_service.state_id', [1, 2, 4, 5])
+                ->first();
+            }
+
+
 
             return response()->json(['response' => $client_service], 200);
 

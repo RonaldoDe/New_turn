@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\Client;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Helper\SetConnectionHelper;
 use App\Models\ClientTurn;
+use App\Models\CUser;
 use App\Models\Grooming\ClientService;
 use App\Models\Master\BranchOffice;
 use App\Models\Service;
@@ -91,10 +92,12 @@ class ClientServicesListController extends Controller
             $client_turn = ClientTurn::on($branch->db_name)->where('user_id', $user_turn->user_id)->where('user_turn_id', $user_turn->id)->whereIn('state_id', [2, 4, 1])->first();
             $current_turn = ClientTurn::on($branch->db_name)->where('state_id', 1)->max('turn_number');
             $service = Service::on($branch->db_name)->find($client_turn->service_id);
+            $employee = CUser::on($branch->db_name)->select('users.id', 'users.name', 'users.last_name')->find($client_turn->employee_id);
             $client_turn->current_turn = $current_turn;
             $client_turn->service_name = $service->name;
             $client_turn->service_description = $service->description;
             $client_turn->service_time = $service->time;
+            $client_turn->employee = $employee;
 
             return response()->json(['response' => $client_turn], 200);
         }

@@ -62,9 +62,9 @@ class ClientCompanyController extends Controller
         }
 
         $branch = BranchOffice::select('branch_office.id', 'branch_office.name', 'branch_office.description', 'branch_office.nit', 'branch_office.email', 'branch_office.city', 'branch_office.longitude', 'branch_office.latitude', 'branch_office.address', 'branch_office.phone', 'branch_office.db_name', 'branch_office.close', 'branch_office.hours_24', 'branch_office.state_id', 'branch_office.company_id', 'branch_office.created_at', 'branch_office.updated_at', 'c.type_id')
-        ->select('company as c', 'branch_office.company_id', 'c.id')
-        ->where('close', 0)
-        ->where('state_id', 1)
+        ->join('company as c', 'branch_office.company_id', 'c.id')
+        ->where('branch_office.close', 0)
+        ->where('branch_office.state_id', 1)
         ->find($id);
 
         if(!$branch){

@@ -14,7 +14,8 @@ class ClientCompanyController extends Controller
 {
     public function companyList(Request $request)
     {
-        $companies = MasterCompany::where('id', '!=', 1)
+        $companies = MasterCompany::select('id', 'name', 'description', 'nit', 'email', 'type_id as company_type_id', 'state_id')
+        ->where('id', '!=', 1)
         ->where('type_id', '!=', 1)
         ->where('state_id', 1)
         ->get();
@@ -40,7 +41,7 @@ class ClientCompanyController extends Controller
 
         $branches = BranchOffice::select('branch_office.id', 'branch_office.name', 'branch_office.description', 'branch_office.nit', 'branch_office.email', 'branch_office.city', 'branch_office.longitude',
         'branch_office.latitude', 'branch_office.address', 'branch_office.phone', 'branch_office.close', 'branch_office.hours_24', 'branch_office.state_id', 'branch_office.company_id', 'branch_office.created_at',
-        'branch_office.updated_at', 'c.name as company_name', 'c.type_id as company_type', 'ct.name as company_type_name', 'ct.description as company_type_descrption')
+        'branch_office.updated_at', 'c.name as company_name', 'c.type_id as company_type_id', 'ct.name as company_type_name', 'ct.description as company_type_descrption')
         ->join('company as c', 'branch_office.company_id', 'c.id')
         ->join('company_type as ct', 'c.type_id', 'ct.id')
         ->where('branch_office.close', 0)
@@ -61,7 +62,7 @@ class ClientCompanyController extends Controller
             return response()->json(['response' => ['error' => ['Sucursal no encontrada']]], 400);
         }
 
-        $branch = BranchOffice::select('branch_office.id', 'branch_office.name', 'branch_office.description', 'branch_office.nit', 'branch_office.email', 'branch_office.city', 'branch_office.longitude', 'branch_office.latitude', 'branch_office.address', 'branch_office.phone', 'branch_office.db_name', 'branch_office.close', 'branch_office.hours_24', 'branch_office.state_id', 'branch_office.company_id', 'branch_office.created_at', 'branch_office.updated_at', 'c.type_id')
+        $branch = BranchOffice::select('branch_office.id', 'branch_office.name', 'branch_office.description', 'branch_office.nit', 'branch_office.email', 'branch_office.city', 'branch_office.longitude', 'branch_office.latitude', 'branch_office.address', 'branch_office.phone', 'branch_office.db_name', 'branch_office.close', 'branch_office.hours_24', 'branch_office.state_id', 'branch_office.company_id', 'branch_office.created_at', 'branch_office.updated_at', 'c.type_id as company_type_id')
         ->join('company as c', 'branch_office.company_id', 'c.id')
         ->where('branch_office.close', 0)
         ->where('branch_office.state_id', 1)

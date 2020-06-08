@@ -135,33 +135,6 @@ class RequestServiceController extends Controller
                 return response()->json(['response' => ['error' => ['El total de minutos y el rango de fechas no coinciden.']]], 400);
             }
 
-            $valid_service = ClientService::on($branch->db_name)->first();
-
-            if($valid_service){
-                $suggested_employee = CUser::on($branch->db_name)->select('users.id', 'users.name', 'users.last_name')
-                ->join('user_has_role as ur', 'users.id', 'ur.user_id')
-                ->join('client_service as cs', 'users.id', 'cs.employee_id')
-                ->where('ur.role_id', 2)
-                ->whereIn('cs.state_id', [1, 3, 4, 6])
-                ->first();
-
-                if(!$suggested_employee){
-                    $last_employee = CUser::on($branch->db_name)->select('users.id', 'users.name', 'users.last_name', 'cs.date_end')
-                    ->join('user_has_role as ur', 'users.id', 'ur.user_id')
-                    ->join('client_service as cs', 'users.id', 'cs.employee_id')
-                    ->where('ur.role_id', 2)
-                    ->whereIn('cs.state_id', [2, 5])
-                    ->orderBy('date_end', 'DESC')
-                    ->max('cs.date_end');
-
-                    return response()->json(['response' => ['error' => ['Todos los empledos están ocupados en estos momentos, un empleado se encuentra disponible a las '.$last_employee]]], 400);
-                }
-            }
-
-
-
-
-
             /*$suggested_employee = null;
             if(!empty(request('employee_id'))){
                 $suggested_employee = CUser::on($branch->db_name)->select('users.id', 'users.name', 'users.last_name')

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\Administration\Grooming;
 use App\Http\Controllers\Controller;
 use App\Models\CUser;
 use App\Models\Grooming\ClientService;
+use App\Models\Grooming\Service;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -44,7 +45,9 @@ class ClientServiceController extends Controller
         ->service(request('service_id'))
         ->get();
 
+
         foreach ($services as $service) {
+            $service_detail = Service::on('connectionDB')->where('id', $service->service_id)->first();
             if($service->employee_id != null){
                 $employee = CUser::on('connectionDB')->where('id', $service->employee_id)->first();
             }else{
@@ -59,6 +62,7 @@ class ClientServiceController extends Controller
                 $acepted = [];
             }
 
+            $service->sevice = $service_detail;
             $service->employee = $employee;
             $service->acepted = $acepted;
             $service->client = $client;

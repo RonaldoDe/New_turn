@@ -72,7 +72,7 @@ Route::middleware('auth:api')->group(function () {
     Route::put('modifyServiceClient/{id}', 'Api\Administration\Grooming\ClientServiceController@modifyServiceClient');
 
     # Asign employee to service client and set state
-    Route::put('assignEmployeeServicen/{id}', 'Api\Administration\Grooming\ClientServiceController@assignEmployee');
+    Route::put('assignEmployeeService/{id}', 'Api\Administration\Grooming\ClientServiceController@assignEmployee');
 
     # Request service
     Route::post('requestService', 'Api\Administration\Grooming\RequestServiceController@requestService');

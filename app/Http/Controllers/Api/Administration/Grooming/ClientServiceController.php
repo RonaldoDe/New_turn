@@ -195,7 +195,7 @@ class ClientServiceController extends Controller
         ->first();
 
         if(!$service){
-            return response()->json(['response' => ['error' => ['Servicio no encontrado.']]], 400);
+            return response()->json(['response' => ['error' => ['Servicio no encontrado.']]], 200);
         }
 
 

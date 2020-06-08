@@ -233,7 +233,7 @@ class ClientServiceController extends Controller
         $service->tracking = json_encode($tracking);
         $service->update();
 
-        return response()->json(['response' => 'Success'], 400);
+        return response()->json(['response' => 'Success'], 200);
 
 
     }

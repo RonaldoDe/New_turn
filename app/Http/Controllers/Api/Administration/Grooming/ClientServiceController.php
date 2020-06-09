@@ -180,22 +180,26 @@ class ClientServiceController extends Controller
             return response()->json(['response' => ['error' => ['Empleado no encontrado']]], 400);
         }
 
-        $employee_availability = ClientService::on('connectionDB')->select('client_service.id')
-        ->join('users as u', 'client_service.employee_id', 'u.id')
-        ->whereNotIn('client_service.state_id', [2, 5])
-        ->where('client_service.employee_id', $employee->id)
-        ->first();
-
-        if($employee_availability){
-            return response()->json(['response' => ['error' => ['El empleado no se encuentra disponible, para poder asignarlo necesitas cambiar de estado el servicio que tiene en proceso en este momento']]], 400);
-        }
-
         $service = ClientService::on('connectionDB')
         ->where('id', $id)
         ->first();
 
         if(!$service){
             return response()->json(['response' => ['error' => ['Servicio no encontrado.']]], 200);
+        }
+
+        $employee_availability = ClientService::on('connectionDB')->select('client_service.id')
+        ->join('users as u', 'client_service.employee_id', 'u.id')
+        ->whereNotIn('client_service.state_id', [2, 5])
+        ->where('client_service.employee_id', $employee->id)
+        ->where('client_service.date_start', '>=', $service->date_start)
+        ->where('client_service.date_start', '<=', $service->date_end)
+        ->where('client_service.date_end', '>=', $service->date_start)
+        ->where('client_service.date_end', '<=', $service->date_end)
+        ->first();
+
+        if($employee_availability){
+            return response()->json(['response' => ['error' => ['El empleado no se encuentra disponible, para poder asignarlo necesitas cambiar de estado el servicio que tiene en proceso en este momento']]], 400);
         }
 
 

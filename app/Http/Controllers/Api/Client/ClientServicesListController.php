@@ -69,7 +69,7 @@ class ClientServicesListController extends Controller
                 ->join('service_list as sl', 'client_service.service_id', 'sl.id')
                 ->where('client_service.user_id', $user_turn->user_id)
                 ->where('client_service.user_service_id', $user_turn->id)
-                ->whereIn('client_service.state_id', [1, 2, 4, 5])
+                ->whereIn('client_service.state_id', [1, 2, 3, 4, 5, 6])
                 ->first();
             }else{
                 $client_service = ClientService::on($branch->db_name)->select('client_service.id', 'client_service.employee_id', 'u.name as employee_name', 'u.last_name as employee_last_name',
@@ -80,7 +80,7 @@ class ClientServicesListController extends Controller
                 ->join('users as u', 'client_service.employee_id', 'u.id')
                 ->where('client_service.user_id', $user_turn->user_id)
                 ->where('client_service.user_service_id', $user_turn->id)
-                ->whereIn('client_service.state_id', [1, 2, 4, 5])
+                ->whereIn('client_service.state_id', [1, 2, 3, 4, 5, 6])
                 ->first();
             }
 

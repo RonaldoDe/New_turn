@@ -14,7 +14,6 @@ class PayUHelper extends Controller
     public static function paymentCredit($account_config, $payer_data, $buyer_data, $card_number, $expiration_date, $card_code, $price, $device, $cookie, $agent)
     {
 
-
         \PayU::$apiKey = $account_config['api_k']; //  Ingrese aquí su propio apiKey.
         \PayU::$apiLogin = $account_config['api_l']; //Ingrese aquí su propio apiLogin.
         \PayU::$merchantId = $account_config['mer_id']; //Ingrese aquí su Id de Comercio.
@@ -109,7 +108,7 @@ class PayUHelper extends Controller
             //IP del pagadador
             \PayUParameters::IP_ADDRESS => $_SERVER['REMOTE_ADDR'],
             //Cookie de la sesión actual.
-            \PayUParameters::PAYER_COOKIE=>$cookie,
+            \PayUParameters::PAYER_COOKIE=>$device,
             //Cookie de la sesión actual.
             \PayUParameters::USER_AGENT=>$agent
         );

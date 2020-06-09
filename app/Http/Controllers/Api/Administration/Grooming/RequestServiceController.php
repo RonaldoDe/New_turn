@@ -38,7 +38,7 @@ class RequestServiceController extends Controller
             'credit_card_security_code' => 'bail|integer',
             'session' => 'bail',
             'device' => 'bail',
-            'cookie' => 'bail',
+            'cookie' => 'bail'
         ]);
         if($validator->fails())
         {

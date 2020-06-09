@@ -57,7 +57,7 @@ class TurnsClientController extends Controller
             'credit_card_security_code' => 'bail|integer',
             'employee_id' => 'bail|integer',
             'dni' => 'bail|',
-            'session' => 'bail',
+            'agent' => 'bail',
             'device' => 'bail',
             'cookie' => 'bail'
         ]);
@@ -144,7 +144,7 @@ class TurnsClientController extends Controller
                     $service_to_pay = Service::on($branch->db_name)->find(request('service_id'));
 
 
-                    $payU = PayUHelper::paymentCredit($account_config, json_decode($payment_data->data), $user, request('credit_card_number'), request('credit_card_expiration_date'), request('credit_card_security_code'), $service_to_pay->price, request('device'), request('cookie'), request('session'));
+                    $payU = PayUHelper::paymentCredit($account_config, json_decode($payment_data->data), $user, request('credit_card_number'), request('credit_card_expiration_date'), request('credit_card_security_code'), $service_to_pay->price, request('device'), request('cookie'), request('agent'));
                     $log = TransactionLog::create([
                         'user_id' => $user->id,
                         'payment_id' => $payment_data->id,

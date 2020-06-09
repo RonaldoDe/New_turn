@@ -109,7 +109,7 @@ class PayUHelper extends Controller
             //IP del pagadador
             \PayUParameters::IP_ADDRESS => $_SERVER['REMOTE_ADDR'],
             //Cookie de la sesión actual.
-            \PayUParameters::PAYER_COOKIE=>"pt1t38347bs6jc9ruv2ecpv7o2",
+            \PayUParameters::PAYER_COOKIE=>session_id(),
             //Cookie de la sesión actual.
             \PayUParameters::USER_AGENT=>"Mozilla/5.0 (Windows NT 5.1; rv:18.0) Gecko/20100101 Firefox/18.0"
         );

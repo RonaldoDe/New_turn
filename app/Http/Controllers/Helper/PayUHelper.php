@@ -105,13 +105,13 @@ class PayUHelper extends Controller
             \PayUParameters::COUNTRY => \PayUCountries::CO,
 
             //Session id del device.
-            \PayUParameters::DEVICE_SESSION_ID => "vghs6tvkcle931686k1900o6e1",
+            \PayUParameters::DEVICE_SESSION_ID => $device,
             //IP del pagadador
             \PayUParameters::IP_ADDRESS => $_SERVER['REMOTE_ADDR'],
             //Cookie de la sesión actual.
-            \PayUParameters::PAYER_COOKIE=>session_id(),
+            \PayUParameters::PAYER_COOKIE=>$cookie,
             //Cookie de la sesión actual.
-            \PayUParameters::USER_AGENT=>"Mozilla/5.0 (Windows NT 5.1; rv:18.0) Gecko/20100101 Firefox/18.0"
+            \PayUParameters::USER_AGENT=>$agent
         );
 
         //solicitud de autorización y captura

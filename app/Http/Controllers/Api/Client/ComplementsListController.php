@@ -96,7 +96,7 @@ class ComplementsListController extends Controller
             'state' => 1,
         ]);
 
-        return response()->json(['response' => 'Succes'], 200);
+        return response()->json(['response' => $payment], 200);
     }
 
     public function listPaymentData(Request $request)

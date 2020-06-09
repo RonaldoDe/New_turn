@@ -81,7 +81,7 @@ class ComplementsListController extends Controller
     public function paymentData(Request $request)
     {
         $validator=\Validator::make($request->all(),[
-            'payment_method' => 'bail|required|exists:payment_data,id',
+            'payment_method' => 'bail|required|exists:payment_method,id',
             'data' => 'bail|required'
         ]);
         if($validator->fails())

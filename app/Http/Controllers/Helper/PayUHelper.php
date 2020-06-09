@@ -11,7 +11,7 @@ require_once public_path('lib/PayU.php');
 
 class PayUHelper extends Controller
 {
-    public static function paymentCredit($account_config, $payer_data, $buyer_data, $card_number, $expiration_date, $card_code, $price)
+    public static function paymentCredit($account_config, $payer_data, $buyer_data, $card_number, $expiration_date, $card_code, $price, $device, $cookie, $agent)
     {
 
 

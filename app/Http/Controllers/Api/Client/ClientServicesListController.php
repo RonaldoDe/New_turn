@@ -69,7 +69,7 @@ class ClientServicesListController extends Controller
                 $set_connection = SetConnectionHelper::setByDBName($branch->db_name);
                 # --------------------- Set connection ------------------------------------#
 
-                $client_turn = ClientTurn::on($branch->db_name)->select('state_id')->where('user_id', $service->user_id)->where('user_turn_id', $service->id)->whereIn('state_id', [2, 4, 1])->first();
+                $client_turn = ClientTurn::on($branch->db_name)->select('state_id')->where('user_id', $service->user_id)->where('user_turn_id', $service->id)->whereIn('state_id', [2, 4, 1, 3])->first();
 
                 $service->turn_state = $client_turn->state_id;
 

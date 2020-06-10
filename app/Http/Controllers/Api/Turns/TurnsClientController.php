@@ -234,7 +234,7 @@ class TurnsClientController extends Controller
         # --------------------- Set connection ------------------------------------#
 
         $client_turn = ClientTurn::on($user_turn->db_name)->where('user_id', Auth::id())->where('user_turn_id', $user_turn->id)->where('state_id', 2)->first();
-        if(!$user_turn){
+        if(!$client_turn){
             return response()->json(['response' => ['error' => ['El turno no pudo ser cancelado.']]], 400);
         }
 

@@ -18,13 +18,63 @@ class ClientServicesListController extends Controller
     public function servicesList(Request $request)
     {
 
-        $user_turn = UserTurn::select('user_turn.id', 'c.name as company_name', 'c.description as company_description', 'bo.id as branch_id', 'bo.name as branch_name', 'bo.description as branch_description', 'ct.name as company_type', 'user_turn.service_type as type_turn', 'user_turn.created_at')
+        $user_turn = UserTurn::select('user_turn.id', 'user_turn.user_id', 'c.name as company_name', 'c.description as company_description', 'c.id as company_id', 'bo.id as branch_id', 'bo.name as branch_name', 'bo.description as branch_description', 'ct.name as company_type', 'user_turn.service_type as type_turn', 'user_turn.created_at')
         ->join('branch_office as bo', 'user_turn.branch_id', 'bo.id')
         ->join('company as c', 'bo.company_id', 'c.id')
         ->join('company_type as ct', 'c.type_id', 'ct.id')
         ->where('user_turn.user_id', Auth::id())
         ->where('user_turn.state', 1)
         ->get();
+
+
+        foreach ($user_turn as $service) {
+            if($service->type_turn == 'grooming_contract'){
+
+                $branch = BranchOffice::find($service->branch_id);
+
+                # --------------------- Set connection ------------------------------------#
+                $set_connection = SetConnectionHelper::setByDBName($branch->db_name);
+                # --------------------- Set connection ------------------------------------#
+
+                $employee_id = ClientService::on($branch->db_name)->select('employee_id')
+                ->where('client_service.user_id', $service->user_id)
+                ->where('client_service.user_service_id', $service->id)
+                ->whereIn('client_service.state_id', [1, 2, 3, 4, 5, 6])
+                ->first();
+
+                if($employee_id->employee_id == null){
+                    $client_service = ClientService::on($branch->db_name)->select('client_service.state_id')
+                    ->where('client_service.user_id', $service->user_id)
+                    ->where('client_service.user_service_id', $service->id)
+                    ->whereIn('client_service.state_id', [1, 2, 3, 4, 5, 6])
+                    ->first();
+                }else{
+                    $client_service = ClientService::on($branch->db_name)->select('client_service.state_id')
+                    ->join('users as u', 'client_service.employee_id', 'u.id')
+                    ->where('client_service.user_id', $service->user_id)
+                    ->where('client_service.user_service_id', $service->id)
+                    ->whereIn('client_service.state_id', [1, 2, 3, 4, 5, 6])
+                    ->first();
+                }
+
+                $service->turn_state = $client_service->state_id;
+
+
+
+            }else{
+
+                $branch = BranchOffice::find($service->branch_id);
+
+                # --------------------- Set connection ------------------------------------#
+                $set_connection = SetConnectionHelper::setByDBName($branch->db_name);
+                # --------------------- Set connection ------------------------------------#
+
+                $client_turn = ClientTurn::on($branch->db_name)->select('state_id')->where('user_id', $service->user_id)->where('user_turn_id', $service->id)->whereIn('state_id', [2, 4, 1])->first();
+
+                $service->turn_state = $client_turn->state_id;
+
+            }
+        }
 
 
         return response()->json(['response' => $user_turn], 200);
@@ -83,7 +133,6 @@ class ClientServicesListController extends Controller
                 ->whereIn('client_service.state_id', [1, 2, 3, 4, 5, 6])
                 ->first();
             }
-
 
 
             return response()->json(['response' => $client_service], 200);

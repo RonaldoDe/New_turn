@@ -89,6 +89,14 @@ Route::middleware('auth:api')->group(function () {
     # Profile
     Route::get('userProfile', 'Api\Administration\UserController@userProfile');
 
+    # Change password
+    Route::post('changePassword', 'Api\Administration\ProfileController@newPassword');
+
+    # Forget password
+    Route::post('forgetPassword', 'Api\Administration\ProfileController@forgetPassword');
+
+    # New password
+    Route::post('newPassword', 'Api\Administration\ProfileController@updateFirstPassword');
 
     # Test routs
 

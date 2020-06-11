@@ -125,4 +125,41 @@ class ProfileController extends Controller
 
 
     }
+
+    # Verify email first time
+    public function validateAcount()
+    {
+        $password = request('password_code');
+        $email = request('email_code');
+        $verify_email = 0;
+
+        $user_email = User::where('email_code', $email)
+        ->first();
+
+        $user_password = User::where('password_code', $password)
+        ->first();
+
+        if(!$user_email && !$user_password){
+            return response()->json(['response' => ['error' => ['Error']]], 404);
+        }
+
+        if($user_email->email_verify == 0){
+            $user_email->email_verify = 1;
+            $user_email->email_verified_at = date('Y-m-d H:i:s');
+            $user_email->update();
+
+            $verify_email = 1;
+        }
+
+        if($user_password->password_verify == 1){
+            return response()->json(['response' => ['error' => ['La cuenta ya se encuentra activada y la contraseña ya se ha actualizado.']]], 400);
+        }
+
+        if($verify_email){
+            return response()->json(['response' => 'Cuenta Verificada', 'data' => $verify_email], 200);
+        }else{
+            return response()->json(['response' => 'La cuenta ya se encuentra verificada.', 'data' => $verify_email], 200);
+        }
+
+    }
 }

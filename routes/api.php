@@ -16,6 +16,12 @@ use Illuminate\Http\Request;
 Route::post('login', 'Api\Login\LoginController@login');
 Route::post('register', 'Api\Login\LoginController@registerUser');
 
+# Forget password
+Route::post('forgetPassword', 'Api\Administration\ProfileController@forgetPassword');
+
+# New password
+Route::post('newPassword', 'Api\Administration\ProfileController@updateFirstPassword');
+
 Route::middleware('auth:api')->group(function () {
     Route::apiResource('users', 'Api\Administration\UserController');
     Route::apiResource('role', 'Api\Administration\RoleController');
@@ -94,12 +100,6 @@ Route::middleware('auth:api')->group(function () {
 
     # Change password
     Route::post('changePassword', 'Api\Administration\ProfileController@newPassword');
-
-    # Forget password
-    Route::post('forgetPassword', 'Api\Administration\ProfileController@forgetPassword');
-
-    # New password
-    Route::post('newPassword', 'Api\Administration\ProfileController@updateFirstPassword');
 
     # Test routs
 

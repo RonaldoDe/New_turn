@@ -145,11 +145,11 @@ class LoginController extends Controller
             # Here we will generate a code to verify the email
             while(TRUE){
                 # Here we create a code
-                $email_code = md5(uniqid(rand(), true));
-                $password_code = md5(uniqid(rand(), true));
+                $email_code = uniqid(rand(1000, 9999), true);
+                $password_code = uniqid(rand(1000, 9999), true);
                 # Here we check if there is a User that has the same email verification code
-                $code_email_exist = User::where('code_email_verify', $email_code)->first();
-                $code_password_exist = User::where('code_password_verify', $password_code)->first();
+                $code_email_exist = User::where('email_code', $email_code)->first();
+                $code_password_exist = User::where('password_code', $password_code)->first();
                 # If there is not, we exit the loop
                 if (!$code_email_exist && !$code_password_exist){
                     break;

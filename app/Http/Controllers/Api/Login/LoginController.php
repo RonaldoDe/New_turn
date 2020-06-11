@@ -60,7 +60,7 @@ class LoginController extends Controller
                 return response()->json(['response' => ['error' => ['Usuario o contraseña incorrectas']]], 400);
             }
         }else{
-            return response()->json(['response' => ['error' => ['Usuario no encontrado']]], 400);
+            return response()->json(['response' => ['error' => ['Usuario no encontrado']]], 401);
           }
 
 

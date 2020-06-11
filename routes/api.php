@@ -34,6 +34,9 @@ Route::middleware('auth:api')->group(function () {
     # Add move user to company
     Route::post('mMoveUsers', 'Api\Master\MUsersController@addUserToCompany');
 
+    Route::post('logout', 'Api\Login\LoginController@logout');
+
+
     # Turn administration
     Route::get('turnsList', 'Api\Administration\TurnsController@turnsList');
     # Client turn

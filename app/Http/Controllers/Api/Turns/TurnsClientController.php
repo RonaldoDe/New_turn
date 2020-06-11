@@ -121,12 +121,12 @@ class TurnsClientController extends Controller
 
             $service = Service::on($branch->db_name)->find(request('service_id'));
 
-            /*# Validate opening hours
+            # Validate opening hours
             $validate_day = HelpersData::validateDayBarber($service);
 
             if($validate_day != 1){
                 return response()->json(['response' => ['error' => $validate_day]], 400);
-            }*/
+            }
             if(request('pay_on_line')){
                 if($company_data->pay_on_line){
                     $payment_data = PaymentData::where('user_id', Auth::id())->where('id', request('payment_data_id'))->first();

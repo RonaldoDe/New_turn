@@ -16,4 +16,15 @@ class TemplateHelper extends Controller
             'email' => $data['email']
             ]);
     }
+
+    # Data to send to the account verification email template
+    public static function emailVerify($data)
+    {
+        return view('email_verify')->with([
+            'password_code' => $data['password_code'],
+            'email_code' => $data['email_code'],
+            'name' => $data['name'],
+            'email' => $data['email']
+        ]);
+    }
 }

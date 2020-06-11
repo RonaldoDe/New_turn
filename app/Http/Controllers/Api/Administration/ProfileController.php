@@ -63,7 +63,7 @@ class ProfileController extends Controller
         # Here we will generate a code to verify the email
         while(TRUE){
             # Here we create a code
-            $password_code = uniqid(rand(1000, 9999), true);
+            $password_code = (rand(1000, 9999));
             # Here we check if there is a User that has the same email verification code
             $code_password_exist = User::where('password_code', $password_code)->first();
             # If there is not, we exit the loop

@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
+    <title>Verify</title>
 </head>
 <body>
-    <H1>Solicitud de olvido de contraseña</H1>
-    <h2>{{$email_code}}</h2>
+    <a href="http://localhost:4300/validacion/{{$email_code}}/{{$password_code}}">Link enfer</a>
 </body>
 </html>
+

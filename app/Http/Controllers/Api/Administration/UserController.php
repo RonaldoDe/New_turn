@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers\Api\Administration;
 
+use App\Http\Controllers\Api\Helpers\Email\TemplatesHelper;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Helper\SendEmailHelper;
 use App\Models\CUser;
 use App\Models\Master\BranchOffice;
 use App\Models\Master\BranchUser;
@@ -132,6 +134,35 @@ class UserController extends Controller
                     }
                 }
 
+                 # Here we will generate a code to verify the email
+            while(TRUE){
+                # Here we create a code
+                $email_code = uniqid(rand(1000, 9999), true);
+                $password_code = uniqid(rand(1000, 9999), true);
+                # Here we check if there is a User that has the same email verification code
+                $code_email_exist = User::where('email_code', $email_code)->first();
+                $code_password_exist = User::where('password_code', $password_code)->first();
+                # If there is not, we exit the loop
+                if (!$code_email_exist && !$code_password_exist){
+                    break;
+                }
+            }
+
+            $data = array(
+                'password_code' => $password_code,
+                'email_code' => $email_code,
+                'name' => $user->name." ".$user->last_name,
+                'email' => $user->email,
+            );
+            # We obtain the user's data to send the mail
+            $principal_email = array((object)['email' => $user->email, 'name' => $user->name." ".$user->last_name]);
+
+            #Send email
+            $send_email = SendEmailHelper::sendEmail('Correo de verificación de cuenta de GIMED.', TemplatesHelper::emailVerify($data), $principal_email, array());
+            if($send_email != 1){
+                return response()->json(['response' => ['error' => [$send_email]]], 400);
+            }
+
             }else{
                 return response()->json(['response' => ['error' => ['Ususario no encontrado']]], 404);
             }
@@ -141,6 +172,7 @@ class UserController extends Controller
         }
         DB::connection('connectionDB')->commit();
         DB::commit();
+
         return response()->json(['response' => 'Success'], 200);
     }
 

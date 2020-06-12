@@ -14,10 +14,11 @@ class ClientCompanyController extends Controller
 {
     public function companyList(Request $request)
     {
-        $companies = MasterCompany::select('id', 'name', 'description', 'nit', 'email', 'type_id as company_type_id', 'state_id')
-        ->where('id', '!=', 1)
-        ->where('type_id', '!=', 1)
-        ->where('state_id', 1)
+        $companies = MasterCompany::select('company.id', 'company.name', 'company.description', 'company.nit', 'company.email', 'company.type_id as company_type_id', 'company.state_id')
+        ->join('branch_office as bo', 'company.id', 'bo.company_id')
+        ->where('company.id', '!=', 1)
+        ->where('company.type_id', '!=', 1)
+        ->where('company.state_id', 1)
         ->get();
 
         return response()->json(['response' => $companies], 200);

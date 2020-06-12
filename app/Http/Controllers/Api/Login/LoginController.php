@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers\Api\Login;
 
+use App\Http\Controllers\Api\Templates\TemplatesHelper;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Helper\SendEmailHelper;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;

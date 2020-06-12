@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\Administration;
 
+use App\Http\Controllers\Api\Helpers\Email\TemplatesHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Helper\SendEmailHelper;
 use App\User;

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Api\Administration;
 
-use App\Http\Controllers\Api\Helpers\Email\TemplatesHelper;
+use App\Http\Controllers\Helper\TemplateHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Helper\SendEmailHelper;
 use App\User;
@@ -85,7 +85,7 @@ class ProfileController extends Controller
 
         $principal_email = array((object)['email' => $user->email, 'name' => $user->name." ".$user->last_name]);
 
-        $send_email = SendEmailHelper::sendEmail('Olvido de contraseña.', TemplatesHelper::forgetPassword($data), $principal_email, array());
+        $send_email = SendEmailHelper::sendEmail('Olvido de contraseña.', TemplateHelper::forgetPassword($data), $principal_email, array());
         if($send_email != 1){
             return response()->json(['response' => ['error' => [$send_email]]], 400);
         }

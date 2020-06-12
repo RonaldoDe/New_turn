@@ -107,7 +107,7 @@ class ProfileController extends Controller
         }
         $password = request('password_code');
 
-        $user_password = User::where('code_password_verify', $password)
+        $user_password = User::where('password_code', $password)
         ->first();
 
         if(!$user_password){

@@ -91,7 +91,7 @@ class ServiceController extends Controller
             'description' => 'required',
             'time' => 'bail|required|integer',
             'price' => 'bail|required|integer',
-            'opening_hours' => 'bail|required|integer',
+            'opening_hours' => 'bail|required',
             'state' => 'bail|required',
         ]);
         if($validator->fails())

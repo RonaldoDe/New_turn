@@ -80,12 +80,15 @@ class RequestServiceController extends Controller
             return response()->json(['response' => ['error' => ['Servicio no encontrado']]], 400);
         }
 
+        $date_end = date('Y-m-d H:i:s', strtotime('+'.$service->unit_per_hour.' minute', strtotime(date(request('date_start')))));
+
+
         # Validate opening hours
-        /*$validate_day = HelpersData::validateDay(request('date_start'), request('date_end'), $service);
+        $validate_day = HelpersData::validateDay(request('date_start'), $date_end, $service);
 
         if($validate_day != 1){
             return response()->json(['response' => ['error' => $validate_day]], 400);
-        }*/
+        }
 
 
         DB::beginTransaction();
@@ -132,6 +135,7 @@ class RequestServiceController extends Controller
             }*/
 
             $date_start = new DateTime(request('date_start'));
+
             /*$date_end = new DateTime(request('date_end'));
             $diff = $date_start->diff($date_end);
 
@@ -217,7 +221,7 @@ class RequestServiceController extends Controller
                 'dni' => $dni,
                 'service_id' => request('service_id'),
                 #'hours' => $count,
-                'date_start' => request('date_start'),
+                'date_start' => $date_end,
                 'date_end' => request('date_end'),
                 'state_id' => 2
             ]);

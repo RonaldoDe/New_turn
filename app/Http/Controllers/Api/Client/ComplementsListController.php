@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\Client;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Helper\SetConnectionHelper;
 use App\Models\CUser;
+use App\Models\Grooming\ClientService;
 use App\Models\Master\BranchOffice;
 use App\Models\Master\MasterCompany;
 use App\Models\PaymentData;
@@ -42,6 +43,8 @@ class ComplementsListController extends Controller
     {
         $validator=\Validator::make($request->all(),[
             'branch_id' => 'bail|required|exists:branch_office,id',
+            'service_id' => 'bail|required|integer',
+            'date_start' => 'bail|required|date_format:"Y-m-d H:i:s"|date',
             'name' => 'bail'
         ]);
         if($validator->fails())
@@ -68,14 +71,74 @@ class ComplementsListController extends Controller
             ->name(request('name'))
             ->get();
         }else{
+
+            $service = Service::on($branch->db_name)->find(request('service_id'));
+
+            if(!$service){
+                return response()->json(['response' => ['error' => 'Servicio no encontrado.']], 400);
+            }
+
+            $current_date_more_waiting = date('Y-m-d H:i:s', strtotime('+'.$service->wait_time.' minute', strtotime(date('Y-m-d H:i:s'))));
+
+            if(request('date_start') < $current_date_more_waiting){
+                return response()->json(['response' => ['error' => ['La fecha de inicio debe ser mayor que la fecha actual MAS '.$service->wait_time.' minutos de la llegada de el empleado..']]], 400);
+            }
+
+
+            $date_end = date('Y-m-d H:i:s', strtotime('+'.$service->unit_per_hour.' minute', strtotime(date(request('date_start')))));
+
             $employees = CUser::on($branch->db_name)->select('users.id','users.name', 'users.last_name')
             ->join('user_has_role as ur', 'users.id', 'ur.user_id')
+            ->join('employee_type_employee as ete', 'users.id', 'ete.employee_id')
+            ->join('employee_type_service as ets', 'ete.employee_type_id', 'ets.employee_type_id')
+            ->where('ets.service_id', $service->id)
             ->where('ur.role_id', 2)
-            ->name(request('name'))
             ->get();
+
+            $collect = collect($employees)->pluck('id');
+
+            $client_service = ClientService::on($branch->db_name)
+            ->whereIn('employee_id', $collect)
+            ->whereIn('state_id', [2, 5])
+            ->get();
+
+            $pass = 0;
+            $employees_valid = array();
+            foreach ($client_service as $client) {
+                # Validar los rangos de fechas
+                if(request('date_start') >= $client->date_start && request('date_start') <= $client->date_end)
+                {
+                    $pass++;
+                }
+
+                if($date_end >= $client->date_start && $date_end <= $client->date_end)
+                {
+                    $pass++;
+                }
+
+                if($client->date_start >= request('date_start') && $client->date_start <= $date_end)
+                {
+                    $pass++;
+                }
+
+                if($client->date_end >= request('date_start') && $client->date_end <= $date_end)
+                {
+                    $pass++;
+                }
+
+                if($pass == 0){
+                    array_push($employees_valid, $client->employee_id);
+                }
+            }
+
+
         }
 
-        return response()->json(['response' => $employees], 200);
+        $employees_list = CUser::on($branch->db_name)->select('users.id','users.name', 'users.last_name')
+        ->whereIn('id', $employees_valid)
+        ->get();
+
+        return response()->json(['response' => $employees_list], 200);
     }
 
     public function paymentData(Request $request)

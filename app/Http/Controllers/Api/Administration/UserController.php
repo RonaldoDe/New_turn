@@ -6,6 +6,8 @@ use App\Http\Controllers\Api\Helpers\Email\TemplatesHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Helper\SendEmailHelper;
 use App\Models\CUser;
+use App\Models\Grooming\EmployeeType;
+use App\Models\Grooming\EmployeeTypeEmployee;
 use App\Models\Master\BranchOffice;
 use App\Models\Master\BranchUser;
 use App\Models\Role;
@@ -53,8 +55,25 @@ class UserController extends Controller
             ->where('ur.user_id', $user->id)
             ->get();
 
+            $employees_types = EmployeeType::on('connectionDB')
+            ->select('employee_type.id', 'employee_type.name', 'employee_type.description', 'employee_type.state')
+            ->join('employee_type_employee as ete', 'employee_type.id', 'ete.employee_type_id')
+            ->where('ete.employee_id', $user->id)
+            ->get();
+
+            $validate_role = Role::on('connectionDB')
+            ->select('role.id', 'role.name', 'role.description')
+            ->join('user_has_role as ur', 'role.id', 'ur.role_id')
+            ->where('ur.user_id', $user->id)
+            ->whereIn('role.id', [1, 2])
+            ->first();
+
             # Assign roles to json
+            if($validate_role){
+                $user->employees_types = $employees_types;
+            }
             $user->roles = $roles;
+
 
         }
 
@@ -79,6 +98,7 @@ class UserController extends Controller
             'email' => 'required|email|max:80|email|unique:users',
             'password' => 'required|max:50|min:6',
             'add_array' => 'bail|array',
+            'employee_type_add_array' => 'bail|array',
         ]);
         if($validator->fails())
         {
@@ -130,6 +150,18 @@ class UserController extends Controller
                         $user_has_role = UserRole::on('connectionDB')->create([
                             'user_id' => $user->id,
                             'role_id' => $add_array,
+                        ]);
+                    }
+                }
+
+                foreach (request('employee_type_add_array') as $add_array) {
+                    # We need to add the employees type´s id for each record in the list.
+                    $employee_type_employee = EmployeeTypeEmployee::on('connectionDB')->where('employee_id', $user->id)->where('employee_type_id', $add_array)->first();
+
+                    if(!$employee_type_employee){
+                        $create_employee_type_employee = EmployeeTypeEmployee::on('connectionDB')->create([
+                            'employee_id' => $user->id,
+                            'employee_type_id' => $add_array,
                         ]);
                     }
                 }
@@ -199,9 +231,25 @@ class UserController extends Controller
         ->where('ur.user_id', $user->id)
         ->get();
 
+        $employees_types = EmployeeType::on('connectionDB')
+        ->select('employee_type.id', 'employee_type.name', 'employee_type.description', 'employee_type.state')
+        ->join('employee_type_employee as ete', 'employee_type.id', 'ete.employee_type_id')
+        ->where('ete.employee_id', $user->id)
+        ->get();
+
+        $validate_role = Role::on('connectionDB')
+        ->select('role.id', 'role.name', 'role.description')
+        ->join('user_has_role as ur', 'role.id', 'ur.role_id')
+        ->where('ur.user_id', $user->id)
+        ->whereIn('role.id', [1, 2])
+        ->first();
+
         # Assign roles to json
         $user->roles = $roles;
 
+        if($validate_role){
+            $user->employees_types = $employees_types;
+        }
         return response()->json(['response' => $user], 200);
     }
 
@@ -224,6 +272,8 @@ class UserController extends Controller
             'state_id' => 'required|integer',
             'add_array' => 'bail|array',
             'delete_array' => 'bail|array',
+            'employee_type_add_array' => 'bail|array',
+            'employee_type_delete_array' => 'bail|array',
         ]);
         if($validator->fails())
         {
@@ -274,28 +324,49 @@ class UserController extends Controller
             $principal_user->state_id = request('state_id');
 
 
-            if(count(request('delete_array')) > 0){
-                foreach (request('delete_array') as $delete_array) {
-                    # We need to remove the role´s id for each record in the list.
-                    $validate_user_has_role = UserRole::on('connectionDB')->where('user_id', $user->id)->where('role_id', $delete_array)->first();
 
-                    if($validate_user_has_role){
-                        $validate_user_has_role->delete();
-                    }
+            foreach (request('delete_array') as $delete_array) {
+                # We need to remove the role´s id for each record in the list.
+                $validate_user_has_role = UserRole::on('connectionDB')->where('user_id', $user->id)->where('role_id', $delete_array)->first();
+
+                if($validate_user_has_role){
+                    $validate_user_has_role->delete();
                 }
             }
 
-            if(count(request('add_array')) > 0){
-                foreach (request('add_array') as $add_array) {
-                    # We need to add the role´s id for each record in the list.
-                    $validate_user_has_role = UserRole::on('connectionDB')->where('user_id', $user->id)->where('role_id', $add_array)->first();
+            # Employee type
+            foreach (request('employee_type_delete_array') as $delete_array) {
+                # We need to remove the role´s id for each record in the list.
+                $validate_employee_type_employee = EmployeeTypeEmployee::on('connectionDB')->where('employee_id', $user->id)->where('employee_type_id', $delete_array)->first();
 
-                    if(!$validate_user_has_role){
-                        $user_has_role = UserRole::on('connectionDB')->create([
-                            'user_id' => $user->id,
-                            'role_id' => $add_array,
-                        ]);
-                    }
+                if($validate_employee_type_employee){
+                    $validate_employee_type_employee->delete();
+                }
+            }
+
+
+            foreach (request('add_array') as $add_array) {
+                # We need to add the role´s id for each record in the list.
+                $validate_user_has_role = UserRole::on('connectionDB')->where('user_id', $user->id)->where('role_id', $add_array)->first();
+
+                if(!$validate_user_has_role){
+                    $user_has_role = UserRole::on('connectionDB')->create([
+                        'user_id' => $user->id,
+                        'role_id' => $add_array,
+                    ]);
+                }
+            }
+
+            # Employee type
+            foreach (request('employee_type_add_array') as $add_array) {
+                # We need to add the employees type´s id for each record in the list.
+                $employee_type_employee = EmployeeTypeEmployee::on('connectionDB')->where('employee_id', $user->id)->where('employee_type_id', $add_array)->first();
+
+                if(!$employee_type_employee){
+                    $create_employee_type_employee = EmployeeTypeEmployee::on('connectionDB')->create([
+                        'employee_id' => $user->id,
+                        'employee_type_id' => $add_array,
+                    ]);
                 }
             }
         }catch(Exception $e){

@@ -304,6 +304,43 @@ class MBranchOfficeController extends Controller
                 );
 
             }else if($company_type->type_id == 3){
+                # Create the phatons users -------------------------------------------
+                $phanto_1 = User::create([
+                    'name' => 'First entry',
+                    'last_name' => '-',
+                    'phone' => request('phone'),
+                    'address' => request('address'),
+                    'dni' => request('nit'),
+                    'email' => '1-'.request('email'),
+                    'password' => bcrypt('123456'),
+                    'phanton_user' => 1,
+                    'state_id' => 1
+                ]);
+
+                $phanto_2 = User::create([
+                    'name' => 'Second entry',
+                    'last_name' => '-',
+                    'phone' => request('phone'),
+                    'address' => request('address'),
+                    'dni' => request('nit'),
+                    'email' => '2-'.request('email'),
+                    'password' => bcrypt('123456'),
+                    'phanton_user' => 1,
+                    'state_id' => 1
+                ]);
+
+                $phanto_3 = User::create([
+                    'name' => 'Third entry',
+                    'last_name' => '-',
+                    'phone' => request('phone'),
+                    'address' => request('address'),
+                    'dni' => request('nit'),
+                    'email' => '3-'.request('email'),
+                    'password' => bcrypt('123456'),
+                    'phanton_user' => 1,
+                    'state_id' => 1
+                ]);
+
                 # /Create the phatons users -------------------------------------------
 
                 $branch_user = BranchUser::insert([
@@ -312,8 +349,25 @@ class MBranchOfficeController extends Controller
                         'branch_id' => $branch->id,
                         'created_at' => date('Y-m-d'),
                         'updated_at' => date('Y-m-d')
-                    ]
+                    ],[
+                        'user_id' => $phanto_1->id,
+                        'branch_id' => $branch->id,
+                        'created_at' => date('Y-m-d'),
+                        'updated_at' => date('Y-m-d')
+                    ],[
+                        'user_id' => $phanto_2->id,
+                        'branch_id' => $branch->id,
+                        'created_at' => date('Y-m-d'),
+                        'updated_at' => date('Y-m-d')
+                    ],[
+                        'user_id' => $phanto_3->id,
+                        'branch_id' => $branch->id,
+                        'created_at' => date('Y-m-d'),
+                        'updated_at' => date('Y-m-d')
+                    ],
                 ]);
+
+
 
                 # User info
                 $data = array();
@@ -350,7 +404,7 @@ class MBranchOfficeController extends Controller
                 ]);
 
                 # Add user to company phantons
-                /*$user_phnton = CUser::on($branch->db_name)->insert([
+                $user_phnton = CUser::on($branch->db_name)->insert([
                     [
                         'name' => 'First entry',
                         'last_name' => '-',
@@ -388,7 +442,7 @@ class MBranchOfficeController extends Controller
                         'created_at' => date('Y-m-d H:i:s'),
                         'updated_at' => date('Y-m-d H:i:s')
                     ]
-                ]);*/
+                ]);
 
                 $user_role = UserRole::on($branch->db_name)->insert([
                     [
@@ -396,26 +450,29 @@ class MBranchOfficeController extends Controller
                         'role_id' => 1,
                         'created_at' => date('Y-m-d H:i:s'),
                         'updated_at' => date('Y-m-d H:i:s')
-                    ]/*,[
+                    ],[
                         'user_id' => 2,
-                        'role_id' => 1,
+                        'role_id' => 2,
                         'created_at' => date('Y-m-d H:i:s'),
                         'updated_at' => date('Y-m-d H:i:s')
                     ],[
                         'user_id' => 3,
-                        'role_id' => 1,
+                        'role_id' => 2,
                         'created_at' => date('Y-m-d H:i:s'),
                         'updated_at' => date('Y-m-d H:i:s')
                     ],[
                         'user_id' => 4,
-                        'role_id' => 1,
+                        'role_id' => 2,
                         'created_at' => date('Y-m-d H:i:s'),
                         'updated_at' => date('Y-m-d H:i:s')
-                    ]*/
+                    ]
                 ]);
 
                 $data = array(
                     'Admin' => $user->email,
+                    'firsr_acount' => $phanto_1->email,
+                    'second_acount' => $phanto_2->email,
+                    'third_acount' => $phanto_3->email,
                 );
             }
         }catch(Exception $e){

@@ -27,10 +27,10 @@ class RequestServiceController extends Controller
         $validator=\Validator::make($request->all(),[
             'branch_id' => 'required|integer|exists:branch_office,id',
             'service_id' => 'required|integer',
-            #'employee_id' => 'bail|integer',
+            'employee_id' => 'bail|integer',
             'total_minutes' => 'bail|required|integer',
             'date_start' => 'bail|required|date_format:"Y-m-d H:i:s"|date',
-            'date_end' => 'bail|required|date_format:"Y-m-d H:i:s"|date',
+            # 'date_end' => 'bail|required|date_format:"Y-m-d H:i:s"|date',
             'pay_on_line' => 'bail|integer|required',
             'payment_data_id' => 'bail|integer',
             'credit_card_number' => 'bail|integer',
@@ -38,7 +38,8 @@ class RequestServiceController extends Controller
             'credit_card_security_code' => 'bail|integer',
             'agent' => 'bail',
             'device' => 'bail',
-            'cookie' => 'bail'
+            'cookie' => 'bail',
+            'dni' => 'bail|',
         ]);
         if($validator->fails())
         {
@@ -46,6 +47,16 @@ class RequestServiceController extends Controller
         }
 
         $user = User::find(Auth::id());
+
+        if($user->phanton_user){
+            if(request('dni') != ''){
+                $dni = request('dni');
+            }else{
+                return response()->json(['response' => ['error' => ['Insertar Dni']]], 400);
+            }
+        }else{
+            $dni = $user->dni;
+        }
 
         # --------------------- Set connection ------------------------------------#
         $branch = BranchOffice::select('branch_office.id', 'branch_office.db_name')
@@ -70,27 +81,21 @@ class RequestServiceController extends Controller
         }
 
         # Validate opening hours
-        $validate_day = HelpersData::validateDay(request('date_start'), request('date_end'), $service);
+        /*$validate_day = HelpersData::validateDay(request('date_start'), request('date_end'), $service);
 
         if($validate_day != 1){
             return response()->json(['response' => ['error' => $validate_day]], 400);
-        }
+        }*/
 
 
         DB::beginTransaction();
         DB::connection($branch->db_name)->beginTransaction();
         try{
 
-            $service_client = UserTurn::create([
-                'user_id' => $user->id,
-                'branch_id' => $branch->id,
-                'service_type' => 'grooming_contract',
-                'state' => 1,
-            ]);
 
-            if(request('date_end') <= request('date_start')){
+            /*if(request('date_end') <= request('date_start')){
                 return response()->json(['response' => ['error' => ['La fecha de inicio debe ser menor que la fecha final.']]], 400);
-            }
+            }*/
 
             $current_date_more_waiting = date('Y-m-d H:i:s', strtotime('+'.$service->wait_time.' minute', strtotime(date('Y-m-d H:i:s'))));
 
@@ -99,6 +104,7 @@ class RequestServiceController extends Controller
             }
 
             # unit of measurement
+            /*
             $i = 0;
             # Number of unit per hours to pay
             $count = 0;
@@ -123,10 +129,10 @@ class RequestServiceController extends Controller
 
             if(!$relation){
                 return response()->json(['response' => ['error' => ['La relación entre los minutos y el minimo tiempo de el servicio no coinciden.']]], 400);
-            }
+            }*/
 
             $date_start = new DateTime(request('date_start'));
-            $date_end = new DateTime(request('date_end'));
+            /*$date_end = new DateTime(request('date_end'));
             $diff = $date_start->diff($date_end);
 
             $hours = $diff->h;
@@ -136,7 +142,7 @@ class RequestServiceController extends Controller
 
             if($total_diff != request('total_minutes')){
                 return response()->json(['response' => ['error' => ['El total de minutos y el rango de fechas no coinciden.']]], 400);
-            }
+            }*/
 
             /*$suggested_employee = null;
             if(!empty(request('employee_id'))){
@@ -185,7 +191,7 @@ class RequestServiceController extends Controller
                     );
 
                     $service_to_pay = Service::on($branch->db_name)->find(request('service_id'));
-                    $price = $service_to_pay->price_per_hour*$count;
+                    $price = $service_to_pay->price_per_hour;
                     $payU = PayUHelper::paymentCredit($account_config, json_decode($payment_data->data), $user, request('credit_card_number'), request('credit_card_expiration_date'), request('credit_card_security_code'), $price, request('device'), request('cookie'), request('agent'));
                     $log = TransactionLog::create([
                         'user_id' => $user->id,
@@ -197,16 +203,23 @@ class RequestServiceController extends Controller
                 }
             }
 
+            $service_client = UserTurn::create([
+                'user_id' => $user->id,
+                'branch_id' => $branch->id,
+                'service_type' => 'grooming_contract',
+                'state' => 1,
+            ]);
 
             $solicited_service = ClientService::on($branch->db_name)->create([
+                'employee_id' => request('employee_id'),
                 'user_id' => $user->id,
                 'user_service_id' => $service_client->id,
-                'dni' => $user->dni,
+                'dni' => $dni,
                 'service_id' => request('service_id'),
-                'hours' => $count,
+                #'hours' => $count,
                 'date_start' => request('date_start'),
                 'date_end' => request('date_end'),
-                'state_id' => 1
+                'state_id' => 2
             ]);
 
             }catch(Exception $e){

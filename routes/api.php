@@ -70,6 +70,9 @@ Route::middleware('auth:api')->group(function () {
     #-------- Grooming ------------
     # Administration
 
+    # Employee type
+    Route::apiResource('employeeType', 'Api\Administration\Grooming\EmployeeTypeController');
+
     # Service config
     Route::apiResource('serviceConfig', 'Api\Administration\Grooming\GServiceController');
 

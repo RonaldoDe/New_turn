@@ -9,7 +9,7 @@ class CUser extends Model
     protected $table = 'users';
 
     protected $fillable = [
-        'name', 'last_name', 'address', 'phone', 'email', 'state_id', 'dni', 'phanton_user', 'principal_id'
+        'name', 'last_name', 'address', 'phone', 'email', 'state_id', 'dni', 'phanton_user', 'principal_id', 'business_days'
     ];
 
     public function scopeName($query, $name)

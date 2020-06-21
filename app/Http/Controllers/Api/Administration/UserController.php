@@ -97,6 +97,7 @@ class UserController extends Controller
             'dni' => 'required|max:20',
             'email' => 'required|email|max:80|email|unique:users',
             'password' => 'required|max:50|min:6',
+            'business_days' => 'bail',
             'add_array' => 'bail|array',
             'employee_type_add_array' => 'bail|array',
         ]);
@@ -117,6 +118,7 @@ class UserController extends Controller
                 'dni' => request('dni'),
                 'email' => request('email'),
                 'password' => bcrypt(request('password')),
+                'business_days' => request('business_days'),
                 'phanton_user' => 0,
                 'state_id' => 1
             ]);
@@ -270,6 +272,7 @@ class UserController extends Controller
             'dni' => 'required|max:20',
             'email' => 'required|email|max:80',
             'state_id' => 'required|integer',
+            'business_days' => 'bail',
             'add_array' => 'bail|array',
             'delete_array' => 'bail|array',
             'employee_type_add_array' => 'bail|array',
@@ -305,6 +308,7 @@ class UserController extends Controller
             $user->dni = request('dni');
             $user->email = request('email');
             $user->state_id = request('state_id');
+            $user->business_days = request('business_days');
 
             # Here we get the instance of an principal user
             $principal_user = User::find($user->principal_id);

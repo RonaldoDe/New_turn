@@ -193,7 +193,8 @@ class NewDatabaseHelper extends Controller
                     `created_at` timestamp NULL DEFAULT NULL,
                     `updated_at` timestamp NULL DEFAULT NULL,
                     `phanton_user` int(11) NOT NULL,
-                    `principal_id` int(11) NOT NULL
+                    `principal_id` int(11) NOT NULL,
+                    `business_days` text DEFAULT NULL
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");
 
                 //Estructura de tabla para la tabla `user_has_role
@@ -593,7 +594,8 @@ class NewDatabaseHelper extends Controller
                     `created_at` timestamp NULL DEFAULT NULL,
                     `updated_at` timestamp NULL DEFAULT NULL,
                     `phanton_user` int(11) NOT NULL,
-                    `principal_id` int(11) NOT NULL
+                    `principal_id` int(11) NOT NULL,
+                    `business_days` text DEFAULT NULL
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");
 
                 //Estructura de tabla para la tabla `user_has_role

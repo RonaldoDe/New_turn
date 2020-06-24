@@ -10,4 +10,15 @@ class MasterCompany extends Model
     protected $fillable = [
         'id', 'name', 'description', 'nit', 'email', 'type_id', 'state_id'
     ];
+
+    public function scopeName($query, $name)
+    {
+        if(!empty($name)){
+            $query->where('company.name', 'LIKE', '%'.$name.'%');
+        }
+    }
+
+    protected $hidden = [
+        'created_at', 'updated_at',
+    ];
 }

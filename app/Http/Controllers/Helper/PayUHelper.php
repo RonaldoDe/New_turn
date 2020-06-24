@@ -4,13 +4,14 @@ namespace App\Http\Controllers\Helper;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use GuzzleHttp\Client;
 
 //prueba del path
 require_once public_path('lib/PayU.php');
 
 class PayUHelper extends Controller
 {
-    public static function paymentCredit($account_config, $payer_data, $buyer_data, $card_number, $expiration_date, $card_code, $price)
+    public static function paymentCredit($account_config, $payer_data, $buyer_data, $card_number, $expiration_date, $card_code, $price, $device, $cookie, $agent)
     {
 
         \PayU::$apiKey = $account_config['api_k']; //  Ingrese aquí su propio apiKey.
@@ -68,6 +69,8 @@ class PayUHelper extends Controller
             \PayUParameters::BUYER_POSTAL_CODE => $buyer_data->postal_code,
             \PayUParameters::BUYER_PHONE => $buyer_data->phone,
 
+            \PayUParameters::PROCESS_WITHOUT_CVV2 => true,
+
             // -- pagador --
             //Ingrese aquí el nombre del pagador.
             \PayUParameters::PAYER_NAME => $payer_data->full_name,
@@ -103,18 +106,18 @@ class PayUHelper extends Controller
             \PayUParameters::COUNTRY => \PayUCountries::CO,
 
             //Session id del device.
-            \PayUParameters::DEVICE_SESSION_ID => "vghs6tvkcle931686k1900o6e1",
+            \PayUParameters::DEVICE_SESSION_ID => $device,
             //IP del pagadador
             \PayUParameters::IP_ADDRESS => $_SERVER['REMOTE_ADDR'],
             //Cookie de la sesión actual.
-            \PayUParameters::PAYER_COOKIE=>"pt1t38347bs6jc9ruv2ecpv7o2",
+            \PayUParameters::PAYER_COOKIE=>date('Y-m-d\TH:i:s'),
             //Cookie de la sesión actual.
-            \PayUParameters::USER_AGENT=>"Mozilla/5.0 (Windows NT 5.1; rv:18.0) Gecko/20100101 Firefox/18.0"
+            \PayUParameters::USER_AGENT=>$agent
         );
 
         //solicitud de autorización y captura
         $response = \PayUPayments::doAuthorizationAndCapture($parameters);
-
+        # return $response;
         //  -- podrás obtener las propiedades de la respuesta --
 /*        if($response){
             $response->transactionResponse->orderId;
@@ -129,5 +132,101 @@ class PayUHelper extends Controller
             $response->transactionResponse->responseCode;
             $response->transactionResponse->responseMessage;
         }*/
+    }
+
+    public static function paymentApi()
+    {
+        # Fixed headers
+        $headers = [
+            'Content-Type' => 'application/json',
+            'Accept' => 'application/json',
+            'Content-Length' => 'length'
+        ];
+
+        $body = [
+            "test"=> false,
+            "language"=> "es",
+            "command"=> "TRANSACTION_RESPONSE_DETAIL",
+            "merchant"=> [
+               "apiLogin"=> "pRRXKOl8ikMmt9u",
+               "apiKey"=> "4Vj8eK4rloUd272L48hsrarnUA"
+            ],
+            "details"=> [
+                "transactionId" => "588e3092-6f11-4b77-badf-55695eaa8249"
+            ]
+        ];
+
+        /*$body = [
+                "language" => "es",
+                "command" => "SUBMIT_TRANSACTION",
+                "merchant" => [
+                   "apiLogin" => "pRRXKOl8ikMmt9u",
+                   "apiKey" => "4Vj8eK4rloUd272L48hsrarnUA"
+                ],
+                "transaction" => [
+                   "order" => [
+                      "accountId" => "512326",
+                      "referenceCode" => "testPanama1",
+                      "description" => "Test order Panama",
+                      "language" => "en",
+                      "notifyUrl" => "http =>//pruebaslap.xtrweb.com/lap/pruebconf.php",
+                      "signature" => "a2de78b35599986d28e9cd8d9048c45d",
+                      "shippingAddress" => [
+                         "country" => "PA"
+                      ],
+                      "buyer" => [
+                         "fullName" => "APPROVED",
+                         "emailAddress" => "test@payulatam.com",
+                         "dniNumber" => "1155255887",
+                         "shippingAddress" => [
+                            "street1" => "Calle 93 B 17 – 25",
+                            "city" => "Panama",
+                            "state" => "Panama",
+                            "country" => "PA",
+                            "postalCode" => "000000",
+                            "phone" => "5582254"
+                         ]
+                      ],
+                      "additionalValues" => [
+                         "TX_VALUE" => [
+                            "value" => 5,
+                            "currency" => "USD"
+                         ]
+                      ]
+                   ],
+                   "creditCard" => [
+                      "number" => "4111111111111111",
+                      "securityCode" => "123",
+                      "expirationDate" => "2018/08",
+                      "name" => "test"
+                   ],
+                   "type" => "AUTHORIZATION_AND_CAPTURE",
+                   "paymentMethod" => "VISA",
+                   "paymentCountry" => "PA",
+                   "payer" => [
+                      "fullName" => "APPROVED",
+                      "emailAddress" => "test@payulatam.com"
+                   ],
+                   "ipAddress" => "127.0.0.1",
+                   "cookie" => "cookie_52278879710130",
+                   "userAgent" => "Firefox",
+                   "extraParameters" => [
+                      "INSTALLMENTS_NUMBER" => 1,
+                      "RESPONSE_URL" => "http://www.misitioweb.com/respuesta.php"
+                   ]
+                ],
+                "test" => true
+        ];*/
+
+        # Basic url and maximum execution time
+        $connection = new Client([
+            'base_uri' => 'https://sandbox.api.payulatam.com/payments-api/4.0/',
+            'timeout' => 9.0
+        ]);
+
+        $get_order = $connection->post("service.cgi", ['headers' => $headers, 'body' => json_encode($body)]);
+        $get = json_decode($get_order->getBody()->getContents());
+        dd($get);
+        return $get;
     }
 }

@@ -8,6 +8,7 @@ use App\Models\CUser;
 use App\Models\Master\BranchOffice;
 use App\Models\Master\BranchUser;
 use App\Models\Role;
+use App\Models\UserRole;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -18,11 +19,11 @@ class MUsersController extends Controller
     public function __construct()
     {
         # the middleware param 1 = List user
-        $this->middleware('permission:/list_user')->only(['show', 'index']);
+        $this->middleware('permission:/m_list_user')->only(['show', 'index']);
         # the middleware param 2 = Create user
-        $this->middleware('permission:/create_user')->only('store');
+        $this->middleware('permission:/m_create_user')->only('store');
         # the middleware param 3 = Update user
-        $this->middleware('permission:/update_user')->only(['update', 'destroy']);
+        $this->middleware('permission:/m_update_user')->only(['update', 'destroy']);
     }
 
     /**
@@ -60,7 +61,7 @@ class MUsersController extends Controller
             $branch = BranchOffice::where('id', '!=', 1)->find(request('branch_id'));
 
             if(!$branch){
-                return response()->json(['response' => ['error' => ['Sucursal no encontrada']]], 404);
+                return response()->json(['response' => ['error' => ['Sucursal no encontrada']]], 400);
             }
 
             $set_connection = SetConnectionHelper::setByDBName($branch->db_name);
@@ -115,7 +116,7 @@ class MUsersController extends Controller
             $branch = BranchOffice::where('id', '!=', 1)->find(request('branch_id'));
 
             if(!$branch){
-                return response()->json(['response' => ['error' => ['Sucursal no encontrada']]], 404);
+                return response()->json(['response' => ['error' => ['Sucursal no encontrada']]], 400);
             }
 
             $set_connection = SetConnectionHelper::setByDBName($branch->db_name);
@@ -170,7 +171,7 @@ class MUsersController extends Controller
                     }
 
                 }else{
-                    return response()->json(['response' => ['error' => ['Ususario no encontrado']]], 404);
+                    return response()->json(['response' => ['error' => ['Ususario no encontrado']]], 400);
                 }
             }catch(Exception $e){
                 DB::connection($branch->db_name)->rollback();
@@ -210,7 +211,7 @@ class MUsersController extends Controller
                     }
 
                 }else{
-                    return response()->json(['response' => ['error' => ['Ususario no encontrado']]], 404);
+                    return response()->json(['response' => ['error' => ['Ususario no encontrado']]], 400);
                 }
             }catch(Exception $e){
                 DB::rollback();
@@ -254,7 +255,7 @@ class MUsersController extends Controller
             $branch = BranchOffice::where('id', '!=', 1)->find(request('branch_id'));
 
             if(!$branch){
-                return response()->json(['response' => ['error' => ['Sucursal no encontrada']]], 404);
+                return response()->json(['response' => ['error' => ['Sucursal no encontrada']]], 400);
             }
 
             $set_connection = SetConnectionHelper::setByDBName($branch->db_name);
@@ -292,7 +293,7 @@ class MUsersController extends Controller
             'phone' => 'required|max:20',
             'address' => 'required|max:20',
             'dni' => 'required|max:20',
-            'email' => 'required|email|max:80|email',
+            'email' => 'required|email|max:80',
             'state_id' => 'required|integer',
             'add_array' => 'bail|array',
             'delete_array' => 'bail|array',
@@ -309,7 +310,7 @@ class MUsersController extends Controller
             $branch = BranchOffice::where('id', '!=', 1)->find(request('branch_id'));
 
             if(!$branch){
-                return response()->json(['response' => ['error' => ['Sucursal no encontrada']]], 404);
+                return response()->json(['response' => ['error' => ['Sucursal no encontrada']]], 400);
             }
 
             $set_connection = SetConnectionHelper::setByDBName($branch->db_name);
@@ -319,7 +320,7 @@ class MUsersController extends Controller
             $user = CUser::on($branch->db_name)->find($id);
             # Here we check if the user does not exist
             if(!$user){
-                return response()->json(['response' => ['error' => ['Ususario no encontrado']]], 404);
+                return response()->json(['response' => ['error' => ['Ususario no encontrado']]], 400);
             }
 
             DB::beginTransaction();
@@ -339,7 +340,7 @@ class MUsersController extends Controller
 
                 # Here we check if the user does not exist
                 if(!$principal_user){
-                    return response()->json(['response' => ['error' => ['Ususario no encontrado']]], 404);
+                    return response()->json(['response' => ['error' => ['Ususario no encontrado']]], 400);
                 }
 
                 # Here we update the basic user data
@@ -388,7 +389,7 @@ class MUsersController extends Controller
             # Here we return success.
             DB::commit();
             DB::connection($branch->db_name)->commit();
-            return response()->json(['response' => 'Usuario actualizado con exito.'], 200);
+            return response()->json(['response' => 'Success.'], 200);
 
         }else{
             # Here we get the instance of an user
@@ -396,7 +397,7 @@ class MUsersController extends Controller
 
             # Here we check if the user does not exist
             if(!$user){
-                return response()->json(['response' => ['error' => ['Ususario no encontrado']]], 404);
+                return response()->json(['response' => ['error' => ['Ususario no encontrado']]], 400);
             }
 
 
@@ -437,7 +438,7 @@ class MUsersController extends Controller
             $user->update();
             # Here we return success.
             DB::commit();
-            return response()->json(['response' => 'Usuario actualizado con exito.'], 200);
+            return response()->json(['response' => 'Success'], 200);
         }
     }
 
@@ -469,7 +470,7 @@ class MUsersController extends Controller
             $branch = BranchOffice::where('id', '!=', 1)->find(request('branch_id'));
 
             if(!$branch){
-                return response()->json(['response' => ['error' => ['Sucursal no encontrada']]], 404);
+                return response()->json(['response' => ['error' => ['Sucursal no encontrada']]], 400);
             }
 
             $set_connection = SetConnectionHelper::setByDBName($branch->db_name);

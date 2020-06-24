@@ -8,6 +8,6 @@ class Service extends Model
 {
     protected $table = 'service_list';
     protected $fillable = [
-        'name', 'description', 'time', 'price'
+        'name', 'description', 'time', 'price', 'opening_hours', 'state'
     ];
 }

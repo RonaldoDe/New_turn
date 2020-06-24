@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Master\BranchOffice;
 use App\Models\Master\MasterCompany;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class MCompanyController extends Controller
 {
@@ -23,7 +24,8 @@ class MCompanyController extends Controller
      */
     public function index()
     {
-        $companies = MasterCompany::where('id', '!=', 1)->get();
+        $companies = MasterCompany::name(request('name'))
+        ->where('id', '!=', 1)->get();
 
         foreach ($companies as $company) {
             $branches = BranchOffice::where('company_id', $company->id)
@@ -54,6 +56,12 @@ class MCompanyController extends Controller
         if($validator->fails())
         {
           return response()->json(['response' => ['error' => $validator->errors()->all()]],400);
+        }
+
+        $type = DB::table('company_type')->where('id', '!=', 1)->find(request('type_id'));
+
+        if(!$type){
+            return response()->json(['response' => ['error' => ['Tipo de empresa no encontrada.']]], 400);
         }
 
         $company = MasterCompany::create([
@@ -113,7 +121,13 @@ class MCompanyController extends Controller
         $company = MasterCompany::where('id', '!=', 1)->find($id);
 
         if(!$company){
-            return response()->json(['response' => ['error' => ['Empresa no encontrada.']]], 404);
+            return response()->json(['response' => ['error' => ['Empresa no encontrada.']]], 400);
+        }
+
+        $type = DB::table('company_type')->where('id', '!=', 1)->find(request('type_id'));
+
+        if(!$type){
+            return response()->json(['response' => ['error' => ['Tipo de empresa no encontrada.']]], 400);
         }
 
         $company->name = request('name');

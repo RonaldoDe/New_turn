@@ -7,10 +7,13 @@ use App\Http\Controllers\Helper\NewDatabaseHelper;
 use App\Http\Controllers\Helper\SetConnectionHelper;
 use App\Models\CompanyData;
 use App\Models\CUser;
+use App\Models\Grooming\GCompanyData;
 use App\Models\Master\BranchOffice;
 use App\Models\Master\BranchUser;
+use App\Models\Master\MasterCompany;
 use App\Models\UserRole;
 use App\User;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -34,6 +37,8 @@ class MBranchOfficeController extends Controller
         $branches = BranchOffice::select('branch_office.id', 'branch_office.name', 'branch_office.description', 'branch_office.nit', 'branch_office.email', 'branch_office.city', 'branch_office.longitude', 'branch_office.latitude', 'branch_office.address', 'branch_office.phone', 'branch_office.close', 'branch_office.hours_24', 'branch_office.state_id', 'branch_office.company_id', 'c.name as company_name', 'c.description as company_description', 'c.nit as company_nit')
         ->join('company as c', 'branch_office.company_id', 'c.id')
         ->where('branch_office.id', '!=', 1)
+        ->name(request('name'))
+        ->nit(request('nit'))
         ->get();
 
         return response()->json(['response' => $branches], 200);
@@ -71,7 +76,8 @@ class MBranchOfficeController extends Controller
         while(TRUE){
             $lower = strtolower(request('name'));
             $replace = str_replace(' ', '_', $lower);
-            $db_name = $replace.'_'.rand(1000, 99999);
+            $db_name_rand = $replace.'_'.rand(1000, 99999);
+            $db_name = 'db_'.$db_name_rand;
             $name_exists = BranchOffice::where('db_name', $db_name)->first();
             # If there is not, we exit the loop
             if (!$name_exists){
@@ -121,152 +127,360 @@ class MBranchOfficeController extends Controller
                 'state_id' => 1
             ]);
 
-            # Create the phatons users -------------------------------------------
-            $phanto_1 = User::create([
-                'name' => 'First entry',
-                'last_name' => '-',
-                'phone' => request('phone'),
-                'address' => request('address'),
-                'dni' => request('nit'),
-                'email' => '1-'.request('email'),
-                'password' => bcrypt('123456'),
-                'phanton_user' => 1,
-                'state_id' => 1
-            ]);
+            $company_type = MasterCompany::find(request('company_id'));
 
-            $phanto_2 = User::create([
-                'name' => 'Second entry',
-                'last_name' => '-',
-                'phone' => request('phone'),
-                'address' => request('address'),
-                'dni' => request('nit'),
-                'email' => '2-'.request('email'),
-                'password' => bcrypt('123456'),
-                'phanton_user' => 1,
-                'state_id' => 1
-            ]);
+            if($company_type->type_id == 2){
 
-            $phanto_3 = User::create([
-                'name' => 'Third entry',
-                'last_name' => '-',
-                'phone' => request('phone'),
-                'address' => request('address'),
-                'dni' => request('nit'),
-                'email' => '3-'.request('email'),
-                'password' => bcrypt('123456'),
-                'phanton_user' => 1,
-                'state_id' => 1
-            ]);
-
-            # /Create the phatons users -------------------------------------------
-
-            $branch_user = BranchUser::insert([
-                [
-                    'user_id' => $principal_user->id,
-                    'branch_id' => $branch->id
-                ],[
-                    'user_id' => $phanto_1->id,
-                    'branch_id' => $branch->id
-                ],[
-                    'user_id' => $phanto_2->id,
-                    'branch_id' => $branch->id
-                ],[
-                    'user_id' => $phanto_3->id,
-                    'branch_id' => $branch->id
-                ],
-            ]);
-
-            # User info
-            $data = array();
-
-            # Create db
-            $new_db = NewDatabaseHelper::newBarberShopDatabase($db_name, $data);
-
-            #Set new connection
-            $set_new_connection = SetConnectionHelper::setByDBName($branch->db_name);
-
-            if($new_db != 1){
-                return response()->json(['response' => ['error' => [$new_db]]], 400);
-            }
-
-            DB::connection($branch->db_name)->beginTransaction();
-            # Add user to company
-            $user = CUser::on($branch->db_name)->create([
-                'name' => request('name'),
-                'last_name' => request('name'),
-                'phone' => request('phone'),
-                'address' => request('address'),
-                'dni' => request('nit'),
-                'email' => request('email'),
-                'phanton_user' => 0,
-                'principal_id' => $principal_user->id,
-                'state_id' => 1
-            ]);
-
-            $company_data = CompanyData::on($branch->db_name)->create([
-                'turns_number' => 0,
-                'min_turns' => 0,
-                'current_return' => 0,
-                'company_id' => $branch->id,
-                'api_k' => null,
-                'api_l' => null,
-                'mer_id' => null,
-                'acc_id' => null,
-                'pay_on_line' => 0,
-            ]);
-
-            # Add user to company phantons
-            $user_phnton = CUser::on($branch->db_name)->insert([
-                [
+                # Create the phatons users -------------------------------------------
+                $phanto_1 = User::create([
                     'name' => 'First entry',
                     'last_name' => '-',
                     'phone' => request('phone'),
                     'address' => request('address'),
                     'dni' => request('nit'),
                     'email' => '1-'.request('email'),
+                    'password' => bcrypt('123456'),
                     'phanton_user' => 1,
-                    'state_id' => 1,
-                    'principal_id' => $phanto_1->id,
-                ],[
+                    'state_id' => 1
+                ]);
+
+                $phanto_2 = User::create([
                     'name' => 'Second entry',
                     'last_name' => '-',
                     'phone' => request('phone'),
                     'address' => request('address'),
                     'dni' => request('nit'),
                     'email' => '2-'.request('email'),
+                    'password' => bcrypt('123456'),
                     'phanton_user' => 1,
-                    'state_id' => 1,
-                    'principal_id' => $phanto_2->id,
-                ],[
+                    'state_id' => 1
+                ]);
+
+                $phanto_3 = User::create([
                     'name' => 'Third entry',
                     'last_name' => '-',
                     'phone' => request('phone'),
                     'address' => request('address'),
                     'dni' => request('nit'),
                     'email' => '3-'.request('email'),
+                    'password' => bcrypt('123456'),
                     'phanton_user' => 1,
-                    'state_id' => 1,
-                    'principal_id' => $phanto_3->id,
-                ]
-            ]);
+                    'state_id' => 1
+                ]);
 
-            $user_role = UserRole::on($branch->db_name)->create([
-                'user_id' => $user->id,
-                'role_id' => 1
-            ]);
+                # /Create the phatons users -------------------------------------------
 
+                $branch_user = BranchUser::insert([
+                    [
+                        'user_id' => $principal_user->id,
+                        'branch_id' => $branch->id,
+                        'created_at' => date('Y-m-d'),
+                        'updated_at' => date('Y-m-d')
+                    ],[
+                        'user_id' => $phanto_1->id,
+                        'branch_id' => $branch->id,
+                        'created_at' => date('Y-m-d'),
+                        'updated_at' => date('Y-m-d')
+                    ],[
+                        'user_id' => $phanto_2->id,
+                        'branch_id' => $branch->id,
+                        'created_at' => date('Y-m-d'),
+                        'updated_at' => date('Y-m-d')
+                    ],[
+                        'user_id' => $phanto_3->id,
+                        'branch_id' => $branch->id,
+                        'created_at' => date('Y-m-d'),
+                        'updated_at' => date('Y-m-d')
+                    ],
+                ]);
+
+                # User info
+                $data = array();
+                # Create Barber Shop db
+                $new_db = NewDatabaseHelper::newBarberShopDatabase($db_name, $data);
+
+                #Set new connection
+                $set_new_connection = SetConnectionHelper::setByDBName($branch->db_name);
+
+                if($new_db != 1){
+                    return response()->json(['response' => ['error' => [$new_db]]], 400);
+                }
+
+                # Add user to company
+                $user = CUser::on($branch->db_name)->create([
+                    'name' => request('name'),
+                    'last_name' => request('name'),
+                    'phone' => request('phone'),
+                    'address' => request('address'),
+                    'dni' => request('nit'),
+                    'email' => request('email'),
+                    'phanton_user' => 0,
+                    'principal_id' => $principal_user->id,
+                    'state_id' => 1
+                ]);
+
+                $company_data = CompanyData::on($branch->db_name)->create([
+                    'turns_number' => 0,
+                    'min_turns' => 0,
+                    'current_return' => 0,
+                    'company_id' => $branch->id,
+                    'api_k' => null,
+                    'api_l' => null,
+                    'mer_id' => null,
+                    'acc_id' => null,
+                    'pay_on_line' => 0,
+                ]);
+
+                # Add user to company phantons
+                $user_phnton = CUser::on($branch->db_name)->insert([
+                    [
+                        'name' => 'First entry',
+                        'last_name' => '-',
+                        'phone' => request('phone'),
+                        'address' => request('address'),
+                        'dni' => request('nit'),
+                        'email' => '1-'.request('email'),
+                        'phanton_user' => 1,
+                        'state_id' => 1,
+                        'principal_id' => $phanto_1->id,
+                        'created_at' => date('Y-m-d H:i:s'),
+                        'updated_at' => date('Y-m-d H:i:s')
+                    ],[
+                        'name' => 'Second entry',
+                        'last_name' => '-',
+                        'phone' => request('phone'),
+                        'address' => request('address'),
+                        'dni' => request('nit'),
+                        'email' => '2-'.request('email'),
+                        'phanton_user' => 1,
+                        'state_id' => 1,
+                        'principal_id' => $phanto_2->id,
+                        'created_at' => date('Y-m-d H:i:s'),
+                        'updated_at' => date('Y-m-d H:i:s')
+                    ],[
+                        'name' => 'Third entry',
+                        'last_name' => '-',
+                        'phone' => request('phone'),
+                        'address' => request('address'),
+                        'dni' => request('nit'),
+                        'email' => '3-'.request('email'),
+                        'phanton_user' => 1,
+                        'state_id' => 1,
+                        'principal_id' => $phanto_3->id,
+                        'created_at' => date('Y-m-d H:i:s'),
+                        'updated_at' => date('Y-m-d H:i:s')
+                    ]
+                ]);
+
+                $user_role = UserRole::on($branch->db_name)->insert([
+                    [
+                        'user_id' => $user->id,
+                        'role_id' => 1,
+                        'created_at' => date('Y-m-d H:i:s'),
+                        'updated_at' => date('Y-m-d H:i:s')
+                    ],[
+                        'user_id' => 2,
+                        'role_id' => 2,
+                        'created_at' => date('Y-m-d H:i:s'),
+                        'updated_at' => date('Y-m-d H:i:s')
+                    ],[
+                        'user_id' => 3,
+                        'role_id' => 2,
+                        'created_at' => date('Y-m-d H:i:s'),
+                        'updated_at' => date('Y-m-d H:i:s')
+                    ],[
+                        'user_id' => 4,
+                        'role_id' => 2,
+                        'created_at' => date('Y-m-d H:i:s'),
+                        'updated_at' => date('Y-m-d H:i:s')
+                    ]
+                ]);
+
+                $data = array(
+                    'Admin' => $user->email,
+                    'firsr_acount' => $phanto_1->email,
+                    'second_acount' => $phanto_2->email,
+                    'third_acount' => $phanto_3->email,
+                );
+
+            }else if($company_type->type_id == 3){
+                # Create the phatons users -------------------------------------------
+                $phanto_1 = User::create([
+                    'name' => 'First entry',
+                    'last_name' => '-',
+                    'phone' => request('phone'),
+                    'address' => request('address'),
+                    'dni' => request('nit'),
+                    'email' => '1-'.request('email'),
+                    'password' => bcrypt('123456'),
+                    'phanton_user' => 1,
+                    'state_id' => 1
+                ]);
+
+                $phanto_2 = User::create([
+                    'name' => 'Second entry',
+                    'last_name' => '-',
+                    'phone' => request('phone'),
+                    'address' => request('address'),
+                    'dni' => request('nit'),
+                    'email' => '2-'.request('email'),
+                    'password' => bcrypt('123456'),
+                    'phanton_user' => 1,
+                    'state_id' => 1
+                ]);
+
+                $phanto_3 = User::create([
+                    'name' => 'Third entry',
+                    'last_name' => '-',
+                    'phone' => request('phone'),
+                    'address' => request('address'),
+                    'dni' => request('nit'),
+                    'email' => '3-'.request('email'),
+                    'password' => bcrypt('123456'),
+                    'phanton_user' => 1,
+                    'state_id' => 1
+                ]);
+
+                # /Create the phatons users -------------------------------------------
+
+                $branch_user = BranchUser::insert([
+                    [
+                        'user_id' => $principal_user->id,
+                        'branch_id' => $branch->id,
+                        'created_at' => date('Y-m-d'),
+                        'updated_at' => date('Y-m-d')
+                    ],[
+                        'user_id' => $phanto_1->id,
+                        'branch_id' => $branch->id,
+                        'created_at' => date('Y-m-d'),
+                        'updated_at' => date('Y-m-d')
+                    ],[
+                        'user_id' => $phanto_2->id,
+                        'branch_id' => $branch->id,
+                        'created_at' => date('Y-m-d'),
+                        'updated_at' => date('Y-m-d')
+                    ],[
+                        'user_id' => $phanto_3->id,
+                        'branch_id' => $branch->id,
+                        'created_at' => date('Y-m-d'),
+                        'updated_at' => date('Y-m-d')
+                    ],
+                ]);
+
+
+
+                # User info
+                $data = array();
+
+                # Create Grooming db
+                $new_db = NewDatabaseHelper::newGroomingDatabase($db_name, $data);
+                #Set new connection
+                $set_new_connection = SetConnectionHelper::setByDBName($branch->db_name);
+
+                if($new_db != 1){
+                    return response()->json(['response' => ['error' => [$new_db]]], 400);
+                }
+
+                # Add user to company
+                $user = CUser::on($branch->db_name)->create([
+                    'name' => request('name'),
+                    'last_name' => request('name'),
+                    'phone' => request('phone'),
+                    'address' => request('address'),
+                    'dni' => request('nit'),
+                    'email' => request('email'),
+                    'phanton_user' => 0,
+                    'principal_id' => $principal_user->id,
+                    'state_id' => 1
+                ]);
+
+                $company_data = GCompanyData::on($branch->db_name)->create([
+                    'company_id' => $branch->id,
+                    'api_k' => null,
+                    'api_l' => null,
+                    'mer_id' => null,
+                    'acc_id' => null,
+                    'pay_on_line' => 0,
+                ]);
+
+                # Add user to company phantons
+                $user_phnton = CUser::on($branch->db_name)->insert([
+                    [
+                        'name' => 'First entry',
+                        'last_name' => '-',
+                        'phone' => request('phone'),
+                        'address' => request('address'),
+                        'dni' => request('nit'),
+                        'email' => '1-'.request('email'),
+                        'phanton_user' => 1,
+                        'state_id' => 1,
+                        'principal_id' => $phanto_1->id,
+                        'created_at' => date('Y-m-d H:i:s'),
+                        'updated_at' => date('Y-m-d H:i:s')
+                    ],[
+                        'name' => 'Second entry',
+                        'last_name' => '-',
+                        'phone' => request('phone'),
+                        'address' => request('address'),
+                        'dni' => request('nit'),
+                        'email' => '2-'.request('email'),
+                        'phanton_user' => 1,
+                        'state_id' => 1,
+                        'principal_id' => $phanto_2->id,
+                        'created_at' => date('Y-m-d H:i:s'),
+                        'updated_at' => date('Y-m-d H:i:s')
+                    ],[
+                        'name' => 'Third entry',
+                        'last_name' => '-',
+                        'phone' => request('phone'),
+                        'address' => request('address'),
+                        'dni' => request('nit'),
+                        'email' => '3-'.request('email'),
+                        'phanton_user' => 1,
+                        'state_id' => 1,
+                        'principal_id' => $phanto_3->id,
+                        'created_at' => date('Y-m-d H:i:s'),
+                        'updated_at' => date('Y-m-d H:i:s')
+                    ]
+                ]);
+
+                $user_role = UserRole::on($branch->db_name)->insert([
+                    [
+                        'user_id' => $user->id,
+                        'role_id' => 1,
+                        'created_at' => date('Y-m-d H:i:s'),
+                        'updated_at' => date('Y-m-d H:i:s')
+                    ],[
+                        'user_id' => 2,
+                        'role_id' => 2,
+                        'created_at' => date('Y-m-d H:i:s'),
+                        'updated_at' => date('Y-m-d H:i:s')
+                    ],[
+                        'user_id' => 3,
+                        'role_id' => 2,
+                        'created_at' => date('Y-m-d H:i:s'),
+                        'updated_at' => date('Y-m-d H:i:s')
+                    ],[
+                        'user_id' => 4,
+                        'role_id' => 2,
+                        'created_at' => date('Y-m-d H:i:s'),
+                        'updated_at' => date('Y-m-d H:i:s')
+                    ]
+                ]);
+
+                $data = array(
+                    'Admin' => $user->email,
+                    'firsr_acount' => $phanto_1->email,
+                    'second_acount' => $phanto_2->email,
+                    'third_acount' => $phanto_3->email,
+                );
+            }
         }catch(Exception $e){
             DB::rollback();
-            if($new_db != 1 && $new_db != 'not-join'){
-                DB::connection($branch->db_name)->rollback();
-            }else if($new_db == 1){
-                DB::connection($branch->db_name)->rollback();
-            }
         }
 
-        DB::connection($branch->db_name)->commit();
         DB::commit();
-        return response()->json(['response' => 'Sucursal creada con exito'], 200);
+        return response()->json(['response' => 'Sucursal creada con exito', 'data' => $data], 200);
     }
 
     /**

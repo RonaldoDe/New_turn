@@ -27,6 +27,10 @@ class CheckConnectionMiddleware
         ->where('branch_user.user_id', $user->id)
         ->first();
 
+        if(!$branch){
+            return response()->json(['response' => ['error' => ['Usted no pertenece a una empresa.']]], 400);
+        }
+
         $configDb = [
             'driver'      => 'mysql',
             'host'        => env('DB_HOST', '127.0.0.1'),

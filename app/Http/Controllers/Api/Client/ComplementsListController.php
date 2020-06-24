@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\Client;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Helper\HelpersData;
 use App\Http\Controllers\Helper\SetConnectionHelper;
 use App\Models\CUser;
 use App\Models\Grooming\ClientService;
@@ -87,12 +88,18 @@ class ComplementsListController extends Controller
 
             $date_end = date('Y-m-d H:i:s', strtotime('+'.$service->unit_per_hour.' minute', strtotime(date(request('date_start')))));
 
+            $validate_business_days = HelpersData::employeeBusinessDays(request('date_start'), $date_end, $service->id, $branch->db_name);
+
+            if(count($validate_business_days) < 1){
+                return response()->json(['response' => ['error' => ['No hay empleados disponibles para la hora solicitada']]], 400);
+            }
             $employees = CUser::on($branch->db_name)->select('users.id','users.name', 'users.last_name')
             ->join('user_has_role as ur', 'users.id', 'ur.user_id')
             ->join('employee_type_employee as ete', 'users.id', 'ete.employee_id')
             ->join('employee_type_service as ets', 'ete.employee_type_id', 'ets.employee_type_id')
             ->where('ets.service_id', $service->id)
             ->where('ur.role_id', 2)
+            ->whereIn('users.id', $validate_business_days)
             ->get();
 
             $collect = collect($employees)->pluck('id');

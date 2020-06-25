@@ -117,7 +117,7 @@ class PayUHelper extends Controller
 
         //solicitud de autorización y captura
         $response = \PayUPayments::doAuthorizationAndCapture($parameters);
-        # return $response;
+        return response()->json($response, 400);
         //  -- podrás obtener las propiedades de la respuesta --
 /*        if($response){
             $response->transactionResponse->orderId;

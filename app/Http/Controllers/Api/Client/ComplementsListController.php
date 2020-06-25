@@ -72,9 +72,9 @@ class ComplementsListController extends Controller
                 return response()->json(['response' => ['error' => 'Servicio no encontrado.']], 400);
             }
 
-            $date_end = date('Y-m-d H:i:s', strtotime('+'.$service->time.' minute', strtotime(date(request('date_start')))));
+            $date_end = date('Y-m-d H:i:s', strtotime('+'.$service->time.' minute', strtotime(date(date('Y-m-d H:i:s')))));
 
-            $validate_business_days = HelpersData::employeeBusinessDays(request('date_start'), $date_end, $service->id, $branch->db_name);
+            $validate_business_days = HelpersData::employeeBusinessDays(date('Y-m-d H:i:s'), $date_end, $service->id, $branch->db_name);
 
             if(count($validate_business_days) < 1){
                 return response()->json(['response' => ['error' => ['No hay empleados disponibles para la hora solicitada']]], 400);

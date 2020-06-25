@@ -87,7 +87,7 @@ class ComplementsListController extends Controller
             ->name(request('name'))
             ->where('ets.service_id', $service->id)
             ->where('ur.role_id', 2)
-            ->whereIn('users.id', $validate_business_days)
+            #->whereIn('users.id', $validate_business_days)
             ->get();
         }else{
 

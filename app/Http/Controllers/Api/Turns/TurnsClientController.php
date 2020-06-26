@@ -158,8 +158,8 @@ class TurnsClientController extends Controller
 
 
                     $payU = PayUHelper::paymentCredit($account_config, json_decode($payment_data->data), $user, request('credit_card_number'), request('credit_card_expiration_date'), request('credit_card_security_code'), $service_to_pay->price, request('device'), request('cookie'), request('agent'));
-                    if($payU->transactionResponse->state == 'DECLINED'){
-                        return response()->json(['response' => ['error' => ['Error al realizar el pago']]], 400);
+                    if($payU->transactionResponse->state != 'APPROVED'){
+                        return response()->json(['response' => ['error' => ['Error al realizar el pago'], 'date' => [$payU]]], 400);
                     }
                     $log = TransactionLog::create([
                         'user_id' => $user->id,

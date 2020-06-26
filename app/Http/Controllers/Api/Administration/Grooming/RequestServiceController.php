@@ -197,6 +197,7 @@ class RequestServiceController extends Controller
                     $service_to_pay = Service::on($branch->db_name)->find(request('service_id'));
                     $price = $service_to_pay->price_per_hour;
                     $payU = PayUHelper::paymentCredit($account_config, json_decode($payment_data->data), $user, request('credit_card_number'), request('credit_card_expiration_date'), request('credit_card_security_code'), $price, request('device'), request('cookie'), request('agent'));
+                    return response()->json($payU, 400);
                     $log = TransactionLog::create([
                         'user_id' => $user->id,
                         'payment_id' => $payment_data->id,

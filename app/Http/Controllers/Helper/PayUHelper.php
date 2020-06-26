@@ -11,7 +11,7 @@ require_once public_path('lib/PayU.php');
 
 class PayUHelper extends Controller
 {
-    public static function paymentCredit($account_config, $payer_data, $buyer_data, $card_number, $expiration_date, $card_code, $price, $device, $cookie, $agent)
+    public static function paymentCredit($account_config, $payer_data, $buyer_data, $card_number, $expiration_date, $card_code, $price, $device, $cookie, $agent, $description)
     {
 
         \PayU::$apiKey = $account_config['api_k']; //  Ingrese aquí su propio apiKey.
@@ -34,7 +34,7 @@ class PayUHelper extends Controller
             //Ingrese aquí el código de referencia.
             \PayUParameters::REFERENCE_CODE => $reference,
             //Ingrese aquí la descripción.
-            \PayUParameters::DESCRIPTION => "Primer pago",
+            \PayUParameters::DESCRIPTION => $description,
 
             // -- Valores --
             //Ingrese aquí el valor.

@@ -60,7 +60,7 @@ class GServiceController extends Controller
             'description' => request('description'),
             'price_per_hour' => request('price_per_hour'),
             'unit_per_hour' => request('unit_per_hour'),
-            'hours_max' => request('hours_max'),
+            'hours_max' => 0,
             'wait_time' => request('wait_time'),
             'state' => request('state'),
             'opening_hours' => json_encode(request('opening_hours')),

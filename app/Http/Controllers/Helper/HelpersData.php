@@ -53,6 +53,7 @@ class HelpersData extends Controller
         }else if($pass_end == 0){
             return 'La fecha final no se encuentra disponible para las horas habiles.';
         }
+
         return 1;
 
     }
@@ -94,7 +95,6 @@ class HelpersData extends Controller
 
     public static function employeeBusinessDays($date_start, $date_end, $service, $db)
     {
-
         $employees = CUser::on($db)->select('users.id','users.name', 'users.last_name', 'users.business_days')
         ->join('user_has_role as ur', 'users.id', 'ur.user_id')
         ->join('employee_type_employee as ete', 'users.id', 'ete.employee_id')
@@ -115,6 +115,7 @@ class HelpersData extends Controller
         $end_hout = date('H:i:s', strtotime($date_end));
 
         $employees_array = array();
+
         foreach ($employees as $employee) {
             $opening = json_decode($employee->business_days);
             $pass_start = 0;
@@ -144,7 +145,6 @@ class HelpersData extends Controller
                     }
                 }
             }
-
             if($pass_start > 0 && $pass_end > 0){
                 array_push($employees_array, $employee->id);
             }

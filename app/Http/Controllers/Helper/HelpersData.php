@@ -103,7 +103,6 @@ class HelpersData extends Controller
         ->where('ur.role_id', 2)
         ->get();
 
-        dd($employees);
 
 
         # Day in string Examnple (Monday)
@@ -145,6 +144,7 @@ class HelpersData extends Controller
                     }
                 }
             }
+            dd([$pass_start, $pass_end]);
             if($pass_start > 0 && $pass_end > 0){
                 array_push($employees_array, $employee->id);
             }

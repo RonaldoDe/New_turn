@@ -113,7 +113,6 @@ class ComplementsListController extends Controller
             if($validate_business_days == 1){
                 return response()->json(['response' => ['error' => ['No hay empleados disponibles para la hora solicitada']]], 400);
             }
-            dd($validate_business_days);
             $employees = CUser::on($branch->db_name)->select('users.id','users.name', 'users.last_name')
             ->join('user_has_role as ur', 'users.id', 'ur.user_id')
             ->join('employee_type_employee as ete', 'users.id', 'ete.employee_id')
@@ -122,6 +121,8 @@ class ComplementsListController extends Controller
             ->where('ur.role_id', 2)
             ->whereIn('users.id', $validate_business_days)
             ->get();
+
+            return response()->json(['response' => [$employees, $validate_business_days]], 400);
 
             $collect = collect($employees)->pluck('id');
 

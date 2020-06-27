@@ -198,7 +198,7 @@ class UserController extends Controller
             }
 
             }else{
-                return response()->json(['response' => ['error' => ['Ususario no encontrado']]], 404);
+                return response()->json(['response' => ['error' => ['Ususario no encontrado']]], 400);
             }
         }catch(Exception $e){
             DB::connection('connectionDB')->rollback();
@@ -224,7 +224,7 @@ class UserController extends Controller
 
         # Validate if the user exists
         if(!$user){
-            return response()->json(['response' => ['error' => ['Ususario no encontrado']]], 404);
+            return response()->json(['response' => ['error' => ['Ususario no encontrado']]], 400);
         }
 
         # Get user roles
@@ -315,7 +315,7 @@ class UserController extends Controller
 
             # Here we check if the principal user does not exist
             if(!$principal_user){
-                return response()->json(['response' => ['error' => ['Ususario no encontrado']]], 404);
+                return response()->json(['response' => ['error' => ['Ususario no encontrado']]], 400);
             }
 
             # Here we update the company user user data
@@ -405,7 +405,7 @@ class UserController extends Controller
 
         # Validate if the user exists
         if(!$user){
-            return response()->json(['response' => ['error' => ['Ususario no encontrado']]], 404);
+            return response()->json(['response' => ['error' => ['Ususario no encontrado']]], 400);
         }
 
         # Get user roles

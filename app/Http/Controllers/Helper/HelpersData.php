@@ -103,7 +103,7 @@ class HelpersData extends Controller
         ->where('ur.role_id', 2)
         ->get();
 
-
+        dd($employees);
 
 
         # Day in string Examnple (Monday)

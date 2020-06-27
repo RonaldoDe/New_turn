@@ -146,11 +146,13 @@ class HelpersData extends Controller
             }
             if($pass_start > 0 || $pass_end > 0){
                 array_push($employees_array, $employee->id);
+                return $employees_array;
+            }else{
+                return 0;
             }
         }
 
 
-        return $employees_array;
 
     }
 }

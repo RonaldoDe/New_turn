@@ -130,7 +130,7 @@ class HelpersData extends Controller
                     if($start == $key){
                         foreach ($value as $date) {
 
-                            dd([$date, $start_hout]);
+                            dd([$date, $start_hout, $date_start]);
 
                             if($start_hout >= $date->date_start && $start_hout <= $date->date_end){
                                 $pass_start += 1;

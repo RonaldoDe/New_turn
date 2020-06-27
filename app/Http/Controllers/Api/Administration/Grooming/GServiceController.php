@@ -44,7 +44,7 @@ class GServiceController extends Controller
             'description' => 'required',
             'price_per_hour' => 'bail|required|integer',
             'unit_per_hour' => 'bail|required|integer',
-            'hours_max' => 'bail|integer',
+            'hours_max' => 'bail',
             'wait_time' => 'bail|required|integer',
             'opening_hours' => 'bail|required',
             'state' => 'bail|required',

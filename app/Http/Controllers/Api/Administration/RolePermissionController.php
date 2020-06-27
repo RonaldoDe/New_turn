@@ -88,7 +88,7 @@ class RolePermissionController extends Controller
 
         # Here we check if the role does not exist
         if(!$role){
-            return response()->json(['response' => ['error' => ['Rol no encontrado']]], 404);
+            return response()->json(['response' => ['error' => ['Rol no encontrado']]], 400);
         }
 
         DB::beginTransaction();

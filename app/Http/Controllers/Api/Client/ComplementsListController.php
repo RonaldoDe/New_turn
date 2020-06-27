@@ -45,7 +45,7 @@ class ComplementsListController extends Controller
         $validator=\Validator::make($request->all(),[
             'branch_id' => 'bail|required|exists:branch_office,id',
             'service_id' => 'bail|required|integer',
-            'date_start' => 'bail|required|date_format:"Y-m-d H:i:s"|date',
+            'date_start' => 'bail|date_format:"Y-m-d H:i:s"|date',
             'name' => 'bail'
         ]);
         if($validator->fails())
@@ -89,6 +89,9 @@ class ComplementsListController extends Controller
             ->where('ur.role_id', 2)
             #->whereIn('users.id', $validate_business_days)
             ->get();
+
+            return response()->json(['response' => $employees], 200);
+
         }else{
 
             $service = Service::on($branch->db_name)->find(request('service_id'));

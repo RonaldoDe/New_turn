@@ -11,14 +11,14 @@ require_once public_path('lib/PayU.php');
 
 class PayUHelper extends Controller
 {
-    public static function paymentCredit($account_config, $payer_data, $buyer_data, $card_number, $expiration_date, $card_code, $price, $device, $cookie, $agent)
+    public static function paymentCredit($account_config, $payer_data, $buyer_data, $card_number, $expiration_date, $card_code, $price, $device, $cookie, $agent, $description)
     {
 
         \PayU::$apiKey = $account_config['api_k']; //  Ingrese aquí su propio apiKey.
         \PayU::$apiLogin = $account_config['api_l']; //Ingrese aquí su propio apiLogin.
         \PayU::$merchantId = $account_config['mer_id']; //Ingrese aquí su Id de Comercio.
         \PayU::$language = \SupportedLanguages::ES; //Seleccione el idioma.
-        \PayU::$isTest = false; //Dejarlo True cuando sean pruebas.
+        \PayU::$isTest = true; //Dejarlo True cuando sean pruebas.
 
         $reference = "1";
         $value = $price;
@@ -34,7 +34,7 @@ class PayUHelper extends Controller
             //Ingrese aquí el código de referencia.
             \PayUParameters::REFERENCE_CODE => $reference,
             //Ingrese aquí la descripción.
-            \PayUParameters::DESCRIPTION => "Primer pago",
+            \PayUParameters::DESCRIPTION => $description,
 
             // -- Valores --
             //Ingrese aquí el valor.
@@ -116,7 +116,7 @@ class PayUHelper extends Controller
         );
 
         //solicitud de autorización y captura
-        $response = \PayUPayments::doAuthorizationAndCapture($parameters);
+        return $response = \PayUPayments::doAuthorizationAndCapture($parameters);
         # return $response;
         //  -- podrás obtener las propiedades de la respuesta --
 /*        if($response){

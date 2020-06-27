@@ -121,12 +121,25 @@ class TurnsClientController extends Controller
 
             $service = Service::on($branch->db_name)->find(request('service_id'));
 
-            # Validate opening hours
+            /*# Validate opening hours
             $validate_day = HelpersData::validateDayBarber($service);
 
             if($validate_day != 1){
                 return response()->json(['response' => ['error' => $validate_day]], 400);
-            }
+            }*/
+
+            $turn = ClientTurn::on($branch->db_name)->create([
+                'employee_id' => request('employee_id'),
+                'user_id' => $user->id,
+                'user_turn_id' => $turn_client->id,
+                'dni' => $dni,
+                'service_id' => request('service_id'),
+                'today' => date('Y-m-d'),
+                'turn_number' => $turn_number+1,
+                'c_return' => $company_data->current_return,
+                'state_id' => 2,
+            ]);
+            $payU = null;
             if(request('pay_on_line')){
                 if($company_data->pay_on_line){
                     $payment_data = PaymentData::where('user_id', Auth::id())->where('id', request('payment_data_id'))->first();
@@ -144,7 +157,10 @@ class TurnsClientController extends Controller
                     $service_to_pay = Service::on($branch->db_name)->find(request('service_id'));
 
 
-                    $payU = PayUHelper::paymentCredit($account_config, json_decode($payment_data->data), $user, request('credit_card_number'), request('credit_card_expiration_date'), request('credit_card_security_code'), $service_to_pay->price, request('device'), request('cookie'), request('agent'));
+                    $payU = PayUHelper::paymentCredit($account_config, json_decode($payment_data->data), $user, request('credit_card_number'), request('credit_card_expiration_date'), request('credit_card_security_code'), $service_to_pay->price, request('device'), request('cookie'), request('agent'), 'Pago de turno');
+                    if($payU->transactionResponse->state != 'APPROVED'){
+                        return response()->json(['response' => ['error' => ['Error al realizar el pago'], 'data' => [$payU]]], 400);
+                    }
                     $log = TransactionLog::create([
                         'user_id' => $user->id,
                         'payment_id' => $payment_data->id,
@@ -154,18 +170,6 @@ class TurnsClientController extends Controller
                     ]);
                 }
             }
-
-            $turn = ClientTurn::on($branch->db_name)->create([
-                'employee_id' => request('employee_id'),
-                'user_id' => $user->id,
-                'user_turn_id' => $turn_client->id,
-                'dni' => $dni,
-                'service_id' => request('service_id'),
-                'today' => date('Y-m-d'),
-                'turn_number' => $turn_number+1,
-                'c_return' => $company_data->current_return,
-                'state_id' => 2,
-            ]);
             }catch(Exception $e){
                 DB::rollback();
                 DB::connection($branch->db_name)->rollback();
@@ -174,7 +178,7 @@ class TurnsClientController extends Controller
 
         DB::commit();
         DB::connection($branch->db_name)->commit();
-        return response()->json(['response' => 'Turno reservado con exito', 'turn' => ['turn_id' => $turn->id, 'turn_number' => $turn->turn_number, 'user_turn_id' => $turn_client->id]], 200);
+        return response()->json(['response' => 'Turno reservado con exito', 'turn' => ['turn_id' => $turn->id, 'turn_number' => $turn->turn_number, 'user_turn_id' => $turn_client->id, 'payU' => $payU]], 200);
     }
 
     /**

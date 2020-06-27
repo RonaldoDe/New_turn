@@ -180,33 +180,6 @@ class RequestServiceController extends Controller
                 }
             }*/
 
-            if(request('pay_on_line')){
-                if($company_data->pay_on_line){
-                    $payment_data = PaymentData::where('user_id', Auth::id())->where('id', request('payment_data_id'))->first();
-                    if(!$payment_data){
-                        return response()->json(['response' => ['error' => ['Datos de la tarjeta de credito no encontrados']]],400);
-                    }
-
-                    $account_config = array(
-                        'api_k' => $company_data->api_k,
-                        'api_l' => $company_data->api_l,
-                        'mer_id' => $company_data->mer_id,
-                        'acc_id' => $company_data->acc_id
-                    );
-
-                    $service_to_pay = Service::on($branch->db_name)->find(request('service_id'));
-                    $price = $service_to_pay->price_per_hour;
-                    $payU = PayUHelper::paymentCredit($account_config, json_decode($payment_data->data), $user, request('credit_card_number'), request('credit_card_expiration_date'), request('credit_card_security_code'), $price, request('device'), request('cookie'), request('agent'));
-                    $log = TransactionLog::create([
-                        'user_id' => $user->id,
-                        'payment_id' => $payment_data->id,
-                        'branch_id' => $branch->id,
-                        'service_id' => $service_to_pay->id,
-                        'action_id' => 'Grooming'
-                    ]);
-                }
-            }
-
             $service_client = UserTurn::create([
                 'user_id' => $user->id,
                 'branch_id' => $branch->id,
@@ -225,6 +198,36 @@ class RequestServiceController extends Controller
                 'date_end' => request('date_end'),
                 'state_id' => 2
             ]);
+            $payU = null;
+            if(request('pay_on_line')){
+                if($company_data->pay_on_line){
+                    $payment_data = PaymentData::where('user_id', Auth::id())->where('id', request('payment_data_id'))->first();
+                    if(!$payment_data){
+                        return response()->json(['response' => ['error' => ['Datos de la tarjeta de credito no encontrados']]],400);
+                    }
+
+                    $account_config = array(
+                        'api_k' => $company_data->api_k,
+                        'api_l' => $company_data->api_l,
+                        'mer_id' => $company_data->mer_id,
+                        'acc_id' => $company_data->acc_id
+                    );
+
+                    $service_to_pay = Service::on($branch->db_name)->find(request('service_id'));
+                    $price = $service_to_pay->price_per_hour;
+                    $payU = PayUHelper::paymentCredit($account_config, json_decode($payment_data->data), $user, request('credit_card_number'), request('credit_card_expiration_date'), request('credit_card_security_code'), $price, request('device'), request('cookie'), request('agent'), 'Pago de servico de aseo');
+                    if($payU->transactionResponse->state != 'APPROVED'){
+                        return response()->json(['response' => ['error' => ['Error al realizar el pago'], 'data' => [$payU]]], 400);
+                    }
+                    $log = TransactionLog::create([
+                        'user_id' => $user->id,
+                        'payment_id' => $payment_data->id,
+                        'branch_id' => $branch->id,
+                        'service_id' => $service_to_pay->id,
+                        'action_id' => 'Grooming'
+                    ]);
+                }
+            }
 
             }catch(Exception $e){
                 DB::rollback();
@@ -234,7 +237,7 @@ class RequestServiceController extends Controller
 
         DB::commit();
         DB::connection($branch->db_name)->commit();
-        return response()->json(['response' => 'Servicio solicitado con exito.', 'servicio' => $solicited_service->id], 200);
+        return response()->json(['response' => 'Servicio solicitado con exito.', 'servicio' => $solicited_service->id, 'payU' => $payU], 200);
     }
 
     public function cancelService(Request $request, $id)

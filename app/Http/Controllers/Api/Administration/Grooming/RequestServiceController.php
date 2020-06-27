@@ -224,7 +224,9 @@ class RequestServiceController extends Controller
                         'payment_id' => $payment_data->id,
                         'branch_id' => $branch->id,
                         'service_id' => $service_to_pay->id,
-                        'action_id' => 'Grooming'
+                        'action_id' => 'Grooming',
+                        'order_id' => $payU->transactionResponse->orderId,
+                        'transaction_id' => $payU->transactionResponse->transactionId,
                     ]);
                 }
             }

@@ -125,7 +125,6 @@ class ComplementsListController extends Controller
 
             $collect = collect($employees)->pluck('id');
 
-            return response()->json(['response' => $validate_business_days], 400);
 
             $client_service = ClientService::on($branch->db_name)
             ->whereIn('employee_id', $collect)
@@ -155,6 +154,7 @@ class ComplementsListController extends Controller
                 {
                     $pass++;
                 }
+                return response()->json(['response' => $employees_valid], 400);
 
                 if($pass > 0){
                     unset($employees_valid[$client->id]);

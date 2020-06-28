@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\Administration;
 use App\Http\Controllers\Helper\TemplateHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Helper\SendEmailHelper;
+use App\Models\Master\TransactionLog;
 use App\User;
 use Illuminate\Http\Request;
 
@@ -162,5 +163,12 @@ class ProfileController extends Controller
             return response()->json(['response' => 'La cuenta ya se encuentra verificada.', 'data' => $verify_email], 200);
         }
 
+    }
+
+    public function transactionList(Request $request)
+    {
+        $user = User::find(Auth::id());
+
+        $transaction = TransactionLog::where('user_id', $user->id)->get();
     }
 }

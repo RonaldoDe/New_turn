@@ -27,7 +27,7 @@ class RequestServiceController extends Controller
         $validator=\Validator::make($request->all(),[
             'branch_id' => 'required|integer|exists:branch_office,id',
             'service_id' => 'required|integer',
-            'employee_id' => 'bail|integer',
+            'employee_id' => 'bail|integer|required',
             #'total_minutes' => 'bail|required|integer',
             'date_start' => 'bail|required|date_format:"Y-m-d H:i:s"|date',
             # 'date_end' => 'bail|required|date_format:"Y-m-d H:i:s"|date',

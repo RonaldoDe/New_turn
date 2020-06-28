@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\Administration;
 use App\Http\Controllers\Helper\TemplateHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Helper\SendEmailHelper;
+use App\Http\Controllers\Helper\SetConnectionHelper;
 use App\Models\Grooming\Service as AppService;
 use App\Models\Master\BranchOffice;
 use App\Models\Master\MasterCompany;

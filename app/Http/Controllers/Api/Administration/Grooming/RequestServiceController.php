@@ -239,7 +239,7 @@ class RequestServiceController extends Controller
 
         DB::commit();
         DB::connection($branch->db_name)->commit();
-        return response()->json(['response' => 'Servicio solicitado con exito.', 'servicio' => $solicited_service->id, 'payU' => $payU], 200);
+        return response()->json(['response' => 'Servicio solicitado con exito.', 'servicio' => $solicited_service, 'payU' => $payU], 200);
     }
 
     public function cancelService(Request $request, $id)

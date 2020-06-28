@@ -18,7 +18,7 @@ class PayUHelper extends Controller
         \PayU::$apiLogin = $account_config['api_l']; //Ingrese aquí su propio apiLogin.
         \PayU::$merchantId = $account_config['mer_id']; //Ingrese aquí su Id de Comercio.
         \PayU::$language = \SupportedLanguages::ES; //Seleccione el idioma.
-        \PayU::$isTest = true; //Dejarlo True cuando sean pruebas.
+        \PayU::$isTest = false; //Dejarlo True cuando sean pruebas.
 
         $reference = "1";
         $value = $price;

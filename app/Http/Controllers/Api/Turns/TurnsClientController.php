@@ -121,12 +121,12 @@ class TurnsClientController extends Controller
 
             $service = Service::on($branch->db_name)->find(request('service_id'));
 
-            /*# Validate opening hours
+            # Validate opening hours
             $validate_day = HelpersData::validateDayBarber($service);
 
             if($validate_day != 1){
-                return response()->json(['response' => ['error' => $validate_day]], 400);
-            }*/
+                return response()->json(['response' => ['error' => [$validate_day]]], 400);
+            }
 
             $turn = ClientTurn::on($branch->db_name)->create([
                 'employee_id' => request('employee_id'),

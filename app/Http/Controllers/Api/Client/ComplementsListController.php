@@ -156,7 +156,7 @@ class ComplementsListController extends Controller
                     $pass++;
                 }
 
-                return response()->json(['response' => [$employees_valid, $client_service, $pass, $client->id]], 400);
+                return response()->json(['response' => [$employees_valid, $client_service, $pass, $client->employee_id]], 400);
                 if($pass > 0){
                     unset($employees_valid[$client->id]);
                 }

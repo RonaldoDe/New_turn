@@ -200,6 +200,9 @@ class RequestServiceController extends Controller
             ]);
             $payU = null;
             if(request('pay_on_line')){
+                if(!$service->pay_on_line){
+                    return response()->json(['response' => ['error' => ['El servico no dispone de la posibilidad de pagar en linea']]], 400);
+                }
                 if($company_data->pay_on_line){
                     $payment_data = PaymentData::where('user_id', Auth::id())->where('id', request('payment_data_id'))->first();
                     if(!$payment_data){

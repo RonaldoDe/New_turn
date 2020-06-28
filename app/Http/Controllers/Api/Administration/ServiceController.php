@@ -44,6 +44,7 @@ class ServiceController extends Controller
             'time' => 'bail|required|integer',
             'price' => 'bail|required|integer',
             'opening_hours' => 'bail|required',
+            'pay_on_line' => 'bail|required|integer',
             'state' => 'bail|required',
         ]);
         if($validator->fails())
@@ -57,6 +58,7 @@ class ServiceController extends Controller
             'description' => request('description'),
             'time' => request('time'),
             'price' => request('price'),
+            'pay_on_line' => request('pay_on_line'),
             'state' => request('state'),
             'opening_hours' => json_encode(request('opening_hours')),
         ]);
@@ -92,6 +94,7 @@ class ServiceController extends Controller
             'time' => 'bail|required|integer',
             'price' => 'bail|required|integer',
             'opening_hours' => 'bail|required',
+            'pay_on_line' => 'bail|required|integer',
             'state' => 'bail|required',
         ]);
         if($validator->fails())
@@ -111,6 +114,7 @@ class ServiceController extends Controller
         $service->time = request('time');
         $service->price = request('price');
         $service->opening_hours = json_encode(request('opening_hours'));
+        $service->pay_on_line = request('pay_on_line');
         $service->state = request('state');
         $service->update();
 

@@ -47,6 +47,7 @@ class GServiceController extends Controller
             'hours_max' => 'bail',
             'wait_time' => 'bail|required|integer',
             'opening_hours' => 'bail|required',
+            'pay_on_line' => 'bail|required|integer',
             'state' => 'bail|required',
         ]);
         if($validator->fails())
@@ -62,6 +63,7 @@ class GServiceController extends Controller
             'unit_per_hour' => request('unit_per_hour'),
             'hours_max' => 0,
             'wait_time' => request('wait_time'),
+            'pay_on_line' => request('pay_on_line'),
             'state' => request('state'),
             'opening_hours' => json_encode(request('opening_hours')),
         ]);
@@ -96,9 +98,9 @@ class GServiceController extends Controller
             'description' => 'required',
             'price_per_hour' => 'bail|required|integer',
             'unit_per_hour' => 'bail|required|integer',
-            'hours_max' => 'bail|required|integer',
             'wait_time' => 'bail|required|integer',
             'opening_hours' => 'bail|required',
+            'pay_on_line' => 'bail|required|integer',
             'state' => 'bail|required',
         ]);
         if($validator->fails())
@@ -121,6 +123,7 @@ class GServiceController extends Controller
         $service->wait_time = request('wait_time');
         $service->opening_hours = json_encode(request('opening_hours'));
         $service->state = request('state');
+        $service->pay_on_line = request('pay_on_line');
         $service->update();
 
         return response()->json(['response' => 'Success'], 200);

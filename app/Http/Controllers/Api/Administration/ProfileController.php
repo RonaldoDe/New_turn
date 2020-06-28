@@ -5,7 +5,11 @@ namespace App\Http\Controllers\Api\Administration;
 use App\Http\Controllers\Helper\TemplateHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Helper\SendEmailHelper;
+use App\Models\Grooming\Service as AppService;
+use App\Models\Master\BranchOffice;
+use App\Models\Master\MasterCompany;
 use App\Models\Master\TransactionLog;
+use App\Models\Service;
 use App\User;
 use Illuminate\Http\Request;
 
@@ -169,6 +173,97 @@ class ProfileController extends Controller
     {
         $user = User::find(Auth::id());
 
-        $transaction = TransactionLog::where('user_id', $user->id)->get();
+        $transactions = TransactionLog::where('user_id', $user->id)->get();
+
+        foreach ($transactions as $transaction) {
+            $branch = BranchOffice::where('id', $transaction->branch_id)->first();
+            if(!$branch){
+                return response()->json(['response' => ['error' => ['Sucursal no encontrada', 'id '.$transaction->branch_id]]], 400);
+            }
+
+            $company = MasterCompany::find($branch->company_id);
+
+            # Set connection to branch
+            $set_connection = SetConnectionHelper::setByDBName($branch->db_name);
+
+            $transaction->branch = array(
+                'branch_id' => $branch->id,
+                'branch_name' => $branch->name,
+                'branch_city' => $branch->city,
+                'branch_address' => $branch->address,
+                'branch_phone' => $branch->phone
+            );
+            # Barber db
+            if($company->type_id == 2){
+                $service = Service::on($branch->db_name)->find($transaction->service_id);
+                $transaction->service = array(
+                    'name' => $service->name,
+                    'description' => $service->description,
+                    'price' => $service->price,
+                    'time' => $service->time,
+                );
+            }else{
+                $service = AppService::on($branch->db_name)->find($transaction->service_id);
+                $transaction->service = array(
+                    'name' => $service->name,
+                    'description' => $service->description,
+                    'price' => $service->price_per_hour,
+                    'time' => $service->unit_per_hour,
+                );
+            }
+            
+        }
+
+        return response()->json(['response' => $transactions], 200);
+    }
+
+    public function transactionDetail(Request $request, $id)
+    {
+        $user = User::find(Auth::id());
+
+        $transaction = TransactionLog::where('user_id', $user->id)->where('id', $id)->first();
+
+        if(!$transaction){
+            return response()->json(['response' => ['error' => ['Registro no encontrado']]], 400);
+        }
+
+        $branch = BranchOffice::where('id', $transaction->branch_id)->first();
+        if(!$branch){
+            return response()->json(['response' => ['error' => ['Sucursal no encontrada', 'id '.$transaction->branch_id]]], 400);
+        }
+
+        $company = MasterCompany::find($branch->company_id);
+
+        # Set connection to branch
+        $set_connection = SetConnectionHelper::setByDBName($branch->db_name);
+
+        $transaction->branch = array(
+            'branch_id' => $branch->id,
+            'branch_name' => $branch->name,
+            'branch_city' => $branch->city,
+            'branch_address' => $branch->address,
+            'branch_phone' => $branch->phone
+        );
+        # Barber db
+        if($company->type_id == 2){
+            $service = Service::on($branch->db_name)->find($transaction->service_id);
+            $transaction->service = array(
+                'name' => $service->name,
+                'description' => $service->description,
+                'price' => $service->price,
+                'time' => $service->time,
+            );
+        }else{
+            $service = AppService::on($branch->db_name)->find($transaction->service_id);
+            $transaction->service = array(
+                'name' => $service->name,
+                'description' => $service->description,
+                'price' => $service->price_per_hour,
+                'time' => $service->unit_per_hour,
+            );
+        }
+            
+
+        return response()->json(['response' => $transaction], 200);
     }
 }

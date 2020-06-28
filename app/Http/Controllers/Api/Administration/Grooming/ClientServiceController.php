@@ -161,7 +161,7 @@ class ClientServiceController extends Controller
     public function assignEmployee(Request $request, $id)
     {
         $validator=\Validator::make($request->all(),[
-            'employee_id' => 'bail|integer|required',
+            'employee_id' => 'bail|integer',
             'state_id' => 'bail|integer',
         ]);
         if($validator->fails())

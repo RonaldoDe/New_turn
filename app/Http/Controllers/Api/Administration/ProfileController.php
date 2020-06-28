@@ -12,6 +12,7 @@ use App\Models\Master\TransactionLog;
 use App\Models\Service;
 use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ProfileController extends Controller
 {
@@ -211,7 +212,7 @@ class ProfileController extends Controller
                     'time' => $service->unit_per_hour,
                 );
             }
-            
+
         }
 
         return response()->json(['response' => $transactions], 200);
@@ -262,7 +263,7 @@ class ProfileController extends Controller
                 'time' => $service->unit_per_hour,
             );
         }
-            
+
 
         return response()->json(['response' => $transaction], 200);
     }

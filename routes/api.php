@@ -102,10 +102,10 @@ Route::middleware('auth:api')->group(function () {
     Route::get('userProfile', 'Api\Administration\UserController@userProfile');
 
     # Transaction log list
-    Route::get('transactionList', 'Api\Administration\UserController@transactionList');
+    Route::get('transactionList', 'Api\Administration\ProfileController@transactionList');
 
     # Transaction log
-    Route::get('transactionList/{id}', 'Api\Administration\UserController@transactionDetail');
+    Route::get('transactionList/{id}', 'Api\Administration\ProfileController@transactionDetail');
 
     # Change password
     Route::post('changePassword', 'Api\Administration\ProfileController@newPassword');

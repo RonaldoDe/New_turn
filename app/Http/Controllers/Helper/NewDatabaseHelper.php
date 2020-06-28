@@ -154,6 +154,7 @@ class NewDatabaseHelper extends Controller
                     `time` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
                     `price` varchar(50) NOT NULL,
                     `opening_hours` text,
+                    `pay_on_line` int(11) NOT NULL,
                     `state` int(11) NOT NULL,
                     `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
                     `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -553,6 +554,7 @@ class NewDatabaseHelper extends Controller
                     `hours_max` int(11) NOT NULL,
                     `wait_time` int(11) NOT NULL,
                     `opening_hours` text,
+                    `pay_on_line` int(11) NOT NULL,
                     `state` int(11) NOT NULL,
                     `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
                     `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP

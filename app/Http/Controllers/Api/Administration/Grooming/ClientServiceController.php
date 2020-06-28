@@ -171,7 +171,8 @@ class ClientServiceController extends Controller
 
         $user = CUser::on('connectionDB')->where('principal_id', Auth::id())->first();
 
-        $employee = CUser::on('connectionDB')->select('users.id', 'users.name', 'users.last_name', 'users.state_id')
+        if(!empty(request('employee_id'))){
+            $employee = CUser::on('connectionDB')->select('users.id', 'users.name', 'users.last_name', 'users.state_id')
         ->join('user_has_role as ur', 'users.id', 'ur.user_id')
         ->where('ur.role_id', 2)
         ->where('users.id', request('employee_id'))->first();
@@ -238,6 +239,42 @@ class ClientServiceController extends Controller
         $service->update();
 
         return response()->json(['response' => 'Success'], 200);
+
+        }else{
+
+        $service = ClientService::on('connectionDB')
+        ->where('id', $id)
+        ->first();
+
+        if(!$service){
+            return response()->json(['response' => ['error' => ['Servicio no encontrado.']]], 200);
+        }
+
+        if($service->tracking == null){
+            $tracking = array();
+        }else{
+            $tracking = json_decode($service->tracking);
+        }
+
+        if(!empty(request('state_id'))){
+            $state = DB::connection('connectionDB')->table('service_state')->where('id', request('state_id'))->first();
+            $new_state = DB::connection('connectionDB')->table('service_state')->where('id', $service->state_id)->first();
+            array_push($tracking, array(
+                'user_id' => $user->id,
+                'user_name' => $user->name.' '.$user->last_name,
+                'last_state' => $new_state->name,
+                'new_state' => $state->name,
+                'updated_at' => date('Y-m-d H:i:s')
+            ));
+
+            $service->state_id = request('state_id');
+        }
+
+        $service->tracking = json_encode($tracking);
+        $service->update();
+
+        return response()->json(['response' => 'Success'], 200);
+        }
 
 
     }

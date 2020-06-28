@@ -132,7 +132,6 @@ class ComplementsListController extends Controller
 
             $pass = 0;
             $employees_valid = $collect;
-            dd($employees_valid);
             foreach ($client_service as $client) {
                 # Validar los rangos de fechas
                 if(request('date_start') >= $client->date_start && request('date_start') <= $client->date_end)

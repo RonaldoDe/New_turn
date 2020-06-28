@@ -125,6 +125,8 @@ class ComplementsListController extends Controller
 
             $collect = collect($employees)->pluck('id');
 
+            return response()->json(['response' => $collect], 400);
+
             $client_service = ClientService::on($branch->db_name)
             ->whereIn('employee_id', $collect)
             ->whereIn('state_id', [2, 5])
@@ -160,7 +162,6 @@ class ComplementsListController extends Controller
             }
 
         }
-        return response()->json(['response' => $employees_valid], 400);
 
         $employees_list = CUser::on($branch->db_name)->select('users.id','users.name', 'users.last_name')
         ->whereIn('id', $employees_valid)

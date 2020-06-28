@@ -110,7 +110,7 @@ class ComplementsListController extends Controller
             $date_end = date('Y-m-d H:i:s', strtotime('+'.$service->time.' minute', strtotime(date(request('date_start')))));
 
             $validate_business_days = HelpersData::employeeBusinessDays(request('date_start'), $date_end, $service->id, $branch->db_name);
-            if($validate_business_days == 1){
+            if($validate_business_days == 0){
                 return response()->json(['response' => ['error' => ['No hay empleados disponibles para la hora solicitada']]], 400);
             }
             $employees = CUser::on($branch->db_name)->select('users.id','users.name', 'users.last_name')
@@ -122,7 +122,6 @@ class ComplementsListController extends Controller
             ->whereIn('users.id', $validate_business_days)
             ->get();
 
-            return response()->json(['response' => [$employees, $validate_business_days]], 400);
 
             $collect = collect($employees)->pluck('id');
 
@@ -132,7 +131,9 @@ class ComplementsListController extends Controller
             ->get();
 
             $pass = 0;
-            $employees_valid = array();
+            $employees_valid = $collect;
+            dd($employees_valid);
+
             foreach ($client_service as $client) {
                 # Validar los rangos de fechas
                 if(request('date_start') >= $client->date_start && request('date_start') <= $client->date_end)
@@ -154,12 +155,11 @@ class ComplementsListController extends Controller
                 {
                     $pass++;
                 }
-
-                if($pass == 0){
-                    array_push($employees_valid, $client->employee_id);
+                dd($employees_valid);
+                if($pass > 0){
+                    unset($employees_valid[$client->id]);
                 }
             }
-
 
         }
 

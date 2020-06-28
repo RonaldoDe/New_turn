@@ -194,7 +194,7 @@ class RequestServiceController extends Controller
                 'dni' => $dni,
                 'service_id' => request('service_id'),
                 #'hours' => $count,
-                'date_start' => request('date_end'),
+                'date_start' => request('date_start'),
                 'date_end' => $date_end,
                 'state_id' => 2
             ]);

@@ -267,11 +267,11 @@ class RequestServiceController extends Controller
         $client_service = ClientService::on($branch->db_name)->select('id', 'state_id')
         ->where('client_service.user_id', $user_turn->user_id)
         ->where('client_service.user_service_id', $user_turn->id)
-        ->whereIn('client_service.state_id', [1, 4])
+        ->whereIn('client_service.state_id', [4])
         ->first();
 
         if(!$client_service){
-            return response()->json(['response' => ['error' => ['El servicio no fue encontrado']]], 400);
+            return response()->json(['response' => ['error' => ['El servicio no fue encontrado o se encuentra en proceso']]], 400);
         }
 
         $client_service->state_id = 3;

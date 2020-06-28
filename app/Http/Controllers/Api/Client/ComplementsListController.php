@@ -159,11 +159,9 @@ class ComplementsListController extends Controller
                 if($pass > 0){
                     unset($employees_valid[$client->id]);
                 }
-                return response()->json(['response' => [$employees_valid, $client_service, $pass]], 400);
             }
 
         }
-        return response()->json(['response' => $employees_valid], 400);
 
         $employees_list = CUser::on($branch->db_name)->select('users.id','users.name', 'users.last_name')
         ->whereIn('id', $employees_valid)

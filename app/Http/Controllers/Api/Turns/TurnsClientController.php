@@ -172,6 +172,7 @@ class TurnsClientController extends Controller
                         'action_id' => 'Barber',
                         'order_id' => $payU->transactionResponse->orderId,
                         'transaction_id' => $payU->transactionResponse->transactionId,
+                        'transaction_state' => $payU->transactionResponse->state,
                     ]);
                 }
             }

@@ -230,6 +230,7 @@ class RequestServiceController extends Controller
                         'action_id' => 'Grooming',
                         'order_id' => $payU->transactionResponse->orderId,
                         'transaction_id' => $payU->transactionResponse->transactionId,
+                        'transaction_state' => $payU->transactionResponse->state,
                     ]);
                 }
             }

@@ -162,6 +162,16 @@ class TurnsClientController extends Controller
 
                     $payU = PayUHelper::paymentCredit($account_config, json_decode($payment_data->data), $user, request('credit_card_number'), request('credit_card_expiration_date'), request('credit_card_security_code'), $service_to_pay->price, request('device'), request('cookie'), request('agent'), 'Pago de turno');
                     if($payU->transactionResponse->state != 'APPROVED'){
+                        $log = TransactionLog::create([
+                            'user_id' => $user->id,
+                            'payment_id' => $payment_data->id,
+                            'branch_id' => $branch->id,
+                            'service_id' => $service_to_pay->id,
+                            'action_id' => 'Barber',
+                            'order_id' => $payU->transactionResponse->orderId,
+                            'transaction_id' => $payU->transactionResponse->transactionId,
+                            'transaction_state' => $payU->transactionResponse->state,
+                        ]);
                         return response()->json(['response' => ['error' => ['Error al realizar el pago'], 'data' => [$payU]]], 400);
                     }
                     $log = TransactionLog::create([

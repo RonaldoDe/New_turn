@@ -125,7 +125,7 @@ class ComplementsListController extends Controller
 
             $collect = collect($employees)->pluck('id');
 
-            return response()->json(['response' => $collect], 400);
+            return response()->json(['response' => $employees], 400);
 
             $client_service = ClientService::on($branch->db_name)
             ->whereIn('employee_id', $collect)

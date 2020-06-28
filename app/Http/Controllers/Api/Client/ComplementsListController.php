@@ -133,7 +133,7 @@ class ComplementsListController extends Controller
 
             $pass = 0;
             $employees_valid = $collect;
-        return response()->json(['response' => $employees_valid], 400);
+        return response()->json(['response' => [$employees_valid, $client_service]], 400);
 
             foreach ($client_service as $client) {
                 # Validar los rangos de fechas

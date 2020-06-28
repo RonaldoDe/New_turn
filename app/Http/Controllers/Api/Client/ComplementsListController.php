@@ -160,14 +160,12 @@ class ComplementsListController extends Controller
                     $data_to_delete = collect($employees_valid)->search($client->employee_id);
                     unset($employees_valid[$data_to_delete]);
                 }
-                return response()->json(['response' => [$test = collect($employees_valid)->values(), $client_service, $pass, $client->employee_id]], 400);
             }
 
         }
-        return response()->json(['response' => $employees_valid], 400);
 
         $employees_list = CUser::on($branch->db_name)->select('users.id','users.name', 'users.last_name')
-        ->whereIn('id', $employees_valid)
+        ->whereIn('id', collect($employees_valid)->values())
         ->get();
 
         return response()->json(['response' => $employees_list], 200);

@@ -157,7 +157,7 @@ class ComplementsListController extends Controller
                 }
 
                 if($pass > 0){
-                    $data_to_delete = array_keys((array)$employees_valid, $client->employee_id);
+                    $data_to_delete = collect($employees_valid)->search($client->employee_id);
                     return response()->json(['response' => [$employees_valid, $client_service, $pass, $data_to_delete]], 400);
                     #unset($employees_valid);
                 }

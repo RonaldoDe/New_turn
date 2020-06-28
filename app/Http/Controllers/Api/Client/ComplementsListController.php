@@ -175,15 +175,7 @@ class ComplementsListController extends Controller
     {
         $validator=\Validator::make($request->all(),[
             'payment_method' => 'bail|required|exists:payment_method,id',
-            "full_name"=> 'bail|required',
-            "email"=> 'bail|required',
-            "phone"=> 'bail|required',
-            "dni"=> 'bail|required',
-            "address_1"=> 'bail|required',
-            "address_2"=> 'bail',
-            "city"=> 'bail|required',
-            "state"=> 'bail|required',
-            "postal_code"=> 'bail',
+            'data' => 'bail|required'
         ]);
         if($validator->fails())
         {
@@ -193,14 +185,7 @@ class ComplementsListController extends Controller
         $payment = PaymentData::create([
             'user_id' => Auth::id(),
             'payment_method' => request('payment_method'),
-            "full_name"=> request('full_name'),
-            "email"=> request('email'),
-            "phone"=> request('phone'),
-            "dni"=> request('dni'),
-            "address_1"=> request('address_1'),
-            "address_2"=> request('address_2'),
-            "city"=> request('city'),
-            "postal_code"=> request('postal_code'),
+            'data' => json_encode(request('data')),
             'state' => 1,
         ]);
 

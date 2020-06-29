@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Api\Administration;
 
 use App\Http\Controllers\Helper\TemplateHelper;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Helper\HelpersData;
+use App\Http\Controllers\Helper\PayUHelper;
 use App\Http\Controllers\Helper\SendEmailHelper;
 use App\Http\Controllers\Helper\SetConnectionHelper;
 use App\Models\Grooming\Service as AppService;
@@ -267,5 +269,38 @@ class ProfileController extends Controller
 
 
         return response()->json(['response' => $transaction], 200);
+    }
+
+    public function repayment(Request $request, $id)
+    {
+        $validator=\Validator::make($request->all(),[
+            'reason' => 'required',
+        ]);
+        if($validator->fails())
+        {
+          return response()->json(['response' => ['error' => $validator->errors()->all()]],400);
+        }
+        $user = User::find(Auth::id());
+
+        $transaction = TransactionLog::where('user_id', $user->id)->where('id', $id)->where('transaction_state', 'APROVED')->first();
+
+        if(!$transaction){
+            return response()->json(['response' => ['error' => ['Registro no encontrado o ya pasaron mas de 24 horas']]], 400);
+        }
+
+        $branch = BranchOffice::find($transaction->branch_id);
+
+        $company_data = GCompanyData::on($branch->db_name)->find(1);
+
+        $account_config = array(
+            'api_k' => $company_data->api_k,
+            'api_l' => $company_data->api_l,
+            'mer_id' => $company_data->mer_id,
+            'acc_id' => $company_data->acc_id
+        );
+
+        $repayment = PayUHelper::repayment($account_config, $transaction->order_id, $transaction->transaction_id, request('reason'));
+
+        return response()->json(['response' => $repayment], 200);
     }
 }

@@ -42,6 +42,7 @@ Route::middleware('auth:api')->group(function () {
 
     Route::post('logout', 'Api\Login\LoginController@logout');
 
+    Route::apiResource('companyData', 'Api\Administration\CompanyDataController');
 
     # Turn administration
     Route::get('turnsList', 'Api\Administration\TurnsController@turnsList');
@@ -104,8 +105,11 @@ Route::middleware('auth:api')->group(function () {
     # Transaction log list
     Route::get('transactionList', 'Api\Administration\ProfileController@transactionList');
 
-    # Transaction log
+    # Transaction log detail
     Route::get('transactionList/{id}', 'Api\Administration\ProfileController@transactionDetail');
+
+    # Repayment
+    Route::post('repayment/{id}', 'Api\Administration\ProfileController@repayment');
 
     # Change password
     Route::post('changePassword', 'Api\Administration\ProfileController@newPassword');

@@ -229,4 +229,42 @@ class PayUHelper extends Controller
         dd($get);
         return $get;
     }
+
+    public static function repayment($account_config, $order_id, $transaction_id, $reason)
+    {
+
+        \PayU::$apiKey = $account_config['api_k']; //  Ingrese aquí su propio apiKey.
+        \PayU::$apiLogin = $account_config['api_l']; //Ingrese aquí su propio apiLogin.
+        \PayU::$merchantId = $account_config['mer_id']; //Ingrese aquí su Id de Comercio.
+        \PayU::$language = \SupportedLanguages::ES; //Seleccione el idioma.
+        \PayU::$isTest = false; //Dejarlo True cuando sean pruebas.
+
+        $reference = "1";
+
+        \Environment::setPaymentsCustomUrl("https://api.payulatam.com/payments-api/4.0/service.cgi");
+        \Environment::setReportsCustomUrl("https://api.payulatam.com/reports-api/4.0/service.cgi");
+        \Environment::setSubscriptionsCustomUrl("https://api.payulatam.com/payments-api/rest/v4.9/");
+
+        //para realizar un pago con tarjeta de crédito---------------------------------
+        $parameters = array(
+            //Ingrese aquí el identificador de la orden.
+            PayUParameters::ORDER_ID => $order_id,
+
+            //Ingrese aquí el identificador de la transacción.
+            PayUParameters::TRANSACTION_ID => $transaction_id,
+
+            //Ingrese aquí el motivo del reembolso.
+            PayUParameters::REASON => $reason,
+        );
+
+        //PayUPayments::doRefund($parameters);
+        return $response = PayUPayments::doVoid($parameters);
+
+        if ($response) {
+            $response->transactionResponse->orderId;
+            $response->transactionResponse->state;
+            $response->transactionResponse->pendingReason;
+            $response->transactionResponse->responseMessage;
+        }
+    }
 }

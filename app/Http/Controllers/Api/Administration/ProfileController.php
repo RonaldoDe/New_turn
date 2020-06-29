@@ -292,6 +292,9 @@ class ProfileController extends Controller
 
         $branch = BranchOffice::find($transaction->branch_id);
 
+        # Set connection to branch
+        $set_connection = SetConnectionHelper::setByDBName($branch->db_name);
+
         $company = MasterCompany::find($branch->company_id);
         if($company->type_id == 2){
             $company_data = CompanyData::on($branch->db_name)->find(1);
@@ -302,7 +305,7 @@ class ProfileController extends Controller
                 'mer_id' => $company_data->mer_id,
                 'acc_id' => $company_data->acc_id
             );
-    
+
             $repayment = PayUHelper::repayment($account_config, $transaction->order_id, $transaction->transaction_id, request('reason'));
         }else{
             $company_data = GCompanyData::on($branch->db_name)->find(1);
@@ -313,10 +316,10 @@ class ProfileController extends Controller
                 'mer_id' => $company_data->mer_id,
                 'acc_id' => $company_data->acc_id
             );
-    
+
             $repayment = PayUHelper::repayment($account_config, $transaction->order_id, $transaction->transaction_id, request('reason'));
         }
-        
+
 
         return response()->json(['response' => $repayment], 200);
     }

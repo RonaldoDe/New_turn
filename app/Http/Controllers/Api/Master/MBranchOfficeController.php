@@ -96,8 +96,10 @@ class MBranchOfficeController extends Controller
             }
         }*/
         $new_db = 'not-join';
+
         DB::beginTransaction();
         try{
+
             $branch = BranchOffice::create([
                 "name" => request('name'),
                 "description" => request('description'),
@@ -124,9 +126,10 @@ class MBranchOfficeController extends Controller
                 'email' => request('email'),
                 'password' => bcrypt('123456'),
                 'phanton_user' => 0,
+                'password_verify' => 0,
+                'email_verify' => 0,
                 'state_id' => 1
             ]);
-
             $company_type = MasterCompany::find(request('company_id'));
 
             if($company_type->type_id == 2){
@@ -141,6 +144,8 @@ class MBranchOfficeController extends Controller
                     'email' => '1-'.request('email'),
                     'password' => bcrypt('123456'),
                     'phanton_user' => 1,
+                    'password_verify' => 1,
+                    'email_verify' => 1,
                     'state_id' => 1
                 ]);
 
@@ -153,6 +158,8 @@ class MBranchOfficeController extends Controller
                     'email' => '2-'.request('email'),
                     'password' => bcrypt('123456'),
                     'phanton_user' => 1,
+                    'password_verify' => 1,
+                    'email_verify' => 1,
                     'state_id' => 1
                 ]);
 
@@ -165,6 +172,8 @@ class MBranchOfficeController extends Controller
                     'email' => '3-'.request('email'),
                     'password' => bcrypt('123456'),
                     'phanton_user' => 1,
+                    'password_verify' => 1,
+                    'email_verify' => 1,
                     'state_id' => 1
                 ]);
 
@@ -298,11 +307,10 @@ class MBranchOfficeController extends Controller
 
                 $data = array(
                     'Admin' => $user->email,
-                    'firsr_acount' => $phanto_1->email,
-                    'second_acount' => $phanto_2->email,
-                    'third_acount' => $phanto_3->email,
+                    'first_account' => $phanto_1->email,
+                    'second_account' => $phanto_2->email,
+                    'third_account' => $phanto_3->email,
                 );
-
             }else if($company_type->type_id == 3){
                 # Create the phatons users -------------------------------------------
                 $phanto_1 = User::create([
@@ -314,6 +322,8 @@ class MBranchOfficeController extends Controller
                     'email' => '1-'.request('email'),
                     'password' => bcrypt('123456'),
                     'phanton_user' => 1,
+                    'password_verify' => 1,
+                    'email_verify' => 1,
                     'state_id' => 1
                 ]);
 
@@ -326,6 +336,8 @@ class MBranchOfficeController extends Controller
                     'email' => '2-'.request('email'),
                     'password' => bcrypt('123456'),
                     'phanton_user' => 1,
+                    'password_verify' => 1,
+                    'email_verify' => 1,
                     'state_id' => 1
                 ]);
 
@@ -338,6 +350,8 @@ class MBranchOfficeController extends Controller
                     'email' => '3-'.request('email'),
                     'password' => bcrypt('123456'),
                     'phanton_user' => 1,
+                    'password_verify' => 1,
+                    'email_verify' => 1,
                     'state_id' => 1
                 ]);
 
@@ -470,13 +484,14 @@ class MBranchOfficeController extends Controller
 
                 $data = array(
                     'Admin' => $user->email,
-                    'firsr_acount' => $phanto_1->email,
-                    'second_acount' => $phanto_2->email,
-                    'third_acount' => $phanto_3->email,
+                    'first_account' => $phanto_1->email,
+                    'second_account' => $phanto_2->email,
+                    'third_account' => $phanto_3->email,
                 );
             }
         }catch(Exception $e){
             DB::rollback();
+            return response()->json(['response' => ['error' => [$e->getMessage()]]]);
         }
 
         DB::commit();

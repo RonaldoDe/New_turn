@@ -8,6 +8,8 @@ use App\Http\Controllers\Helper\HelpersData;
 use App\Http\Controllers\Helper\PayUHelper;
 use App\Http\Controllers\Helper\SendEmailHelper;
 use App\Http\Controllers\Helper\SetConnectionHelper;
+use App\Models\CompanyData;
+use App\Models\Grooming\GCompanyData;
 use App\Models\Grooming\Service as AppService;
 use App\Models\Master\BranchOffice;
 use App\Models\Master\MasterCompany;
@@ -290,16 +292,31 @@ class ProfileController extends Controller
 
         $branch = BranchOffice::find($transaction->branch_id);
 
-        $company_data = GCompanyData::on($branch->db_name)->find(1);
+        $company = MasterCompany::find($branch->company_id);
+        if($company->type_id == 2){
+            $company_data = CompanyData::on($branch->db_name)->find(1);
 
-        $account_config = array(
-            'api_k' => $company_data->api_k,
-            'api_l' => $company_data->api_l,
-            'mer_id' => $company_data->mer_id,
-            'acc_id' => $company_data->acc_id
-        );
+            $account_config = array(
+                'api_k' => $company_data->api_k,
+                'api_l' => $company_data->api_l,
+                'mer_id' => $company_data->mer_id,
+                'acc_id' => $company_data->acc_id
+            );
+    
+            $repayment = PayUHelper::repayment($account_config, $transaction->order_id, $transaction->transaction_id, request('reason'));
+        }else{
+            $company_data = GCompanyData::on($branch->db_name)->find(1);
 
-        $repayment = PayUHelper::repayment($account_config, $transaction->order_id, $transaction->transaction_id, request('reason'));
+            $account_config = array(
+                'api_k' => $company_data->api_k,
+                'api_l' => $company_data->api_l,
+                'mer_id' => $company_data->mer_id,
+                'acc_id' => $company_data->acc_id
+            );
+    
+            $repayment = PayUHelper::repayment($account_config, $transaction->order_id, $transaction->transaction_id, request('reason'));
+        }
+        
 
         return response()->json(['response' => $repayment], 200);
     }

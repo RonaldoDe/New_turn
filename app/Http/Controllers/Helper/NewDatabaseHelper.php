@@ -67,6 +67,43 @@ class NewDatabaseHelper extends Controller
                     `updated_at` timestamp NULL DEFAULT NULL
                 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;");
 
+                  //Estructura de tabla para la tabla `employee_service`
+                  $structure = DB::connection('newCompany')->statement("CREATE TABLE `employee_service` (
+                    `id` int(11) NOT NULL,
+                    `employee_id` int(11) NOT NULL,
+                    `service_id` int(11) NOT NULL,
+                    `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                    `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+                  ) ENGINE=InnoDB DEFAULT CHARSET=latin1;");
+
+                  //Estructura de tabla para la tabla `employee_type_employee`
+                $structure = DB::connection('newCompany')->statement("CREATE TABLE `employee_type_employee` (
+                    `id` int(11) NOT NULL,
+                    `employee_type_id` int(11) NOT NULL,
+                    `employee_id` int(11) NOT NULL,
+                    `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                    `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
+                  ) ENGINE=InnoDB DEFAULT CHARSET=latin1;");
+
+                  //Estructura de tabla para la tabla `employee_type`
+                $structure = DB::connection('newCompany')->statement("CREATE TABLE `employee_type` (
+                    `id` int(11) NOT NULL,
+                    `name` varchar(75) NOT NULL,
+                    `description` text NOT NULL,
+                    `state` int(11) NOT NULL,
+                    `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                    `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+                  ) ENGINE=InnoDB DEFAULT CHARSET=latin1;");
+
+                  //Estructura de tabla para la tabla `employee_type_service`
+                $structure = DB::connection('newCompany')->statement("CREATE TABLE `employee_type_service` (
+                    `id` int(11) NOT NULL,
+                    `employee_type_id` int(11) NOT NULL,
+                    `service_id` int(11) NOT NULL,
+                    `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                    `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+                  ) ENGINE=InnoDB DEFAULT CHARSET=latin1;");
+
                 //Estructura de tabla para la tabla `module
                 $structure = DB::connection('newCompany')->statement("CREATE TABLE `module` (
                     `id` int(10) NOT NULL,
@@ -164,8 +201,8 @@ class NewDatabaseHelper extends Controller
                 $opening = '[{ "monday": [{ "date_start": "08:00:00", "date_end": "12:30:00" }, { "date_start": "14:00:00", "date_end": "17:30:00" }] }, { "tuesday": [{ "date_start": "08:00:00", "date_end": "12:30:00" }, { "date_start": "14:00:00", "date_end": "17:30:00" }] }, { "wednesday": [{ "date_start": "08:00:00", "date_end": "12:30:00" }, { "date_start": "14:00:00", "date_end": "17:30:00" }] }, { "thursday": [{ "date_start": "08:00:00", "date_end": "12:30:00" }, { "date_start": "14:00:00", "date_end": "17:30:00" }] }, { "friday": [{ "date_start": "08:00:00", "date_end": "12:30:00" }, { "date_start": "14:00:00", "date_end": "17:30:00" }] }, { "saturday": [{ "date_start": "08:00:00", "date_end": "12:30:00" }, { "date_start": "14:00:00", "date_end": "16:30:00" }] }, { "holidays": [{ "date_start": "08:00:00", "date_end": "12:30:00" }] }]';
 
                 // Volcado de datos para la tabla `service_list`
-                $structure = DB::connection('newCompany')->statement("INSERT INTO `service_list` (`id`, `name`, `description`, `time`, `price`, `opening_hours`, `state`) VALUES
-                (1, 'General', 'Es un turno para cortarse el cabello.', '45', '10000', '$opening', 1);");
+                $structure = DB::connection('newCompany')->statement("INSERT INTO `service_list` (`id`, `name`, `description`, `time`, `price`, `opening_hours`, `state`, `pay_on_line`) VALUES
+                (1, 'General', 'Es un turno para cortarse el cabello.', '45', '10000', '$opening', 1, 1);");
 
                 //Estructura de tabla para la tabla `turn_state
                 $structure = DB::connection('newCompany')->statement("CREATE TABLE `turn_state` (
@@ -237,6 +274,28 @@ class NewDatabaseHelper extends Controller
                 $relations = DB::connection('newCompany')->statement("ALTER TABLE `company_data`
                 ADD PRIMARY KEY (`id`);");
 
+                //Indices de la tabla `employee_service`
+                $relations = DB::connection('newCompany')->statement("ALTER TABLE `employee_service`
+                ADD PRIMARY KEY (`id`),
+                ADD KEY `employee_id` (`employee_id`),
+                ADD KEY `service_id` (`service_id`);");
+
+                //Indices de la tabla `employee_type`
+                $relations = DB::connection('newCompany')->statement("ALTER TABLE `employee_type`
+                ADD PRIMARY KEY (`id`);");
+
+                //Indices de la tabla `employee_type_employee`
+                $relations = DB::connection('newCompany')->statement("ALTER TABLE `employee_type_employee`
+                ADD PRIMARY KEY (`id`),
+                ADD KEY `employee_type_id` (`employee_type_id`),
+                ADD KEY `employee_id` (`employee_id`);");
+
+                //Indices de la tabla `employee_type_service`
+                $relations = DB::connection('newCompany')->statement("ALTER TABLE `employee_type_service`
+                ADD PRIMARY KEY (`id`),
+                ADD KEY `service_id` (`service_id`),
+                ADD KEY `employee_type_id` (`employee_type_id`);");
+
                 //Indices de la tabla `module`
                 $relations = DB::connection('newCompany')->statement("ALTER TABLE `module`
                 ADD PRIMARY KEY (`id`);");
@@ -291,6 +350,22 @@ class NewDatabaseHelper extends Controller
                 $auto_increment = DB::connection('newCompany')->statement("ALTER TABLE `company_data`
                 MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;");
 
+                // AUTO_INCREMENT de la tabla `employee_service`
+                $auto_increment = DB::connection('newCompany')->statement("ALTER TABLE `employee_service`
+                MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;");
+
+                // AUTO_INCREMENT de la tabla `employee_type`
+                $auto_increment = DB::connection('newCompany')->statement("ALTER TABLE `employee_type`
+                MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;");
+
+                // AUTO_INCREMENT de la tabla `employee_type_employee`
+                $auto_increment = DB::connection('newCompany')->statement("ALTER TABLE `employee_type_employee`
+                MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;");
+
+                // AUTO_INCREMENT de la tabla `employee_type_service`
+                $auto_increment = DB::connection('newCompany')->statement("ALTER TABLE `employee_type_service`
+                MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;");
+
                 // AUTO_INCREMENT de la tabla `module`
                 $auto_increment = DB::connection('newCompany')->statement("ALTER TABLE `module`
                 MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;");
@@ -336,6 +411,21 @@ class NewDatabaseHelper extends Controller
                 ADD CONSTRAINT `client_turn_ibfk_3` FOREIGN KEY (`finished_by_id`) REFERENCES `users` (`id`),
                 ADD CONSTRAINT `client_turn_ibfk_4` FOREIGN KEY (`state_id`) REFERENCES `turn_state` (`id`),
                 ADD CONSTRAINT `client_turn_ibfk_5` FOREIGN KEY (`started_by`) REFERENCES `users` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;");
+
+                //Filtros para la tabla `employee_service`
+                $filters = DB::connection('newCompany')->statement("ALTER TABLE `employee_service`
+                ADD CONSTRAINT `employee_service_ibfk_1` FOREIGN KEY (`employee_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+                ADD CONSTRAINT `employee_service_ibfk_2` FOREIGN KEY (`service_id`) REFERENCES `service_list` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;");
+
+                //Filtros para la tabla `employee_type_employee`
+                $filters = DB::connection('newCompany')->statement("ALTER TABLE `employee_type_employee`
+                ADD CONSTRAINT `employee_type_employee_ibfk_1` FOREIGN KEY (`employee_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+                ADD CONSTRAINT `employee_type_employee_ibfk_2` FOREIGN KEY (`employee_type_id`) REFERENCES `employee_type` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;");
+
+                //Filtros para la tabla `employee_type_service`
+                $filters = DB::connection('newCompany')->statement("ALTER TABLE `employee_type_service`
+                ADD CONSTRAINT `employee_type_service_ibfk_1` FOREIGN KEY (`service_id`) REFERENCES `service_list` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+                ADD CONSTRAINT `employee_type_service_ibfk_2` FOREIGN KEY (`employee_type_id`) REFERENCES `employee_type` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;");
 
                 //Filtros para la tabla `permission`
                 $filters = DB::connection('newCompany')->statement("ALTER TABLE `permission`
@@ -564,8 +654,8 @@ class NewDatabaseHelper extends Controller
                 $opening = '[{ "monday": [{ "date_start": "08:00:00", "date_end": "12:30:00" }, { "date_start": "14:00:00", "date_end": "17:30:00" }] }, { "tuesday": [{ "date_start": "08:00:00", "date_end": "12:30:00" }, { "date_start": "14:00:00", "date_end": "17:30:00" }] }, { "wednesday": [{ "date_start": "08:00:00", "date_end": "12:30:00" }, { "date_start": "14:00:00", "date_end": "17:30:00" }] }, { "thursday": [{ "date_start": "08:00:00", "date_end": "12:30:00" }, { "date_start": "14:00:00", "date_end": "17:30:00" }] }, { "friday": [{ "date_start": "08:00:00", "date_end": "12:30:00" }, { "date_start": "14:00:00", "date_end": "17:30:00" }] }, { "saturday": [{ "date_start": "08:00:00", "date_end": "12:30:00" }, { "date_start": "14:00:00", "date_end": "16:30:00" }] }, { "holidays": [{ "date_start": "08:00:00", "date_end": "12:30:00" }] }]';
 
                 // Volcado de datos para la tabla `service_list`
-                $structure = DB::connection('newCompany')->statement("INSERT INTO `service_list` (`id`, `name`, `description`, `price_per_hour`, `unit_per_hour`, `hours_max`, `wait_time`, `opening_hours`, `state`) VALUES
-                (1, 'General', 'Aseo general.', '20000', 30, 12, 30, '$opening', 1);");
+                $structure = DB::connection('newCompany')->statement("INSERT INTO `service_list` (`id`, `name`, `description`, `price_per_hour`, `unit_per_hour`, `hours_max`, `wait_time`, `opening_hours`, `state`, `pay_on_line`) VALUES
+                (1, 'General', 'Aseo general.', '20000', 30, 12, 30, '$opening', 1, 1);");
 
                 //Estructura de tabla para la tabla `service_state
                 $structure = DB::connection('newCompany')->statement("CREATE TABLE `service_state` (

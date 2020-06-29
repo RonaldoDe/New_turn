@@ -199,4 +199,36 @@ class ComplementsListController extends Controller
 
         return response()->json(['response' => $payment], 200);
     }
+
+    public function businessHours(Request $request)
+    {
+        $validator=\Validator::make($request->all(),[
+            'branch_id' => 'bail|required|exists:branch_office,id',
+        ]);
+        if($validator->fails())
+        {
+          return response()->json(['response' => ['error' => $validator->errors()->all()]],400);
+        }
+        # --------------------- Set connection ------------------------------------#
+
+        $branch = BranchOffice::find(request('branch_id'));
+
+        $company = MasterCompany::find($branch->company_id);
+
+        $set_connection = SetConnectionHelper::setByDBName($branch->db_name);
+        # --------------------- Set connection ------------------------------------#
+
+        if($company->type_id != 3){
+            return response()->json(['response' => ['error' => ['Error']]], 400);
+        }
+
+        $client_services = ClientService::on($branch->db_name)->select('client_service.id', 'client_service.employee_id', 'client_service.service_id', 'client_service.date_start', 'client_service.date_end',
+        'client_service.state_id', 'sl.name as service_name', 'sl.description as service_description', 'sl.price_per_hour')
+        ->join('service_list as sl', 'client_service.service_id', 'sl.id')
+        ->whereIn('state_id', [2, 5])
+        ->get();
+
+        return response()->json(['response' => $client_services], 200);
+
+    }
 }

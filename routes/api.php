@@ -99,6 +99,9 @@ Route::middleware('auth:api')->group(function () {
     # Client services
     Route::get('clientServices/{id}', 'Api\Client\ClientServicesListController@servicesListDetail');
 
+    # Business hours to client service
+    Route::get('businessHours', 'Api\Client\ComplementsListController@businessHours');
+
     # Profile
     Route::get('userProfile', 'Api\Administration\UserController@userProfile');
 

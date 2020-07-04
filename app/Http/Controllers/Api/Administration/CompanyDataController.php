@@ -68,6 +68,7 @@ class CompanyDataController extends Controller
             'latitude' => 'required',
             'address' => 'required',
             'phone' => 'required',
+            'minimun_time' => 'required',
             'close' => 'required',
             'api_k' => 'bail',
             'api_l' => 'bail',
@@ -82,7 +83,7 @@ class CompanyDataController extends Controller
 
         $company_data = CompanyData::on('connectionDB')->find(1);
 
-        $branch = BranchOffice::select('id', 'name', 'nit', 'email', 'city', 'longitude', 'latitude', 'address', 'phone', 'close', 'company_id')
+        $branch = BranchOffice::select('id', 'name', 'nit', 'email', 'city', 'longitude', 'latitude', 'address', 'phone', 'close', 'company_id', 'minimun_time')
         ->find($company_data->company_id);
 
         $company = MasterCompany::find($branch->company_id);
@@ -95,6 +96,7 @@ class CompanyDataController extends Controller
             $branch->latitude = request('latitude');
             $branch->address = request('address');
             $branch->phone = request('phone');
+            $branch->minimun_time = request('minimun_time');
             $branch->close = request('close');
             $company_data->api_k = request('api_k');
             $company_data->api_l = request('api_l');
@@ -111,6 +113,7 @@ class CompanyDataController extends Controller
             $branch->latitude = request('latitude');
             $branch->address = request('address');
             $branch->phone = request('phone');
+            $branch->minimun_time = request('minimun_time');
             $branch->close = request('close');
             $company_data->api_k = request('api_k');
             $company_data->api_l = request('api_l');

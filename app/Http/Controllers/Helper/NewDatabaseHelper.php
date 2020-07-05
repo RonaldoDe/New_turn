@@ -119,7 +119,8 @@ class NewDatabaseHelper extends Controller
                 (2, 'Roles', 'Permite administrar los roles.', '2020-03-23 23:36:31', '2020-03-23 23:36:31'),
                 (3, 'Sucursal', 'Administración de la sucursal', '2020-04-24 05:00:00', '2020-04-24 05:00:00'),
                 (4, 'Turnos', 'Administración de turnos', '2020-04-24 05:00:00', '2020-04-24 05:00:00'),
-                (5, 'Servicios', 'Administración de servicios.', '2020-04-24 05:00:00', '2020-04-24 05:00:00');");
+                (5, 'Servicios', 'Administración de servicios.', '2020-04-24 05:00:00', '2020-04-24 05:00:00'),
+                (6, 'Tipos de empleados', 'Administración de los tipos de empleados.', '2020-04-24 05:00:00', '2020-04-24 05:00:00');");
 
                 //Estructura de tabla para la tabla `permission
                 $structure = DB::connection('newCompany')->statement("CREATE TABLE `permission` (
@@ -144,8 +145,8 @@ class NewDatabaseHelper extends Controller
                 (8, 'Iniciar turno', 'Empezar un turno.', '/start_turn', '2020-04-24 05:00:00', '2020-04-24 05:00:00', 4),
                 (9, 'Listar configuración de los servicios', 'Lista la configuración de los servicios que ofrece la empresa.', '/list_c_service', '2020-05-08 05:00:00', '2020-05-08 05:00:00', 5),
                 (10, 'Crear y modificar la configuración de los servicios', 'Crear y modificar la configuración de los servicios que ofrece la empresa.', '/create_c_service', '2020-05-08 05:00:00', '2020-05-08 05:00:00', 5),
-                (11, 'Lista de tipos de empleados', 'Lista los tipos de empleados', '/list_employee_type', '2020-05-08 05:00:00', '2020-05-08 05:00:00', 5),
-                (12, 'Modificar tipos de empleados', 'Puede crear, editar y eliminar los tipos de empleados.', '/create_employee_type', '2020-05-08 05:00:00', '2020-05-08 05:00:00', 4);");
+                (11, 'Lista de tipos de empleados', 'Lista los tipos de empleados', '/list_employee_type', '2020-05-08 05:00:00', '2020-05-08 05:00:00', 6),
+                (12, 'Modificar tipos de empleados', 'Puede crear, editar y eliminar los tipos de empleados.', '/create_employee_type', '2020-05-08 05:00:00', '2020-05-08 05:00:00', 6);");
 
                 //Estructura de tabla para la tabla `role`
                 $structure = DB::connection('newCompany')->statement("CREATE TABLE `role` (
@@ -596,7 +597,7 @@ class NewDatabaseHelper extends Controller
                 (9, 'Listar configuración de los servicios', 'Lista la configuración de los servicios que ofrece la empresa.', '/list_c_service', '2020-05-08 05:00:00', '2020-05-08 05:00:00', 4),
                 (10, 'Crear y modificar la configuración de los servicios', 'Crear y modificar la configuración de los servicios que ofrece la empresa.', '/create_c_service', '2020-05-08 05:00:00', '2020-05-08 05:00:00', 4),
                 (11, 'Lista de tipos de empleados', 'Lista los tipos de empleados', '/list_employee_type', '2020-05-08 05:00:00', '2020-05-08 05:00:00', 5),
-                (12, 'Modificar tipos de empleados', 'Puede crear, editar y eliminar los tipos de empleados.', '/create_employee_type', '2020-05-08 05:00:00', '2020-05-08 05:00:00', 4);");
+                (12, 'Modificar tipos de empleados', 'Puede crear, editar y eliminar los tipos de empleados.', '/create_employee_type', '2020-05-08 05:00:00', '2020-05-08 05:00:00', 5);");
 
                 //Estructura de tabla para la tabla `role`
                 $structure = DB::connection('newCompany')->statement("CREATE TABLE `role` (

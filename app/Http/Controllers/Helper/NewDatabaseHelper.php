@@ -143,7 +143,9 @@ class NewDatabaseHelper extends Controller
                 (7, 'Listar turnos', 'Puede listar la información de los turnos.', '/list_turns', '2020-04-24 05:00:00', '2020-04-24 05:00:00', 4),
                 (8, 'Iniciar turno', 'Empezar un turno.', '/start_turn', '2020-04-24 05:00:00', '2020-04-24 05:00:00', 4),
                 (9, 'Listar configuración de los servicios', 'Lista la configuración de los servicios que ofrece la empresa.', '/list_c_service', '2020-05-08 05:00:00', '2020-05-08 05:00:00', 5),
-                (10, 'Crear y modificar la configuración de los servicios', 'Crear y modificar la configuración de los servicios que ofrece la empresa.', '/create_c_service', '2020-05-08 05:00:00', '2020-05-08 05:00:00', 5);");
+                (10, 'Crear y modificar la configuración de los servicios', 'Crear y modificar la configuración de los servicios que ofrece la empresa.', '/create_c_service', '2020-05-08 05:00:00', '2020-05-08 05:00:00', 5),
+                (11, 'Lista de tipos de empleados', 'Lista los tipos de empleados', '/list_employee_type', '2020-05-08 05:00:00', '2020-05-08 05:00:00', 5),
+                (12, 'Modificar tipos de empleados', 'Puede crear, editar y eliminar los tipos de empleados.', '/create_employee_type', '2020-05-08 05:00:00', '2020-05-08 05:00:00', 4);");
 
                 //Estructura de tabla para la tabla `role`
                 $structure = DB::connection('newCompany')->statement("CREATE TABLE `role` (
@@ -181,6 +183,8 @@ class NewDatabaseHelper extends Controller
                 (8, 8, 2, '2020-04-24 05:00:00', '2020-04-24 05:00:00'),
                 (11, 9, 2, '2020-04-24 05:00:00', '2020-04-24 05:00:00'),
                 (9, 9, 1, '2020-04-24 05:00:00', '2020-04-24 05:00:00'),
+                (12, 11, 1, '2020-05-07 03:11:37', '2020-05-07 03:11:37'),
+                (13, 12, 1, '2020-05-07 03:11:37', '2020-05-07 03:11:37'),
                 (10, 10, 1, '2020-04-24 05:00:00', '2020-04-24 05:00:00');");
 
                 //Estructura de tabla para la tabla `service_list

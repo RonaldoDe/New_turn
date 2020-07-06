@@ -82,6 +82,8 @@ class ComplementsListController extends Controller
 
             $employees = CUser::on($branch->db_name)->select('users.id', 'users.name', 'users.last_name')
             ->join('user_has_role as ur', 'users.id', 'ur.user_id')
+            ->join('employee_type_employee as ete', 'users.id', 'ete.employee_id')
+            ->join('employee_type_service as ets', 'ete.employee_type_id', 'ets.employee_type_id')
             ->where('ur.role_id', 2)
             ->where('users.phanton_user', 0)
             ->name(request('name'))

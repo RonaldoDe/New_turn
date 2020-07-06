@@ -8,6 +8,7 @@ use App\Models\Grooming\EmployeeTypeService;
 use App\Models\Master\BranchOffice;
 use App\Models\Master\BranchUser;
 use App\Models\Master\MasterCompany;
+use App\User;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;

@@ -5,8 +5,12 @@ namespace App\Http\Controllers\Api\Administration\Grooming;
 use App\Http\Controllers\Controller;
 use App\Models\Grooming\EmployeeType;
 use App\Models\Grooming\EmployeeTypeService;
+use App\Models\Master\BranchOffice;
+use App\Models\Master\BranchUser;
+use App\Models\Master\MasterCompany;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class EmployeeTypeController extends Controller
@@ -30,13 +34,32 @@ class EmployeeTypeController extends Controller
      */
     public function index()
     {
+        $user = User::find(Auth::id());
+
+        $branch_user = BranchUser::where('user_id', $user)->first();
+
+        $branch = BranchOffice::find($branch_user->branch_id);
+
+        if(!$branch){
+            return response()->json(['response' => ['error' => ['Sucursal no encontrada.']]], 400);
+        }
+
+        $company = MasterCompany::where($branch->company_id)->first();
+
         $employees_types = EmployeeType::on('connectionDB')->get();
 
         foreach ($employees_types as $employee_type) {
-            $employee_type_service = EmployeeTypeService::on('connectionDB')->select('sl.id', 'sl.name', 'sl.description', 'sl.price_per_hour', 'sl.hours_max', 'sl.wait_time', 'sl.opening_hours', 'sl.state')
-            ->join('service_list as sl', 'employee_type_service.service_id', 'sl.id')
-            ->where('employee_type_service.employee_type_id', $employee_type->id)
-            ->get();
+            if($company->type_id == 2){
+                $employee_type_service = EmployeeTypeService::on('connectionDB')->select('sl.id', 'sl.name', 'sl.description', 'sl.price', 'sl.opening_hours', 'sl.state', 'sl.time')
+                ->join('service_list as sl', 'employee_type_service.service_id', 'sl.id')
+                ->where('employee_type_service.employee_type_id', $employee_type->id)
+                ->get();
+            }else{
+                $employee_type_service = EmployeeTypeService::on('connectionDB')->select('sl.id', 'sl.name', 'sl.description', 'sl.price_per_hour', 'sl.hours_max', 'sl.wait_time', 'sl.opening_hours', 'sl.state')
+                ->join('service_list as sl', 'employee_type_service.service_id', 'sl.id')
+                ->where('employee_type_service.employee_type_id', $employee_type->id)
+                ->get();
+            }
 
             $employee_type->services = $employee_type_service;
         }
@@ -99,20 +122,39 @@ class EmployeeTypeController extends Controller
      */
     public function show($id)
     {
-        $employees_types = EmployeeType::on('connectionDB')->find($id);
+        $user = User::find(Auth::id());
 
-        if(!$employees_types){
+        $branch_user = BranchUser::where('user_id', $user)->first();
+
+        $branch = BranchOffice::find($branch_user->branch_id);
+
+        if(!$branch){
+            return response()->json(['response' => ['error' => ['Sucursal no encontrada.']]], 400);
+        }
+
+        $company = MasterCompany::where($branch->company_id)->first();
+
+        $employee_type = EmployeeType::on('connectionDB')->find($id);
+
+        if(!$employee_type){
             return response()->json(['response' => ['error' => ['Tipo de empleado no encontrado']]], 400);
         }
 
-        $employee_type_service = EmployeeTypeService::on('connectionDB')->select('sl.id', 'sl.name', 'sl.description', 'sl.price_per_hour', 'sl.hours_max', 'sl.wait_time', 'sl.opening_hours', 'sl.state')
-        ->join('service_list as sl', 'employee_type_service.service_id', 'sl.id')
-        ->where('employee_type_service.employee_type_id', $employees_types->id)
-        ->get();
+        if($company->type_id == 2){
+            $employee_type_service = EmployeeTypeService::on('connectionDB')->select('sl.id', 'sl.name', 'sl.description', 'sl.price', 'sl.opening_hours', 'sl.state', 'sl.time')
+            ->join('service_list as sl', 'employee_type_service.service_id', 'sl.id')
+            ->where('employee_type_service.employee_type_id', $employee_type->id)
+            ->get();
+        }else{
+            $employee_type_service = EmployeeTypeService::on('connectionDB')->select('sl.id', 'sl.name', 'sl.description', 'sl.price_per_hour', 'sl.hours_max', 'sl.wait_time', 'sl.opening_hours', 'sl.state')
+            ->join('service_list as sl', 'employee_type_service.service_id', 'sl.id')
+            ->where('employee_type_service.employee_type_id', $employee_type->id)
+            ->get();
+        }
 
-        $employees_types->services = $employee_type_service;
+        $employee_type->services = $employee_type_service;
 
-        return response()->json(['response' => $employees_types], 200);
+        return response()->json(['response' => $employee_type], 200);
     }
 
     /**

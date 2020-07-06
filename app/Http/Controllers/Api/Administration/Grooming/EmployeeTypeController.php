@@ -37,7 +37,7 @@ class EmployeeTypeController extends Controller
     {
         $user = User::find(Auth::id());
 
-        $branch_user = BranchUser::where('user_id', $user)->first();
+        $branch_user = BranchUser::where('user_id', $user->id)->first();
 
         $branch = BranchOffice::find($branch_user->branch_id);
 

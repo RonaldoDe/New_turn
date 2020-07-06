@@ -64,7 +64,7 @@ class ComplementsListController extends Controller
         $set_connection = SetConnectionHelper::setByDBName($branch->db_name);
         # --------------------- Set connection ------------------------------------#
 
-        if($compnay->type_id == 1){
+        if($compnay->type_id == 2){
 
             $service = Service::on($branch->db_name)->find(request('service_id'));
 

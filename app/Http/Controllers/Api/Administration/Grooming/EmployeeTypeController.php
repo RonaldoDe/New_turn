@@ -45,7 +45,7 @@ class EmployeeTypeController extends Controller
             return response()->json(['response' => ['error' => ['Sucursal no encontrada.']]], 400);
         }
 
-        $company = MasterCompany::where($branch->company_id)->first();
+        $company = MasterCompany::where('id', $branch->company_id)->first();
 
         $employees_types = EmployeeType::on('connectionDB')->get();
 
@@ -133,7 +133,7 @@ class EmployeeTypeController extends Controller
             return response()->json(['response' => ['error' => ['Sucursal no encontrada.']]], 400);
         }
 
-        $company = MasterCompany::where($branch->company_id)->first();
+        $company = MasterCompany::where('id', $branch->company_id)->first();
 
         $employee_type = EmployeeType::on('connectionDB')->find($id);
 

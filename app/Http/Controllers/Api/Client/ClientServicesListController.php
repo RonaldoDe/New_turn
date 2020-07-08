@@ -49,8 +49,9 @@ class ClientServicesListController extends Controller
                     ->whereIn('client_service.state_id', [1, 2, 3, 4, 5, 6])
                     ->first();
                 }else{
-                    $client_service = ClientService::on($branch->db_name)->select('client_service.state_id')
+                    $client_service = ClientService::on($branch->db_name)->select('client_service.state_id', 'client_service.date_start', 'client_service.date_end', 'sl.name', 'sl.unit_per_hour')
                     ->join('users as u', 'client_service.employee_id', 'u.id')
+                    ->join('service_list as sl', 'client_service.service_id', 'sl.id')
                     ->where('client_service.user_id', $service->user_id)
                     ->where('client_service.user_service_id', $service->id)
                     ->whereIn('client_service.state_id', [1, 2, 3, 4, 5, 6])
@@ -58,6 +59,10 @@ class ClientServicesListController extends Controller
                 }
 
                 $service->turn_state = $client_service->state_id;
+                $service->date_start = $client_service->date_start;
+                $service->date_end = $client_service->date_end;
+                $service->service_name = $client_service->name;
+                $service->time = $client_service->unit_per_hour;
 
 
 
@@ -69,8 +74,9 @@ class ClientServicesListController extends Controller
                 $set_connection = SetConnectionHelper::setByDBName($branch->db_name);
                 # --------------------- Set connection ------------------------------------#
 
-                $client_turn = ClientTurn::on($branch->db_name)->select('state_id')->where('user_id', $service->user_id)->where('user_turn_id', $service->id)->whereIn('state_id', [2, 4, 1, 3])->first();
+                $client_turn = ClientTurn::on($branch->db_name)->select('state_id', 'turn_number')->where('user_id', $service->user_id)->where('user_turn_id', $service->id)->whereIn('state_id', [2, 4, 1, 3])->first();
 
+                $service->turn_number = $client_turn->turn_number;
                 $service->turn_state = $client_turn->state_id;
 
             }

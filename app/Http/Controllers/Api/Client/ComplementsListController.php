@@ -206,6 +206,8 @@ class ComplementsListController extends Controller
     {
         $validator=\Validator::make($request->all(),[
             'branch_id' => 'bail|required|exists:branch_office,id',
+            'service_id' => 'bail|numeric',
+            'date' => 'bail|date_format:"Y-m-d H:i:s"|date',
         ]);
         if($validator->fails())
         {
@@ -230,7 +232,15 @@ class ComplementsListController extends Controller
         ->whereIn('state_id', [2, 5])
         ->get();
 
-        return response()->json(['response' => $client_services], 200);
+        $employee_not_business = ClientService::on($branch->db_name)->select('client_service.id', 'client_service.employee_id', 'client_service.service_id', 'client_service.date_start', 'client_service.date_end',
+        'client_service.state_id', 'sl.name as service_name', 'sl.description as service_description', 'sl.price_per_hour')
+        ->join('service_list as sl', 'client_service.service_id', 'sl.id')
+        ->join('users as u', 'client_service.employee_id', 'u.id')
+        ->whereIn('state_id', [2, 5])
+        ->where('client_service.service_id', request('service_id'))
+        ->get();
+
+        return response()->json(['response' => $client_services, 'employee_not_business' => $employee_not_business], 200);
 
     }
 }

@@ -226,21 +226,85 @@ class ComplementsListController extends Controller
             return response()->json(['response' => ['error' => ['Error']]], 400);
         }
 
-        $client_services = ClientService::on($branch->db_name)->select('client_service.id', 'client_service.employee_id', 'client_service.service_id', 'client_service.date_start', 'client_service.date_end',
-        'client_service.state_id', 'sl.name as service_name', 'sl.description as service_description', 'sl.price_per_hour')
-        ->join('service_list as sl', 'client_service.service_id', 'sl.id')
-        ->whereIn('state_id', [2, 5])
-        ->get();
+        if(!empty(request('service_id'))){
+            $client_services = ClientService::on($branch->db_name)->select('client_service.id', 'client_service.employee_id', 'client_service.service_id', 'client_service.date_start', 'client_service.date_end',
+            'client_service.state_id', 'sl.name as service_name', 'sl.description as service_description', 'sl.price_per_hour', 'u.name as employee_name', 'u.last_name as employee_last_name')
+            ->join('service_list as sl', 'client_service.service_id', 'sl.id')
+            ->join('users as u', 'client_service.employee_id', 'u.id')
+            ->whereIn('client_service.state_id', [2, 5])
+            ->where('client_service.service_id', request('service_id'))
+            ->get();
 
-        $employee_not_business = ClientService::on($branch->db_name)->select('client_service.id', 'client_service.employee_id', 'client_service.service_id', 'client_service.date_start', 'client_service.date_end',
-        'client_service.state_id', 'sl.name as service_name', 'sl.description as service_description', 'sl.price_per_hour')
-        ->join('service_list as sl', 'client_service.service_id', 'sl.id')
-        ->join('users as u', 'client_service.employee_id', 'u.id')
-        ->whereIn('state_id', [2, 5])
-        ->where('client_service.service_id', request('service_id'))
-        ->get();
+            // Validar los empleados disponibles por el servicio, luego ver cuales pueden hacer trabajo en cada una de los servicios ocupados
+            // Agregar en un array cuales es tán tomados y hacer un plug para hacer la consulta de usuarios y agregarlo a el detalle de cada servicio como la cantidad de disponibles y la lista
 
-        return response()->json(['response' => $client_services, 'employee_not_business' => $employee_not_business], 200);
+            $employees = CUser::on($branch->db_name)->select('users.id','users.name', 'users.last_name')
+            ->join('user_has_role as ur', 'users.id', 'ur.user_id')
+            ->join('employee_type_employee as ete', 'users.id', 'ete.employee_id')
+            ->join('employee_type_service as ets', 'ete.employee_type_id', 'ets.employee_type_id')
+            ->where('ets.service_id', request('service_id'))
+            ->where('ur.role_id', 2)
+            ->get();
+
+
+            $collect = collect($employees)->pluck('id');
+
+            foreach ($client_services as $client_master) {
+
+                $client_service = ClientService::on($branch->db_name)
+                ->where('id', '!=', $client_master->id)
+                ->where('employee_id', '!=', $client_master->employee_id)
+                ->whereIn('employee_id', $collect)
+                ->whereIn('state_id', [2, 5])
+                ->get();
+
+                $pass = 0;
+                $employees_valid = $collect;
+
+                foreach ($client_service as $client) {
+                    # Validar los rangos de fechas
+                    if(request('date_start') >= $client->date_start && request('date_start') <= $client->date_end)
+                    {
+                        $pass++;
+                    }
+
+                    if($client_master->date_end >= $client->date_start && $client_master->date_end <= $client->date_end)
+                    {
+                        $pass++;
+                    }
+
+                    if($client->date_start >= request('date_start') && $client->date_start <= $client_master->date_end)
+                    {
+                        $pass++;
+                    }
+
+                    if($client->date_end >= request('date_start') && $client->date_end <= $client_master->date_end)
+                    {
+                        $pass++;
+                    }
+
+                    if($pass > 0){
+                        $data_to_delete = collect($employees_valid)->search($client->employee_id);
+                        unset($employees_valid[$data_to_delete]);
+                    }
+                }
+                $employees_list = CUser::on($branch->db_name)->select('users.id','users.name', 'users.last_name')
+                ->whereIn('id', collect($employees_valid)->values())
+                ->get();
+
+                $client_master->business = $employees_list;
+            }
+
+        }else{
+            $client_services = ClientService::on($branch->db_name)->select('client_service.id', 'client_service.employee_id', 'client_service.service_id', 'client_service.date_start', 'client_service.date_end',
+            'client_service.state_id', 'sl.name as service_name', 'sl.description as service_description', 'sl.price_per_hour', 'u.name as employee_name', 'u.last_name as employee_last_name')
+            ->join('service_list as sl', 'client_service.service_id', 'sl.id')
+            ->join('users as u', 'client_service.employee_id', 'u.id')
+            ->whereIn('client_service.state_id', [2, 5])
+            ->get();
+        }
+
+        return response()->json(['response' => $client_services], 200);
 
     }
 }

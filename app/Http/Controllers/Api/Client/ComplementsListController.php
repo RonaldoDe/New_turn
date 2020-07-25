@@ -207,7 +207,7 @@ class ComplementsListController extends Controller
         $validator=\Validator::make($request->all(),[
             'branch_id' => 'bail|required|exists:branch_office,id',
             'service_id' => 'bail|numeric',
-            'date' => 'bail|date_format:"Y-m-d H:i:s"|date',
+            'date' => 'bail|date_format:"Y-m-d"|date',
         ]);
         if($validator->fails())
         {
@@ -232,11 +232,12 @@ class ComplementsListController extends Controller
             ->join('service_list as sl', 'client_service.service_id', 'sl.id')
             ->join('users as u', 'client_service.employee_id', 'u.id')
             ->whereIn('client_service.state_id', [2, 5])
-            ->where('client_service.service_id', request('service_id'))
+            ->where('client_service.date_start', '>=', request('date').' 00:00:00')
+            ->where('client_service.date_end', '<=', request('date').' 23:59:59')
             ->get();
 
             // Validar los empleados disponibles por el servicio, luego ver cuales pueden hacer trabajo en cada una de los servicios ocupados
-            // Agregar en un array cuales es tán tomados y hacer un plug para hacer la consulta de usuarios y agregarlo a el detalle de cada servicio como la cantidad de disponibles y la lista
+            // Agregar en un array cuales es tán tomados y hacer un pluck para hacer la consulta de usuarios y agregarlo a el detalle de cada servicio como la cantidad de disponibles y la lista
 
             $employees = CUser::on($branch->db_name)->select('users.id','users.name', 'users.last_name')
             ->join('user_has_role as ur', 'users.id', 'ur.user_id')
@@ -247,23 +248,23 @@ class ComplementsListController extends Controller
             ->get();
 
 
-            $collect = collect($employees)->pluck('id');
 
             foreach ($client_services as $client_master) {
+                $test = collect($employees)->pluck('id');
 
                 $client_service = ClientService::on($branch->db_name)
                 ->where('id', '!=', $client_master->id)
                 ->where('employee_id', '!=', $client_master->employee_id)
-                ->whereIn('employee_id', $collect)
+                ->whereIn('employee_id', $test)
                 ->whereIn('state_id', [2, 5])
                 ->get();
 
                 $pass = 0;
-                $employees_valid = $collect;
+                $employees_valid = $test;
 
                 foreach ($client_service as $client) {
                     # Validar los rangos de fechas
-                    if(request('date_start') >= $client->date_start && request('date_start') <= $client->date_end)
+                    if($client_master->date_start >= $client->date_start && $client_master->date_start <= $client->date_end)
                     {
                         $pass++;
                     }
@@ -273,12 +274,12 @@ class ComplementsListController extends Controller
                         $pass++;
                     }
 
-                    if($client->date_start >= request('date_start') && $client->date_start <= $client_master->date_end)
+                    if($client->date_start >= $client_master->date_start && $client->date_start <= $client_master->date_end)
                     {
                         $pass++;
                     }
 
-                    if($client->date_end >= request('date_start') && $client->date_end <= $client_master->date_end)
+                    if($client->date_end >= $client_master->date_start && $client->date_end <= $client_master->date_end)
                     {
                         $pass++;
                     }
@@ -288,11 +289,16 @@ class ComplementsListController extends Controller
                         unset($employees_valid[$data_to_delete]);
                     }
                 }
+
+                $data_to_delete = collect($employees_valid)->search($client_master->employee_id);
+                unset($employees_valid[$data_to_delete]);
+
                 $employees_list = CUser::on($branch->db_name)->select('users.id','users.name', 'users.last_name')
                 ->whereIn('id', collect($employees_valid)->values())
                 ->get();
 
-                $client_master->business = $employees_list;
+                $client_master->available_employees = $employees_list;
+
             }
 
         }else{

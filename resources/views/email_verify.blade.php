@@ -7,7 +7,7 @@
     <title>Verify</title>
 </head>
 <body>
-    <a href="http://localhost:4300/validacion/{{$email_code}}/{{$password_code}}">Link enfer</a>
+    <a href="http://localhost:4300/validacion/{{$email_code}}">Link enfer</a>
 </body>
 </html>
 

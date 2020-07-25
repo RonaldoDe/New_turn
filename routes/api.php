@@ -22,6 +22,9 @@ Route::post('forgetPassword', 'Api\Administration\ProfileController@forgetPasswo
 # New password
 Route::post('newPassword', 'Api\Administration\ProfileController@updateFirstPassword');
 
+# Validate acount
+Route::post('validateEmail', 'Helper\TemplateHelper@validateAcount');
+
 Route::middleware('auth:api')->group(function () {
     Route::apiResource('users', 'Api\Administration\UserController');
     Route::apiResource('role', 'Api\Administration\RoleController');

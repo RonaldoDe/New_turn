@@ -227,14 +227,7 @@ class ComplementsListController extends Controller
         }
 
         if(!empty(request('service_id'))){
-            $client_services = ClientService::on($branch->db_name)->select('client_service.id', 'client_service.employee_id', 'client_service.service_id', 'client_service.date_start', 'client_service.date_end',
-            'client_service.state_id', 'sl.name as service_name', 'sl.description as service_description', 'sl.price_per_hour', 'u.name as employee_name', 'u.last_name as employee_last_name')
-            ->join('service_list as sl', 'client_service.service_id', 'sl.id')
-            ->join('users as u', 'client_service.employee_id', 'u.id')
-            ->whereIn('client_service.state_id', [2, 5])
-            ->where('client_service.date_start', '>=', request('date').' 00:00:00')
-            ->where('client_service.date_end', '<=', request('date').' 23:59:59')
-            ->get();
+
 
             // Validar los empleados disponibles por el servicio, luego ver cuales pueden hacer trabajo en cada una de los servicios ocupados
             // Agregar en un array cuales es tán tomados y hacer un pluck para hacer la consulta de usuarios y agregarlo a el detalle de cada servicio como la cantidad de disponibles y la lista
@@ -245,6 +238,16 @@ class ComplementsListController extends Controller
             ->join('employee_type_service as ets', 'ete.employee_type_id', 'ets.employee_type_id')
             ->where('ets.service_id', request('service_id'))
             ->where('ur.role_id', 2)
+            ->get();
+
+            $client_services = ClientService::on($branch->db_name)->select('client_service.id', 'client_service.employee_id', 'client_service.service_id', 'client_service.date_start', 'client_service.date_end',
+            'client_service.state_id', 'sl.name as service_name', 'sl.description as service_description', 'sl.price_per_hour', 'u.name as employee_name', 'u.last_name as employee_last_name')
+            ->join('service_list as sl', 'client_service.service_id', 'sl.id')
+            ->join('users as u', 'client_service.employee_id', 'u.id')
+            ->whereIn('client_service.state_id', [2, 5])
+            ->whereIn('client_service.employee_id', collect($employees)->pluck('id'))
+            ->where('client_service.date_start', '>=', request('date').' 00:00:00')
+            ->where('client_service.date_end', '<=', request('date').' 23:59:59')
             ->get();
 
 

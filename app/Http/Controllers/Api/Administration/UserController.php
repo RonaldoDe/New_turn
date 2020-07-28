@@ -109,6 +109,7 @@ class UserController extends Controller
         DB::connection('connectionDB')->beginTransaction();
         DB::beginTransaction();
         try{
+
             # Create user
             $principal_user = User::create([
                 'name' => request('name'),
@@ -117,10 +118,13 @@ class UserController extends Controller
                 'address' => request('address'),
                 'dni' => request('dni'),
                 'email' => request('email'),
+                'password_verify' => 1,
+                'email_verify' => 0,
                 'password' => bcrypt(request('password')),
                 'phanton_user' => 0,
                 'state_id' => 1
             ]);
+
             # Validate if the user was created
             if($principal_user){
 
@@ -139,7 +143,7 @@ class UserController extends Controller
                     'dni' => request('dni'),
                     'email' => request('email'),
                     'phanton_user' => 0,
-                    'business_days' => request('business_days'),
+                    'business_days' => json_encode(request('business_days')),
                     'principal_id' => $principal_user->id,
                     'state_id' => 1
                 ]);
@@ -192,7 +196,7 @@ class UserController extends Controller
             $principal_email = array((object)['email' => $user->email, 'name' => $user->name." ".$user->last_name]);
 
             #Send email
-            $send_email = SendEmailHelper::sendEmail('Correo de verificación de cuenta de GIMED.', TemplateHelper::emailVerify($data), $principal_email, array());
+            $send_email = SendEmailHelper::sendEmail('Correo de verificación de cuenta.', TemplateHelper::emailVerify($data), $principal_email, array());
             if($send_email != 1){
                 return response()->json(['response' => ['error' => [$send_email]]], 400);
             }
@@ -201,6 +205,7 @@ class UserController extends Controller
                 return response()->json(['response' => ['error' => ['Ususario no encontrado']]], 400);
             }
         }catch(Exception $e){
+
             DB::connection('connectionDB')->rollback();
             DB::rollback();
         }

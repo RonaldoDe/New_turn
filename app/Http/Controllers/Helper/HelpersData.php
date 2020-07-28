@@ -118,7 +118,7 @@ class HelpersData extends Controller
         foreach ($employees as $employee) {
             $opening = json_decode($employee->business_days);
 
-            if($opening = '' || $opening = []){
+            if($opening == '' || $opening == []){
                 array_push($employees_array, $employee->id);
             }else{
 

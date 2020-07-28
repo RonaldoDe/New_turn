@@ -117,35 +117,41 @@ class HelpersData extends Controller
 
         foreach ($employees as $employee) {
             $opening = json_decode($employee->business_days);
-            $pass_start = 0;
-            $pass_end = 0;
-            if($start == 'sunday'){
-                $start = 'holidays';
-            }
-            if($end == 'sunday'){
-                $end = 'holidays';
-            }
-            for ($i=0; $i < 7; $i++) {
-                foreach ($opening[$i] as $key => $value) {
-                    if($start == $key){
-                        foreach ($value as $date) {
+
+            if($opening = '' || $opening = []){
+                array_push($employees_array, $employee->id);
+            }else{
+
+                $pass_start = 0;
+                $pass_end = 0;
+                if($start == 'sunday'){
+                    $start = 'holidays';
+                }
+                if($end == 'sunday'){
+                    $end = 'holidays';
+                }
+                for ($i=0; $i < 7; $i++) {
+                    foreach ($opening[$i] as $key => $value) {
+                        if($start == $key){
+                            foreach ($value as $date) {
 
 
-                            if($start_hout >= $date->date_start && $start_hout <= $date->date_end){
-                                $pass_start += 1;
+                                if($start_hout >= $date->date_start && $start_hout <= $date->date_end){
+                                    $pass_start += 1;
+                                }
+
+                                if($end_hout >= $date->date_start && $end_hout <= $date->date_end){
+                                    $pass_end += 1;
+                                }
                             }
 
-                            if($end_hout >= $date->date_start && $end_hout <= $date->date_end){
-                                $pass_end += 1;
-                            }
+
                         }
-
-
                     }
                 }
-            }
-            if($pass_start > 0 || $pass_end > 0){
-                array_push($employees_array, $employee->id);
+                if($pass_start > 0 || $pass_end > 0){
+                    array_push($employees_array, $employee->id);
+                }
             }
 
         }

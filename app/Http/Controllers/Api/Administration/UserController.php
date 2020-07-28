@@ -118,7 +118,6 @@ class UserController extends Controller
                 'dni' => request('dni'),
                 'email' => request('email'),
                 'password' => bcrypt(request('password')),
-                'business_days' => request('business_days'),
                 'phanton_user' => 0,
                 'state_id' => 1
             ]);
@@ -140,6 +139,7 @@ class UserController extends Controller
                     'dni' => request('dni'),
                     'email' => request('email'),
                     'phanton_user' => 0,
+                    'business_days' => request('business_days'),
                     'principal_id' => $principal_user->id,
                     'state_id' => 1
                 ]);
@@ -284,7 +284,7 @@ class UserController extends Controller
         }
 
         # Here we get the instance of an user
-        $user = User::on('connectionDB')->find($id);
+        $user = CUser::on('connectionDB')->find($id);
 
         # Here we check if the user does not exist
         if(!$user){

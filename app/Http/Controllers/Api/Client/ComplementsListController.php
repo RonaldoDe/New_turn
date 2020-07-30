@@ -292,7 +292,7 @@ class ComplementsListController extends Controller
                     }
 
                     if($client->employee_id == 12){
-                        return response()->json(['response' => $employees_valid], 200);
+                        return response()->json(['response' => $employees_valid, 'pass' => $pass], 200);
                     }
                 }
 

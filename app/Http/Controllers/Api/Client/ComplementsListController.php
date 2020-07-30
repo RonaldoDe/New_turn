@@ -291,7 +291,7 @@ class ComplementsListController extends Controller
                         unset($employees_valid[$data_to_delete]);
                     }
 
-                    if($client->employee_id == 12){
+                    if($client->employee_id == 12 && $client == 43){
                         return response()->json(['response' => $employees_valid, 'pass' => $pass], 200);
                     }
                 }

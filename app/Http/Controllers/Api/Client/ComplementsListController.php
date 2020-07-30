@@ -250,7 +250,6 @@ class ComplementsListController extends Controller
             ->where('client_service.date_end', '<=', request('date').' 23:59:59')
             ->get();
 
-            return response()->json(['response' => $client_services], 200);
 
             foreach ($client_services as $client_master) {
                 $test = collect($employees)->pluck('id');
@@ -261,6 +260,7 @@ class ComplementsListController extends Controller
                 ->whereIn('employee_id', $test)
                 ->whereIn('state_id', [2, 5])
                 ->get();
+                return response()->json(['response' => $client_service], 200);
 
                 $pass = 0;
                 $employees_valid = $test;

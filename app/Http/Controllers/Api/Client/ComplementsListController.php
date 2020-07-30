@@ -260,7 +260,6 @@ class ComplementsListController extends Controller
                 ->whereIn('employee_id', $test)
                 ->whereIn('state_id', [2, 5])
                 ->get();
-                return response()->json(['response' => $client_service], 200);
 
                 $pass = 0;
                 $employees_valid = $test;
@@ -292,6 +291,7 @@ class ComplementsListController extends Controller
                         unset($employees_valid[$data_to_delete]);
                     }
                 }
+                return response()->json(['response' => $employees_valid], 200);
 
                 $data_to_delete = collect($employees_valid)->search($client_master->employee_id);
                 unset($employees_valid[$data_to_delete]);

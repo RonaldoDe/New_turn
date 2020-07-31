@@ -7,10 +7,12 @@ use App\Http\Controllers\Helper\HelpersData;
 use App\Http\Controllers\Helper\SetConnectionHelper;
 use App\Models\CUser;
 use App\Models\Grooming\ClientService;
+use App\Models\Grooming\Service as AppService;
 use App\Models\Master\BranchOffice;
 use App\Models\Master\MasterCompany;
 use App\Models\PaymentData;
 use App\Models\Service;
+use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -250,59 +252,94 @@ class ComplementsListController extends Controller
             ->where('client_service.date_end', '<=', request('date').' 23:59:59')
             ->get();
 
+            $data_array = array();
 
             foreach ($client_services as $client_master) {
-                $test = collect($employees)->pluck('id');
+                $old_date_start = $client_master->date_start;
+                $old_date_end = $client_master->date_end;
 
-                $client_service = ClientService::on($branch->db_name)
-                ->where('id', '!=', $client_master->id)
-                ->where('employee_id', '!=', $client_master->employee_id)
-                ->whereIn('employee_id', $test)
-                ->whereIn('state_id', [2, 5])
-                ->get();
+                $date_start = new DateTime($client_master->date_start);
+                $date_end = new DateTime($client_master->date_end);
+                $total_time = $date_start->diff($date_end)->i;
 
-                $pass = 0;
-                $employees_valid = $test;
+                for ($i=0; $i < $total_time; $i += $branch->minimun_time) {
 
-                foreach ($client_service as $client) {
-                    # Validar los rangos de fechas
-                    if($client_master->date_start >= $client->date_start && $client_master->date_start <= $client->date_end)
-                    {
-                        $pass++;
+                    $new_date_start = $date_start->modify('+'.$i.' minute')->format('Y-m-d H:i:s');
+                    $new_date_end = date('Y-m-d H:i:s', strtotime('+'.$branch->minimun_time.' minute', strtotime($new_date_start)));
+
+                    # Sumar los "10" min desde la hora inicial y hacer el resto de el código y validar esos tiempos por cada usuario
+                    # Crear un registro por cada vuelta de el for, como si fuese un registro de db pero con las horas divididas por el minimo
+
+                    $test = collect($employees)->pluck('id');
+
+                    $client_service = ClientService::on($branch->db_name)
+                    ->where('id', '!=', $client_master->id)
+                    ->where('employee_id', '!=', $client_master->employee_id)
+                    ->whereIn('employee_id', $test)
+                    ->whereIn('state_id', [2, 5])
+                    ->get();
+
+                    $pass = 0;
+                    $employees_valid = $test;
+
+                    foreach ($client_service as $client) {
+                        # Validar los rangos de fechas
+                        if($new_date_start >= $client->date_start && $new_date_start <= $client->date_end)
+                        {
+                            $pass++;
+                        }
+
+                        if($new_date_end >= $client->date_start && $new_date_end <= $client->date_end)
+                        {
+                            $pass++;
+                        }
+
+                        if($client->date_start >= $new_date_start && $client->date_start <= $new_date_end)
+                        {
+                            $pass++;
+                        }
+
+                        if($client->date_end >= $new_date_start && $client->date_end <= $new_date_end)
+                        {
+                            $pass++;
+                        }
+
+                        if($pass > 0){
+                            $data_to_delete = collect($employees_valid)->search($client->employee_id);
+                            unset($employees_valid[$data_to_delete]);
+                        }
+
                     }
+                    $data_to_delete = collect($employees_valid)->search($client_master->employee_id);
+                    unset($employees_valid[$data_to_delete]);
 
-                    if($client_master->date_end >= $client->date_start && $client_master->date_end <= $client->date_end)
-                    {
-                        $pass++;
-                    }
+                    $employees_list = CUser::on($branch->db_name)->select('users.id','users.name', 'users.last_name')
+                    ->whereIn('id', collect($employees_valid)->values())
+                    ->get();
 
-                    if($client->date_start >= $client_master->date_start && $client->date_start <= $client_master->date_end)
-                    {
-                        $pass++;
-                    }
-
-                    if($client->date_end >= $client_master->date_start && $client->date_end <= $client_master->date_end)
-                    {
-                        $pass++;
-                    }
-
-                    if($pass > 0){
-                        $data_to_delete = collect($employees_valid)->search($client->employee_id);
-                        unset($employees_valid[$data_to_delete]);
-                    }
-
+                    # $client_master->available_employees = $employees_list;
+                    # $client_master->date_start = $new_date_start;
+                    # $client_master->date_end = $new_date_end;
+                    array_push($data_array, array(
+                        "id"=> 9,
+                        "employee_id"=> 3,
+                        "service_id"=> 1,
+                        "date_start"=> $new_date_start,
+                        "date_end"=> $new_date_end,
+                        "state_id"=> 5,
+                        "service_name"=> "General",
+                        "service_description"=> "Aseo general.",
+                        "price_per_hour"=> "20000",
+                        "employee_name"=> "Ronal2",
+                        "employee_last_name"=> "Camacho",
+                        "available_employees"=> $employees_list
+                    ));
                 }
 
-                $data_to_delete = collect($employees_valid)->search($client_master->employee_id);
-                unset($employees_valid[$data_to_delete]);
-
-                $employees_list = CUser::on($branch->db_name)->select('users.id','users.name', 'users.last_name')
-                ->whereIn('id', collect($employees_valid)->values())
-                ->get();
-
-                $client_master->available_employees = $employees_list;
 
             }
+            return response()->json(['response' => $data_array], 200);
+
 
         }else{
             $client_services = ClientService::on($branch->db_name)->select('client_service.id', 'client_service.employee_id', 'client_service.service_id', 'client_service.date_start', 'client_service.date_end',

@@ -112,7 +112,6 @@ class ComplementsListController extends Controller
 
 
             $original_date_end = date('Y-m-d H:i:s', strtotime('+'.$service->unit_per_hour.' minute', strtotime(date(request('date_start')))));
-            return response()->json(['response' => [$original_date_end]], 400);
 
             $validate_business_days = HelpersData::employeeBusinessDays(request('date_start'), $original_date_end, $service->id, $branch->db_name);
             if($validate_business_days == 0){

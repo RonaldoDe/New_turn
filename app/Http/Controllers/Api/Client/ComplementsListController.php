@@ -267,7 +267,7 @@ class ComplementsListController extends Controller
                     $new_date_start = $date_start->modify('+'.$i.' minute')->format('Y-m-d H:i:s');
                     $new_date_end = date('Y-m-d H:i:s', strtotime('+'.$branch->minimun_time.' minute', strtotime($new_date_start)));
 
-                    array_push($testy, $i);
+                    array_push($testy, $i, );
                     # Sumar los "10" min desde la hora inicial y hacer el resto de el código y validar esos tiempos por cada usuario
                     # Crear un registro por cada vuelta de el for, como si fuese un registro de db pero con las horas divididas por el minimo
 
@@ -322,17 +322,17 @@ class ComplementsListController extends Controller
                     # $client_master->date_start = $new_date_start;
                     # $client_master->date_end = $new_date_end;
                     array_push($data_array, array(
-                        "id"=> 9,
-                        "employee_id"=> 3,
-                        "service_id"=> 1,
+                        "id"=> $client_master->id,
+                        "employee_id"=> $client_master->employee_id,
+                        "service_id"=> $client_master->service_id,
                         "date_start"=> $new_date_start,
                         "date_end"=> $new_date_end,
-                        "state_id"=> 5,
-                        "service_name"=> "General",
-                        "service_description"=> "Aseo general.",
-                        "price_per_hour"=> "20000",
-                        "employee_name"=> "Ronal2",
-                        "employee_last_name"=> "Camacho",
+                        "state_id"=> $client_master->state_id,
+                        "service_name"=> $client_master->service_name,
+                        "service_description"=> $client_master->service_description,
+                        "price_per_hour"=> $client_master->price_per_hour,
+                        "employee_name"=> $client_master->employee_name,
+                        "employee_last_name"=> $client_master->employee_last_name,
                         "available_employees"=> $employees_list
                     ));
                 }

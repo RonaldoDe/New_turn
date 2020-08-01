@@ -339,7 +339,7 @@ class ComplementsListController extends Controller
 
 
             }
-            return response()->json(['response' => $data_array], 200);
+            return response()->json(['response' => $data_array, 'testy' => $testy], 200);
 
 
         }else{

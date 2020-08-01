@@ -342,8 +342,8 @@ class ComplementsListController extends Controller
                         "available_employees"=> $employees_list
                     ));
 
-                    if($client_master->id == 46){
-                        return response()->json(['response' => [$client_master, $i, $new_date_start, $data_array]], 400);
+                    if($client_master->id == 46 ){
+                        return response()->json(['response' => [$client_master, $i, $new_date_start, $data_array, $total_time]], 400);
                     }
                 }
 

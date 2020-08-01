@@ -111,7 +111,7 @@ class ComplementsListController extends Controller
             }
 
 
-            $date_end = date('Y-m-d H:i:s', strtotime('+'.$service->time.' minute', strtotime(date(request('date_start')))));
+            $original_date_end = date('Y-m-d H:i:s', strtotime('+'.$service->time.' minute', strtotime(date(request('date_start')))));
 
             $validate_business_days = HelpersData::employeeBusinessDays(request('date_start'), $date_end, $service->id, $branch->db_name);
             if($validate_business_days == 0){
@@ -130,39 +130,51 @@ class ComplementsListController extends Controller
             $collect = collect($employees)->pluck('id');
 
 
-            $client_service = ClientService::on($branch->db_name)
-            ->whereIn('employee_id', $collect)
-            ->whereIn('state_id', [2, 5])
-            ->get();
+
 
             $pass = 0;
             $employees_valid = $collect;
-
-            foreach ($client_service as $client) {
-                # Validar los rangos de fechas
-                if(request('date_start') >= $client->date_start && request('date_start') <= $client->date_end)
-                {
-                    $pass++;
+            $date_start = new DateTime(request('date_start'));
+            $date_end = new DateTime($original_date_end);
+            $total_time = $date_start->diff($date_end)->i;
+            for ($i=0; $i < $total_time; $i += $branch->minimun_time) {
+                if($i > 0){
+                    $date_start = new DateTime(request('date_start'));
                 }
+                $new_date_start = $date_start->modify('+'.$i.' minute')->format('Y-m-d H:i:s');
+                $new_date_end = date('Y-m-d H:i:s', strtotime('+'.$branch->minimun_time.' minute', strtotime($new_date_start)));
 
-                if($date_end >= $client->date_start && $date_end <= $client->date_end)
-                {
-                    $pass++;
-                }
+                $client_service = ClientService::on($branch->db_name)
+                ->whereIn('employee_id', $collect)
+                ->whereIn('state_id', [2, 5])
+                ->get();
 
-                if($client->date_start >= request('date_start') && $client->date_start <= $date_end)
-                {
-                    $pass++;
-                }
+                foreach ($client_service as $client) {
+                    # Validar los rangos de fechas
+                    if($new_date_start >= $client->date_start && $new_date_start <= $client->date_end)
+                    {
+                        $pass++;
+                    }
 
-                if($client->date_end >= request('date_start') && $client->date_end <= $date_end)
-                {
-                    $pass++;
-                }
+                    if($new_date_end >= $client->date_start && $new_date_end <= $client->date_end)
+                    {
+                        $pass++;
+                    }
 
-                if($pass > 0){
-                    $data_to_delete = collect($employees_valid)->search($client->employee_id);
-                    unset($employees_valid[$data_to_delete]);
+                    if($client->date_start >= $new_date_start && $client->date_start <= $new_date_end)
+                    {
+                        $pass++;
+                    }
+
+                    if($client->date_end >= $new_date_start && $client->date_end <= $new_date_end)
+                    {
+                        $pass++;
+                    }
+
+                    if($pass > 0){
+                        $data_to_delete = collect($employees_valid)->search($client->employee_id);
+                        unset($employees_valid[$data_to_delete]);
+                    }
                 }
             }
 
@@ -255,14 +267,14 @@ class ComplementsListController extends Controller
             $data_array = array();
 
             foreach ($client_services as $client_master) {
-                $old_date_start = $client_master->date_start;
-                $old_date_end = $client_master->date_end;
 
                 $date_start = new DateTime($client_master->date_start);
                 $date_end = new DateTime($client_master->date_end);
                 $total_time = $date_start->diff($date_end)->i;
                 for ($i=0; $i < $total_time; $i += $branch->minimun_time) {
-                    $date_start = new DateTime($client_master->date_start);
+                    if($i > 0){
+                        $date_start = new DateTime($client_master->date_start);
+                    }
                     $new_date_start = $date_start->modify('+'.$i.' minute')->format('Y-m-d H:i:s');
                     $new_date_end = date('Y-m-d H:i:s', strtotime('+'.$branch->minimun_time.' minute', strtotime($new_date_start)));
 

@@ -263,7 +263,7 @@ class ComplementsListController extends Controller
                 $total_time = $date_start->diff($date_end)->i;
                 $testy = array();
                 for ($i=0; $i < $total_time; $i += $branch->minimun_time) {
-
+                    $date_start = new DateTime($client_master->date_start);
                     $new_date_start = $date_start->modify('+'.$i.' minute')->format('Y-m-d H:i:s');
                     $new_date_end = date('Y-m-d H:i:s', strtotime('+'.$branch->minimun_time.' minute', strtotime($new_date_start)));
 

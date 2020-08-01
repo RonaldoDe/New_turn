@@ -267,7 +267,7 @@ class ComplementsListController extends Controller
                     $new_date_start = $date_start->modify('+'.$i.' minute')->format('Y-m-d H:i:s');
                     $new_date_end = date('Y-m-d H:i:s', strtotime('+'.$branch->minimun_time.' minute', strtotime($new_date_start)));
 
-                    array_push($testy, $i, );
+                    array_push($testy, $i, $new_date_start);
                     # Sumar los "10" min desde la hora inicial y hacer el resto de el código y validar esos tiempos por cada usuario
                     # Crear un registro por cada vuelta de el for, como si fuese un registro de db pero con las horas divididas por el minimo
 

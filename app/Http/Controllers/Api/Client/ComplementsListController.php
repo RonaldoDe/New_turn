@@ -270,13 +270,12 @@ class ComplementsListController extends Controller
                 $date_end = new DateTime($client_master->date_end);
                 $total_time = $date_start->diff($date_end)->i;
                 for ($i=0; $i < $total_time; $i += $branch->minimun_time) {
-                    if($client_master->id == 46){
-                        return response()->json(['response' => [$client_master, $i]], 400);
-                    }
                     $date_start = new DateTime($client_master->date_start);
                     $new_date_start = $date_start->modify('+'.$i.' minute')->format('Y-m-d H:i:s');
                     $new_date_end = date('Y-m-d H:i:s', strtotime('+'.$branch->minimun_time.' minute', strtotime($new_date_start)));
-
+                    if($client_master->id == 46){
+                        return response()->json(['response' => [$client_master, $i, $new_date_start]], 400);
+                    }
                     # Sumar los "10" min desde la hora inicial y hacer el resto de el código y validar esos tiempos por cada usuario
                     # Crear un registro por cada vuelta de el for, como si fuese un registro de db pero con las horas divididas por el minimo
 

@@ -138,9 +138,7 @@ class ComplementsListController extends Controller
             $date_end = new DateTime($original_date_end);
             $total_time = $date_start->diff($date_end)->i;
             for ($i=0; $i < $total_time; $i += $branch->minimun_time) {
-                if($i > 0){
-                    $date_start = new DateTime(request('date_start'));
-                }
+                $date_start = new DateTime(request('date_start'));
                 $new_date_start = $date_start->modify('+'.$i.' minute')->format('Y-m-d H:i:s');
                 $new_date_end = date('Y-m-d H:i:s', strtotime('+'.$branch->minimun_time.' minute', strtotime($new_date_start)));
 
@@ -272,9 +270,10 @@ class ComplementsListController extends Controller
                 $date_end = new DateTime($client_master->date_end);
                 $total_time = $date_start->diff($date_end)->i;
                 for ($i=0; $i < $total_time; $i += $branch->minimun_time) {
-                    if($i > 0){
-                        $date_start = new DateTime($client_master->date_start);
+                    if($client_master->id == 46){
+                        return response()->json(['response' => [$client_master, $i]], 400);
                     }
+                    $date_start = new DateTime($client_master->date_start);
                     $new_date_start = $date_start->modify('+'.$i.' minute')->format('Y-m-d H:i:s');
                     $new_date_end = date('Y-m-d H:i:s', strtotime('+'.$branch->minimun_time.' minute', strtotime($new_date_start)));
 

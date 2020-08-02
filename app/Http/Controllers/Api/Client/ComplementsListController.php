@@ -294,7 +294,7 @@ class ComplementsListController extends Controller
 
                     foreach ($client_service as $client) {
                         # Validar los rangos de fechas
-                        if($new_date_start > $client->date_start && $new_date_start = $client->date_end)
+                        if($new_date_start > $client->date_start && $new_date_start < $client->date_end)
                         {
                             $pass++;
                         }

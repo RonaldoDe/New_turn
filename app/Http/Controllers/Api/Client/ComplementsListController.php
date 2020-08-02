@@ -292,12 +292,9 @@ class ComplementsListController extends Controller
                     ->where('client_service.date_end', '<=', request('date').' 23:59:59')
                     ->get();
 
-                    $pass = 0;
                     $employees_valid = $test;
                     foreach ($client_service as $client) {
-                        if($client_master->id == 46 && $pass > 0 && $client->employee_id == 12){
-                            return response()->json(['response' => $employees_valid, $pass, $client->employee_id], 400);
-                        }
+                        $pass = 0;
 
                         # Validar los rangos de fechas
                         if($new_date_start > $client->date_start && $new_date_start < $client->date_end)
@@ -334,6 +331,10 @@ class ComplementsListController extends Controller
                                 return response()->json(['response' => 4, $new_date_end, $client->date_start, $client->date_end, $client_service], 400);
                             }
 
+                        }
+
+                        if($client_master->id == 46 && $pass > 0 && $client->employee_id == 12){
+                            return response()->json(['response' => $employees_valid, $pass, $client->employee_id], 400);
                         }
 
 

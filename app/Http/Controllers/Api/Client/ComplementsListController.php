@@ -304,7 +304,7 @@ class ComplementsListController extends Controller
                         if($new_date_end > $client->date_start && $new_date_end < $client->date_end)
                         {
                             $pass++;
-                            #return response()->json(['response' => 2, $new_date_end, $client->date_start, $client->date_end], 400);
+                            return response()->json(['response' => 2, $new_date_end, $client->date_start, $client->date_end], 400);
 
                         }
 

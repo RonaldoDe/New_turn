@@ -298,7 +298,7 @@ class ComplementsListController extends Controller
                         if($new_date_start > $client->date_start && $new_date_start < $client->date_end)
                         {
                             $pass++;
-                            if($client_master->id == 46 && $pass > 0 && $client->employee_id == 12){
+                            if($client_master->id == 46 && $client->employee_id == 12){
                                 return response()->json(['response' => 2, $new_date_end, $client->date_start, $client->date_end], 400);
                             }
 
@@ -307,7 +307,7 @@ class ComplementsListController extends Controller
                         if($new_date_end > $client->date_start && $new_date_end < $client->date_end)
                         {
                             $pass++;
-                            if($client_master->id == 46 && $pass > 0 && $client->employee_id == 12){
+                            if($client_master->id == 46 && $client->employee_id == 12){
                                 return response()->json(['response' => 2, $new_date_end, $client->date_start, $client->date_end], 400);
                             }
 
@@ -316,7 +316,7 @@ class ComplementsListController extends Controller
                         if($client->date_start > $new_date_start && $client->date_start < $new_date_end)
                         {
                             $pass++;
-                            if($client_master->id == 46 && $pass > 0 && $client->employee_id == 12){
+                            if($client_master->id == 46 && $client->employee_id == 12){
                                 return response()->json(['response' => 2, $new_date_end, $client->date_start, $client->date_end], 400);
                             }
 
@@ -325,7 +325,7 @@ class ComplementsListController extends Controller
                         if($client->date_end > $new_date_start && $client->date_end < $new_date_end)
                         {
                             $pass++;
-                            if($client_master->id == 46 && $pass > 0 && $client->employee_id == 12){
+                            if($client_master->id == 46 && $client->employee_id == 12){
                                 return response()->json(['response' => 2, $new_date_end, $client->date_start, $client->date_end], 400);
                             }
 

@@ -315,7 +315,7 @@ class ComplementsListController extends Controller
                         }
 
                         if($client_master->id == 46 && $pass > 0 && $client->employee_id == 12){
-                            return response()->json(['response' => $employees_valid, $pass], 400);
+                            return response()->json(['response' => $employees_valid, $pass, $client], 400);
                         }
                         if($pass > 0){
                             $data_to_delete = collect($employees_valid)->search($client->employee_id);

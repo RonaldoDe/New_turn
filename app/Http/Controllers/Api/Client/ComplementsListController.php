@@ -279,6 +279,7 @@ class ComplementsListController extends Controller
 
                     # Validar cuando las horas no sean exactas y no alcencen a la hora final, para que pueda tomar a el empleado.
                     # Descomentar lo comentado para serguir probando, Aumentar el resto de tiempo de la diferencia a la hora final.
+                    # Esto de arriba a la hora de validar el empleado "pass"
 
                     $test = collect($employees)->pluck('id');
 

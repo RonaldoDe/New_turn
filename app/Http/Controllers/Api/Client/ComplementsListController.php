@@ -288,6 +288,8 @@ class ComplementsListController extends Controller
                     ->where('employee_id', '!=', $client_master->employee_id)
                     ->whereIn('employee_id', $test)
                     ->whereIn('state_id', [2, 5])
+                    ->where('client_service.date_start', '>=', request('date').' 00:00:00')
+                    ->where('client_service.date_end', '<=', request('date').' 23:59:59')
                     ->get();
 
                     $pass = 0;

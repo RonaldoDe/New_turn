@@ -277,8 +277,8 @@ class ComplementsListController extends Controller
                     $new_date_start = $date_start->modify('+'.$i.' minute')->format('Y-m-d H:i:s');
                     $new_date_end = date('Y-m-d H:i:s', strtotime('+'.$branch->minimun_time.' minute', strtotime($new_date_start)));
 
-                    # Sumar los "10" min desde la hora inicial y hacer el resto de el código y validar esos tiempos por cada usuario
-                    # Crear un registro por cada vuelta de el for, como si fuese un registro de db pero con las horas divididas por el minimo
+                    # Validar cuando las horas no sean exactas y no alcencen a la hora final, para que pueda tomar a el empleado.
+                    # Descomentar lo comentado para serguir probando, Aumentar el resto de tiempo de la diferencia a la hora final.
 
                     $test = collect($employees)->pluck('id');
 
@@ -297,43 +297,37 @@ class ComplementsListController extends Controller
                         if($new_date_start > $client->date_start && $new_date_start < $client->date_end)
                         {
                             $pass++;
-                            return response()->json(['response' => 1], 400);
 
                         }
 
                         if($new_date_end > $client->date_start && $new_date_end < $client->date_end)
                         {
                             $pass++;
-                            return response()->json(['response' => 2, $new_date_end, $client->date_start, $client->date_end], 400);
+                            #return response()->json(['response' => 2, $new_date_end, $client->date_start, $client->date_end], 400);
 
                         }
 
                         if($client->date_start > $new_date_start && $client->date_start < $new_date_end)
                         {
                             $pass++;
-                            return response()->json(['response' => 3], 400);
 
                         }
 
                         if($client->date_end > $new_date_start && $client->date_end < $new_date_end)
                         {
                             $pass++;
-                            return response()->json(['response' => 4], 400);
 
                         }
 
-                        if($client_master->id == 46 && $pass > 0 && $client->employee_id == 12){
-                            return response()->json(['response' => $employees_valid, $pass, $client], 400);
-                        }
+                        #if($client_master->id == 46 && $pass > 0 && $client->employee_id == 12){
+                            #return response()->json(['response' => $employees_valid, $pass, $client], 400);
+                        #}
                         if($pass > 0){
                             $data_to_delete = collect($employees_valid)->search($client->employee_id);
                             unset($employees_valid[$data_to_delete]);
                         }
 
-
-
                     }
-
 
                     $data_to_delete = collect($employees_valid)->search($client_master->employee_id);
                     unset($employees_valid[$data_to_delete]);

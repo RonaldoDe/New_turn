@@ -142,6 +142,9 @@ class ComplementsListController extends Controller
                 $new_date_start = $date_start->modify('+'.$i.' minute')->format('Y-m-d H:i:s');
                 $new_date_end = date('Y-m-d H:i:s', strtotime('+'.$branch->minimun_time.' minute', strtotime($new_date_start)));
 
+                # Hcaer un array para que se guarde el empleado disponible y a que hora está disponible, o revisar si puedo hacer que si manda de 10 y demora 10, que lo agrege si es que lo está sacando
+                # Tambien quitar el limitador de ">=" y poner ">" para que pueda tomar desde el final de un servicio
+
                 $client_service = ClientService::on($branch->db_name)
                 ->whereIn('employee_id', $collect)
                 ->whereIn('state_id', [2, 5])
@@ -291,22 +294,22 @@ class ComplementsListController extends Controller
 
                     foreach ($client_service as $client) {
                         # Validar los rangos de fechas
-                        if($new_date_start >= $client->date_start && $new_date_start <= $client->date_end)
+                        if($new_date_start > $client->date_start && $new_date_start = $client->date_end)
                         {
                             $pass++;
                         }
 
-                        if($new_date_end >= $client->date_start && $new_date_end <= $client->date_end)
+                        if($new_date_end > $client->date_start && $new_date_end < $client->date_end)
                         {
                             $pass++;
                         }
 
-                        if($client->date_start >= $new_date_start && $client->date_start <= $new_date_end)
+                        if($client->date_start > $new_date_start && $client->date_start < $new_date_end)
                         {
                             $pass++;
                         }
 
-                        if($client->date_end >= $new_date_start && $client->date_end <= $new_date_end)
+                        if($client->date_end > $new_date_start && $client->date_end < $new_date_end)
                         {
                             $pass++;
                         }

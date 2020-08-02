@@ -304,7 +304,7 @@ class ComplementsListController extends Controller
                                 if($client->employee_id == 12){
                                     return response()->json(['response' => 00], 400);
                                 }
-                                return response()->json(['response' => 1, $new_date_end, $client->date_start, $client->date_end, $client->employee_id], 400);
+                                #return response()->json(['response' => 1, $new_date_end, $client->date_start, $client->date_end, $client->employee_id], 400);
                             }
 
                         }
@@ -316,7 +316,7 @@ class ComplementsListController extends Controller
                                 if($client->employee_id == 12){
                                     return response()->json(['response' => 00], 400);
                                 }
-                                return response()->json(['response' => 2, $new_date_end, $client->date_start, $client->date_end, $client->employee_id], 400);
+                                #return response()->json(['response' => 2, $new_date_end, $client->date_start, $client->date_end, $client->employee_id], 400);
                             }
 
                         }
@@ -328,7 +328,7 @@ class ComplementsListController extends Controller
                                 if($client->employee_id == 12){
                                     return response()->json(['response' => 00], 400);
                                 }
-                                return response()->json(['response' => 3, $new_date_end, $client->date_start, $client->date_end, $client->employee_id], 400);
+                                #return response()->json(['response' => 3, $new_date_end, $client->date_start, $client->date_end, $client->employee_id], 400);
                             }
 
                         }
@@ -340,7 +340,7 @@ class ComplementsListController extends Controller
                                 if($client->employee_id == 12){
                                     return response()->json(['response' => 00], 400);
                                 }
-                                return response()->json(['response' => 4, $new_date_end, $client->date_start, $client->date_end, $client->employee_id], 400);
+                                #return response()->json(['response' => 4, $new_date_end, $client->date_start, $client->date_end, $client->employee_id], 400);
                             }
 
                         }

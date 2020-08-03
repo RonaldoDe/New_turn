@@ -149,6 +149,7 @@ class ComplementsListController extends Controller
                 ->whereIn('state_id', [2, 5])
                 ->where('date_start', '>=', request('date_start'))
                 ->get();
+                return response()->json(['response' => [$client_service]], 400);
 
                 foreach ($client_service as $client) {
                     $pass = 0;
@@ -158,7 +159,7 @@ class ComplementsListController extends Controller
                     {
                         $pass++;
                         if($client->employee_id == 12){
-                            return response()->json(['response' => [$client, 1]], 200);
+                            return response()->json(['response' => [$client, 1]], 400);
                         }
                     }
 
@@ -166,7 +167,7 @@ class ComplementsListController extends Controller
                     {
                         $pass++;
                         if($client->employee_id == 12){
-                            return response()->json(['response' => [$client, 2]], 200);
+                            return response()->json(['response' => [$client, 2]], 400);
                         }
                     }
 
@@ -174,7 +175,7 @@ class ComplementsListController extends Controller
                     {
                         $pass++;
                         if($client->employee_id == 12){
-                            return response()->json(['response' => [$client, 3]], 200);
+                            return response()->json(['response' => [$client, 3]], 400);
                         }
                     }
 
@@ -182,12 +183,12 @@ class ComplementsListController extends Controller
                     {
                         $pass++;
                         if($client->employee_id == 12){
-                            return response()->json(['response' => [$client, 4]], 200);
+                            return response()->json(['response' => [$client, 4]], 400);
                         }
                     }
 
                     if($client->employee_id == 12){
-                        return response()->json(['response' => [$client, 'bad']], 200);
+                        return response()->json(['response' => [$client, 'bad']], 400);
                     }
 
                     if($pass > 0){

@@ -326,6 +326,10 @@ class ComplementsListController extends Controller
                             unset($employees_valid[$data_to_delete]);
                         }
 
+                        if($client_master->id == 44){
+                            return response()->json(['response' => [$client, $employees_valid, 'new' => [$new_date_start, $new_date_end]]], 400);
+                        }
+
                     }
 
                     $data_to_delete = collect($employees_valid)->search($client_master->employee_id);

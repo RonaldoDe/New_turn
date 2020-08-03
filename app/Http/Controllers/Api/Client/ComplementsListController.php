@@ -132,7 +132,6 @@ class ComplementsListController extends Controller
 
 
 
-            $pass = 0;
             $employees_valid = $collect;
             $date_start = new DateTime(request('date_start'));
             $date_end = new DateTime($original_date_end);
@@ -151,6 +150,8 @@ class ComplementsListController extends Controller
                 ->get();
 
                 foreach ($client_service as $client) {
+                    $pass = 0;
+
                     # Validar los rangos de fechas
                     if($new_date_start > $client->date_start && $new_date_start <= $client->date_end)
                     {

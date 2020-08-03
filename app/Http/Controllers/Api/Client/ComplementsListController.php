@@ -295,7 +295,7 @@ class ComplementsListController extends Controller
                     $employees_valid = $test;
                     foreach ($client_service as $client) {
                         $pass = 0;
-                        if($client_master->id == 42){
+                        if($client_master->id == 44){
                             return response()->json(['response' => [$client, $employees_valid]], 400);
                         }
                         # Validar los rangos de fechas

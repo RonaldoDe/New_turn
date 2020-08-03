@@ -280,9 +280,8 @@ class ComplementsListController extends Controller
                     $new_date_start = $date_start->modify('+'.$i.' minute')->format('Y-m-d H:i:s');
                     $new_date_end = date('Y-m-d H:i:s', strtotime('+'.$branch->minimun_time.' minute', strtotime($new_date_start)));
 
-                    # Validar cuando las horas no sean exactas y no alcencen a la hora final, para que pueda tomar a el empleado.
-                    # Descomentar lo comentado para serguir probando, Aumentar el resto de tiempo de la diferencia a la hora final.
-                    # Esto de arriba a la hora de validar el empleado "pass"
+                    # Validar que no pueda tomar un servicio con teniendo en cuenta las horas de antes, osea que no deje coger de las 9:50 si hay un servicio ocupado a lsa 10 y el servicio que
+                    # va a escoger es de mas de 10 minutos
 
                     $test = collect($employees)->pluck('id');
 

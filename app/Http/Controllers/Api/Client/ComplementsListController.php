@@ -149,7 +149,7 @@ class ComplementsListController extends Controller
                 ->whereIn('state_id', [2, 5])
                 ->where('date_start', '>=', request('date_start'))
                 ->get();
-                return response()->json(['response' => [$client_service]], 400);
+                return response()->json(['response' => [request('date_start')]], 400);
 
                 foreach ($client_service as $client) {
                     $pass = 0;

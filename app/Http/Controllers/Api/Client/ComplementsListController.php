@@ -305,20 +305,20 @@ class ComplementsListController extends Controller
                             }
                         }
 
-                        if($new_date_end >= $client->date_start && $new_date_end < $client->date_end)
+                        if($new_date_end > $client->date_start && $new_date_end <= $client->date_end)
                         {
                             $pass++;
                             if($client_master->id == 44 && $client->employee_id == 13){
-                                return response()->json(['response' => [2, $new_date_start, $new_date_end, $client->date_start, $client->date_end]], 400);
+                                #return response()->json(['response' => [2, $new_date_start, $new_date_end, $client->date_start, $client->date_end]], 400);
                             }
 
                         }
 
-                        if($client->date_start > $new_date_start && $client->date_start < $new_date_end)
+                        if($client->date_start > $new_date_start && $client->date_start <= $new_date_end)
                         {
                             $pass++;
                             if($client_master->id == 44 && $client->employee_id == 13){
-                                #return response()->json(['response' => [3, $new_date_start, $new_date_end, $client->date_start]], 400);
+                                return response()->json(['response' => [3, $new_date_start, $new_date_end, $client->date_start]], 400);
                             }
 
                         }

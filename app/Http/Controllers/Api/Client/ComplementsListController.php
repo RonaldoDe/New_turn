@@ -295,27 +295,29 @@ class ComplementsListController extends Controller
                     $employees_valid = $test;
                     foreach ($client_service as $client) {
                         $pass = 0;
-
+                        if($client_master->id == 42){
+                            return response()->json(['response' => [$client, $employees_valid]], 400);
+                        }
                         # Validar los rangos de fechas
-                        if($new_date_start >= $client->date_start && $new_date_start <= $client->date_end)
+                        if($new_date_start > $client->date_start && $new_date_start < $client->date_end)
                         {
                             $pass++;
 
                         }
 
-                        if($new_date_end >= $client->date_start && $new_date_end <= $client->date_end)
+                        if($new_date_end > $client->date_start && $new_date_end < $client->date_end)
                         {
                             $pass++;
 
                         }
 
-                        if($client->date_start >= $new_date_start && $client->date_start <= $new_date_end)
+                        if($client->date_start > $new_date_start && $client->date_start < $new_date_end)
                         {
                             $pass++;
 
                         }
 
-                        if($client->date_end >= $new_date_start && $client->date_end <= $new_date_end)
+                        if($client->date_end > $new_date_start && $client->date_end < $new_date_end)
                         {
                             $pass++;
 

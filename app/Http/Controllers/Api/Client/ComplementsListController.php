@@ -309,7 +309,7 @@ class ComplementsListController extends Controller
                         {
                             $pass++;
                             if($client_master->id == 44 && $client->employee_id == 13){
-                                return response()->json(['response' => [2]], 400);
+                                #return response()->json(['response' => [2]], 400);
                             }
 
                         }

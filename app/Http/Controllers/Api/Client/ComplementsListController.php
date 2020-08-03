@@ -159,7 +159,7 @@ class ComplementsListController extends Controller
                     {
                         $pass++;
                         if($client->employee_id == 12){
-                            return response()->json(['response' => [$client, 1]], 400);
+                            return response()->json(['response' => [$new_date_start, $new_date_end, $client, 1]], 400);
                         }
                     }
 

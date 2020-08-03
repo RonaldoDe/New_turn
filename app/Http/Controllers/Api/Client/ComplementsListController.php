@@ -300,35 +300,23 @@ class ComplementsListController extends Controller
                         if($new_date_start > $client->date_start && $new_date_start <= $client->date_end)
                         {
                             $pass++;
-                            if($client_master->id == 44 && $client->employee_id == 13){
-                                return response()->json(['response' => [1]], 400);
-                            }
                         }
 
                         if($new_date_end > $client->date_start && $new_date_end <= $client->date_end)
                         {
                             $pass++;
-                            if($client_master->id == 44 && $client->employee_id == 13){
-                                #return response()->json(['response' => [2, $new_date_start, $new_date_end, $client->date_start, $client->date_end]], 400);
-                            }
 
                         }
 
                         if($client->date_start >= $new_date_start && $client->date_start < $new_date_end)
                         {
                             $pass++;
-                            if($client_master->id == 44 && $client->employee_id == 13){
-                                return response()->json(['response' => [3, $new_date_start, $new_date_end, $client->date_start]], 400);
-                            }
 
                         }
 
                         if($client->date_end > $new_date_start && $client->date_end <= $new_date_end)
                         {
                             $pass++;
-                            if($client_master->id == 44 && $client->employee_id == 13){
-                                return response()->json(['response' => [4]], 400);
-                            }
 
                         }
 
@@ -337,9 +325,6 @@ class ComplementsListController extends Controller
                             unset($employees_valid[$data_to_delete]);
                         }
 
-                        if($client_master->id == 44 && $client->employee_id == 13){
-                            return response()->json(['response' => [$client, $employees_valid, 'new' => [$new_date_start, $new_date_end], $pass]], 400);
-                        }
 
                     }
 

@@ -283,6 +283,9 @@ class ComplementsListController extends Controller
             ->where('client_service.date_end', '<=', request('date').' 23:59:59')
             ->get();
 
+            $service = Service::on($branch->db_name)->find(request('service_id'));
+
+
             $data_array = array();
 
             foreach ($client_services as $client_master) {
@@ -316,24 +319,32 @@ class ComplementsListController extends Controller
                         # Validar los rangos de fechas
                         if($new_date_start > $client->date_start && $new_date_start < $client->date_end)
                         {
+                            if($branch->minimun_time <= $service->unit_per_hour){
                             $pass++;
+                        }
                         }
 
                         if($new_date_end >= $client->date_start && $new_date_end <= $client->date_end)
                         {
+                            if($branch->minimun_time <= $service->unit_per_hour){
                             $pass++;
+                        }
 
                         }
 
                         if($client->date_start >= $new_date_start && $client->date_start < $new_date_end)
                         {
+                            if($branch->minimun_time <= $service->unit_per_hour){
                             $pass++;
+                        }
 
                         }
 
                         if($client->date_end > $new_date_start && $client->date_end <= $new_date_end)
                         {
+                            if($branch->minimun_time <= $service->unit_per_hour){
                             $pass++;
+                        }
 
                         }
 

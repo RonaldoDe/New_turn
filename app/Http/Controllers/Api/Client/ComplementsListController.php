@@ -147,6 +147,8 @@ class ComplementsListController extends Controller
                 $client_service = ClientService::on($branch->db_name)
                 ->whereIn('employee_id', $collect)
                 ->whereIn('state_id', [2, 5])
+                ->where('date_start', '<=', request('date_start'))
+                ->where('date_end', '>=', request('date_start'))
                 ->get();
 
                 foreach ($client_service as $client) {
@@ -159,7 +161,7 @@ class ComplementsListController extends Controller
 
                     }
 
-                    if($new_date_end >= $client->date_start && $new_date_end <= $client->date_end)
+                    if($new_date_end > $client->date_start && $new_date_end <= $client->date_end)
                     {
                         $pass++;
 

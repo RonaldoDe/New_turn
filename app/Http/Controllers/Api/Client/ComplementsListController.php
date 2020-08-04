@@ -155,7 +155,7 @@ class ComplementsListController extends Controller
                         return response()->json(['response' => $client, $new_date_start, $new_date_end], 400);
                     }
                     # Validar los rangos de fechas
-                    if($new_date_start > $client->date_start && $new_date_start < $client->date_end)
+                    if($new_date_start > $client->date_start && $new_date_start <= $client->date_end)
                     {
                         $pass++;
                     }

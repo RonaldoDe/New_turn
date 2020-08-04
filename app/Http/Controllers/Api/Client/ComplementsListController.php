@@ -320,7 +320,7 @@ class ComplementsListController extends Controller
                         # Validar los rangos de fechas
                         if($new_date_start > $client->date_start && $new_date_start < $client->date_end)
                         {
-                            if($service->unit_per_hour <= $branch->minimun_time){
+                            if($branch->minimun_time <= $service->unit_per_hour){
                                $pass++;
                             }
                         }
@@ -328,7 +328,10 @@ class ComplementsListController extends Controller
                         if($new_date_end > $client->date_start && $new_date_end <= $client->date_end)
                         {
 
-                            if($service->unit_per_hour <= $branch->minimun_time){
+                            if($branch->minimun_time <= $service->unit_per_hour){
+                                /*if($client_master->employee_id == 13 && $client->id == 50){
+                                    return response()->json(['response' => $client_master, $new_date_start, $new_date_end, $pass, 'minimun and max' => [$branch->minimun_time, $service->unit_per_hour]], 400);
+                                }*/
                                 $pass++;
                             }
 
@@ -336,7 +339,7 @@ class ComplementsListController extends Controller
 
                         if($client->date_start >= $new_date_start && $client->date_start < $new_date_end)
                         {
-                            if($service->unit_per_hour <= $branch->minimun_time){
+                            if($branch->minimun_time <= $service->unit_per_hour){
                                 $pass++;
                             }
 
@@ -344,7 +347,7 @@ class ComplementsListController extends Controller
 
                         if($client->date_end > $new_date_start && $client->date_end <= $new_date_end)
                         {
-                            if($service->unit_per_hour <= $branch->minimun_time){
+                            if($branch->minimun_time <= $service->unit_per_hour){
                                 $pass++;
                             }
 

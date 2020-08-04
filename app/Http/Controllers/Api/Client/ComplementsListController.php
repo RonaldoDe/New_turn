@@ -311,7 +311,7 @@ class ComplementsListController extends Controller
                             $pass++;
                         }
 
-                        if($new_date_end > $client->date_start && $new_date_end <= $client->date_end)
+                        if($new_date_end >= $client->date_start && $new_date_end <= $client->date_end)
                         {
                             $pass++;
 

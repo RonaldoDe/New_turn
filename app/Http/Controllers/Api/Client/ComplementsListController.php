@@ -150,7 +150,6 @@ class ComplementsListController extends Controller
                 ->where('date_start', '>=', request('date_start'))
                 ->get();
 
-                return response()->json(['response' => $client_service], 400);
 
                 foreach ($client_service as $client) {
                     $pass = 0;
@@ -179,9 +178,9 @@ class ComplementsListController extends Controller
                         $pass++;
                     }
 
-                    /*if($client->employee_id == 13){
+                    if($client->employee_id == 13 && $client->id == 52){
                         return response()->json(['response' => $client, $new_date_start, $new_date_end, $pass], 400);
-                    }*/
+                    }
 
                     if($pass > 0){
                         $data_to_delete = collect($employees_valid)->search($client->employee_id);

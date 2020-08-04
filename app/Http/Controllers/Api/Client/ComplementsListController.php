@@ -143,6 +143,7 @@ class ComplementsListController extends Controller
 
                 # Hcaer un array para que se guarde el empleado disponible y a que hora está disponible, o revisar si puedo hacer que si manda de 10 y demora 10, que lo agrege si es que lo está sacando
                 # Tambien quitar el limitador de ">=" y poner ">" para que pueda tomar desde el final de un servicio
+                # Seguir chequeado si en numero de empleados coincide con los de business
 
                 $client_service = ClientService::on($branch->db_name)
                 ->whereIn('employee_id', $collect)

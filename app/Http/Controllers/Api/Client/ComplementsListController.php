@@ -299,7 +299,7 @@ class ComplementsListController extends Controller
                         $pass = 0;
 
                         # Validar los rangos de fechas
-                        if($new_date_start > $client->date_start && $new_date_start <= $client->date_end)
+                        if($new_date_start > $client->date_start && $new_date_start < $client->date_end)
                         {
                             $pass++;
                         }

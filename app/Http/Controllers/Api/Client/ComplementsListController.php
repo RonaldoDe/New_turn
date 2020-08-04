@@ -151,6 +151,8 @@ class ComplementsListController extends Controller
                 ->where('date_end', '>=', request('date_start'))
                 ->get();
 
+                return response()->json(['response' => $client_service], 400);
+
                 foreach ($client_service as $client) {
                     $pass = 0;
 

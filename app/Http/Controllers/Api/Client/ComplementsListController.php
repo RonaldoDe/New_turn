@@ -317,7 +317,7 @@ class ComplementsListController extends Controller
                         $pass = 0;
 
                         if($client_master->employee_id == 13 && $client->id == 50 && $i == 0){
-                            return response()->json(['response' => $client_master, $new_date_start, $new_date_end, $pass, 'minimun and max' => [$branch->minimun_time, $service->unit_per_hour]], 400);
+                            return response()->json(['response' => $client, $new_date_start, $new_date_end, $pass, 'minimun and max' => [$branch->minimun_time, $service->unit_per_hour]], 400);
                         }
                         # Validar los rangos de fechas
                         if($new_date_start > $client->date_start && $new_date_start < $client->date_end)

@@ -151,7 +151,9 @@ class ComplementsListController extends Controller
 
                 foreach ($client_service as $client) {
                     $pass = 0;
-
+                    if($client->employee_id == 13){
+                        return response()->json(['response' => $client, $new_date_start, $new_date_start], 400);
+                    }
                     # Validar los rangos de fechas
                     if($new_date_start > $client->date_start && $new_date_start < $client->date_end)
                     {

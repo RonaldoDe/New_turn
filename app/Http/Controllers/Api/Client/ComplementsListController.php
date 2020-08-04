@@ -316,7 +316,9 @@ class ComplementsListController extends Controller
                     foreach ($client_service as $client) {
                         $pass = 0;
 
-
+                        if($client->employee_id == 13 && $client_master->id == 50 && $i == 0){
+                            return response()->json(['response' => $client, $new_date_start, $new_date_end, $pass, 'minimun and max' => [$branch->minimun_time, $service->unit_per_hour]], 400);
+                        }
                         # Validar los rangos de fechas
                         if($new_date_start > $client->date_start && $new_date_start < $client->date_end)
                         {
@@ -353,7 +355,6 @@ class ComplementsListController extends Controller
                             $data_to_delete = collect($employees_valid)->search($client->employee_id);
                             unset($employees_valid[$data_to_delete]);
                         }
-
 
                     }
 

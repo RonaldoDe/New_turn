@@ -147,7 +147,7 @@ class ComplementsListController extends Controller
                 $client_service = ClientService::on($branch->db_name)
                 ->whereIn('employee_id', $collect)
                 ->whereIn('state_id', [2, 5])
-                ->where('date_start', '>=', request('date_start'))
+                #->where('date_start', '>=', request('date_start'))
                 ->get();
 
 

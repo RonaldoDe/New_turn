@@ -316,35 +316,39 @@ class ComplementsListController extends Controller
                     foreach ($client_service as $client) {
                         $pass = 0;
 
+                        if($client->employee_id == 10 && $client->id == 50){
+                            return response()->json(['response' => $client, $new_date_start, $new_date_end, $pass], 400);
+                        }
+
                         # Validar los rangos de fechas
                         if($new_date_start > $client->date_start && $new_date_start < $client->date_end)
                         {
                             if($branch->minimun_time <= $service->unit_per_hour){
-                            $pass++;
-                        }
+                               $pass++;
+                            }
                         }
 
                         if($new_date_end > $client->date_start && $new_date_end <= $client->date_end)
                         {
                             if($branch->minimun_time <= $service->unit_per_hour){
-                            $pass++;
-                        }
+                                $pass++;
+                            }
 
                         }
 
                         if($client->date_start >= $new_date_start && $client->date_start < $new_date_end)
                         {
                             if($branch->minimun_time <= $service->unit_per_hour){
-                            $pass++;
-                        }
+                                $pass++;
+                            }
 
                         }
 
                         if($client->date_end > $new_date_start && $client->date_end <= $new_date_end)
                         {
                             if($branch->minimun_time <= $service->unit_per_hour){
-                            $pass++;
-                        }
+                                $pass++;
+                            }
 
                         }
 

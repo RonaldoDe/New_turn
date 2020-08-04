@@ -157,25 +157,32 @@ class ComplementsListController extends Controller
                     # Validar los rangos de fechas
                     if($new_date_start > $client->date_start && $new_date_start < $client->date_end)
                     {
-                        $pass++;
-
+                        if($branch->minimun_time <= $service->unit_per_hour){
+                            $pass++;
+                        }
                     }
 
                     if($new_date_end >= $client->date_start && $new_date_end <= $client->date_end)
                     {
-                        $pass++;
+                        if($branch->minimun_time <= $service->unit_per_hour){
+                            $pass++;
+                        }
 
                     }
 
                     if($client->date_start >= $new_date_start && $client->date_start < $new_date_end)
                     {
-                        $pass++;
+                        if($branch->minimun_time <= $service->unit_per_hour){
+                            $pass++;
+                        }
 
                     }
 
                     if($client->date_end > $new_date_start && $client->date_end <= $new_date_end)
                     {
-                        $pass++;
+                        if($branch->minimun_time <= $service->unit_per_hour){
+                            $pass++;
+                        }
                     }
 
                     /*if($client->employee_id == 13 && $client->id == 52){

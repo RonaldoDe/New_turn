@@ -153,6 +153,7 @@ class ComplementsListController extends Controller
 
                 foreach ($client_service as $client) {
                     $pass = 0;
+                    return response()->json(['response' => $branch->minimun_time <= $service->unit_per_hour], 400);
 
                     # Validar los rangos de fechas
                     if($new_date_start > $client->date_start && $new_date_start < $client->date_end)

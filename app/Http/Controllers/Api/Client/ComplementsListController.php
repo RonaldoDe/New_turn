@@ -327,9 +327,6 @@ class ComplementsListController extends Controller
 
                         if($new_date_end > $client->date_start && $new_date_end <= $client->date_end)
                         {
-                            if($client_master->employee_id == 13 && $client->id == 50 && $i == 0){
-                                return response()->json(['response' => $client, $new_date_start, $new_date_end, $pass, 'minimun and max' => [$branch->minimun_time, $service->unit_per_hour]], 400);
-                            }
                             if($branch->minimun_time <= $service->unit_per_hour){
                                 $pass++;
                             }

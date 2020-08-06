@@ -357,7 +357,8 @@ class ComplementsListController extends Controller
                         }*/
                         if($new_date_start > $client->date_start){
                             $after_the_start_date = date('Y-m-d H:i:s', strtotime('+'.$service->unit_per_hour.' minute', strtotime($client->date_start)));
-                            if($after_the_start_date > $new_date_start){
+                            if($after_the_start_date > $new_date_start && $client->id == 62 && $client_master->id == 59){
+                                return response()->json(['response' => [$client, $new_date_start, $after_the_start_date, $client_master->id]], 400);
                                 $pass++;
                             }
                         }

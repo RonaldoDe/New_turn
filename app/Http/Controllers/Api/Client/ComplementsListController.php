@@ -327,7 +327,7 @@ class ComplementsListController extends Controller
                             }
                         }
 
-                        if($new_date_end > $client->date_start && $new_date_end < $client->date_end)
+                        if($new_date_end > $client->date_start && $new_date_end <= $client->date_end)
                         {
 
                             if($branch->minimun_time <= $service->unit_per_hour){

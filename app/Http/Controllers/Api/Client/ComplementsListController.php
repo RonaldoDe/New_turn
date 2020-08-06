@@ -352,8 +352,8 @@ class ComplementsListController extends Controller
 
                         }
 
+                        return response()->json(['response' => [$client, $new_date_start, $new_date_end]], 400);
                         if($new_date_start >= $client->date_start && $service->unit_per_hour > $branch->minimun_time){
-                            return response()->json(['response' => [$client, $new_date_start, $new_date_end]], 400);
                         }
 
                         if($pass > 0){

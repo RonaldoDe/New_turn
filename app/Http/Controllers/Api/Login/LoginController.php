@@ -140,6 +140,8 @@ class LoginController extends Controller
             'password' => bcrypt(request('password')),
             'phanton_user' => 0,
             'state_id' => 1,
+            'password_verify' => 0,
+            'email_verify' => 0,
             'user_type' => request('user_type')
         ]);
 

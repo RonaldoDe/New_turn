@@ -33,7 +33,7 @@ class TestPay extends Controller
         Mail::send("forget_password", $data, function($message) use ($to_name, $to_email) {
         $message->to($to_email, $to_name)
         ->subject("Test");
-        $message->from('luisanacamacho25@gmail.com',"Test turno");
+        $message->from('tuturnocolapp@gmail.com',"Test turno");
         });
         /*$send_email = SendEmailHelper::sendEmail('Correo de verificación de cuenta.', TemplateHelper::emailVerify($data), $principal_email, array());
         if($send_email != 1){

@@ -196,11 +196,10 @@ class UserController extends Controller
             $principal_email = array((object)['email' => $user->email, 'name' => $user->name." ".$user->last_name]);
 
             #Send email
-            $send_email = SendEmailHelper::sendEmail('Correo de verificación de cuenta.', TemplateHelper::emailVerify($data), $principal_email, array());
+            /*$send_email = SendEmailHelper::sendEmail('Correo de verificación de cuenta.', TemplateHelper::emailVerify($data), $principal_email, array());
             if($send_email != 1){
                 return response()->json(['response' => ['error' => [$send_email]]], 400);
-            }
-
+            }*/
             }else{
                 return response()->json(['response' => ['error' => ['Ususario no encontrado']]], 400);
             }

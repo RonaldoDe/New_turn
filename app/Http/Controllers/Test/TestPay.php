@@ -8,7 +8,7 @@ use App\Http\Controllers\Helper\SendEmailHelper;
 use App\Http\Controllers\Helper\TemplateHelper;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Mail;
 class TestPay extends Controller
 {
     public function tets()
@@ -28,10 +28,17 @@ class TestPay extends Controller
         );
         $principal_email = array((object)['email' => 'ronaldocamachomeza@hotmail.com', 'name' => 'Ronaldo camacho']);
 
-        $send_email = SendEmailHelper::sendEmail('Correo de verificación de cuenta.', TemplateHelper::emailVerify($data), $principal_email, array());
+        $to_name = 'Alfredo';
+        $to_email = 'ronaldocamachomeza@hotmail.com';
+        Mail::send("forget_password", $data, function($message) use ($to_name, $to_email) {
+        $message->to($to_email, $to_name)
+        ->subject("Test");
+        $message->from('tuturnocolapp@gmail.com',"Test turno");
+        });
+        /*$send_email = SendEmailHelper::sendEmail('Correo de verificación de cuenta.', TemplateHelper::emailVerify($data), $principal_email, array());
         if($send_email != 1){
             return response()->json(['response' => ['error' => [$send_email]]], 400);
-        }
+        }*/
 
         return response()->json(['response' => 'Success'], 200);
     }

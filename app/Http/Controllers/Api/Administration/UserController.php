@@ -200,7 +200,7 @@ class UserController extends Controller
             Mail::send("email_verify", $data, function($message) use ($to_name, $to_email) {
             $message->to($user->email, $user->name." ".$user->last_name)
             ->subject("Correo de verificación de cuenta");
-            $message->from('tuturnocolapp@gmail.com',"App Tuturno");
+            $message->from('luisanacamacho25@gmail.com',"App Tuturno");
             });
             #Send email
             /*$send_email = SendEmailHelper::sendEmail('Correo de verificación de cuenta.', TemplateHelper::emailVerify($data), $principal_email, array());

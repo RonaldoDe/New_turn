@@ -19,6 +19,9 @@ Route::post('register', 'Api\Login\LoginController@registerUser');
 # Forget password
 Route::post('forgetPassword', 'Api\Administration\ProfileController@forgetPassword');
 
+Route::post('testEmail', 'Test\TestPay@testEmail');
+
+
 # New password
 Route::post('newPassword', 'Api\Administration\ProfileController@updateFirstPassword');
 

@@ -62,7 +62,7 @@ class SendEmailHelper extends Controller
 
             if (!$mail->send()) {
                 $response = 'No se pudo enviar el mensaje';
-                // $response = $mail->ErrorInfo;
+                //$response = $mail->ErrorInfo;
             } else {
                 $response = 1;
             }

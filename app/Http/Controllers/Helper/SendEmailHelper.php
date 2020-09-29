@@ -41,11 +41,11 @@ class SendEmailHelper extends Controller
 
             // $mail->AuthType = "CRAM-MD5";
 
-            $mail->Username = "tuturnocolapp@gmail.com";
+            $mail->Username = "jelga13@gmail.com";
 
-            $mail->Password = "Tuturnocol2020";
+            $mail->Password = "s12piderwick!";
 
-            $mail->setFrom('tuturnocolapp@gmail.com');
+            $mail->setFrom('jelga13@gmail.com');
             foreach ($principal as $principa) {
                 $mail->addAddress($principa->email, $principa->name);
             }

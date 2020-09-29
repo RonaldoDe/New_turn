@@ -24,21 +24,21 @@ class TestPay extends Controller
             'password_code' => '123434',
             'email_code' => '123434',
             'name' => 'Ronaldo camacho',
-            'email' => 'ronaldocamachomeza@hotmail.com',
+            'email' => 'rcamacho12@misena.edu.co',
         );
-        $principal_email = array((object)['email' => 'ronaldocamachomeza@hotmail.com', 'name' => 'Ronaldo camacho']);
+        $principal_email = array((object)['email' => 'rcamacho12@misena.edu.co', 'name' => 'Ronaldo camacho']);
 
-        $to_name = 'Alfredo';
-        $to_email = 'ronaldocamachomeza@hotmail.com';
+        /*$to_name = 'Alfredo';
+        $to_email = 'rcamacho12@misena.edu.co';
         Mail::send("forget_password", $data, function($message) use ($to_name, $to_email) {
         $message->to($to_email, $to_name)
         ->subject("Test");
         $message->from('tuturnocolapp@gmail.com',"Test turno");
-        });
-        /*$send_email = SendEmailHelper::sendEmail('Correo de verificación de cuenta.', TemplateHelper::emailVerify($data), $principal_email, array());
+        });*/
+        $send_email = SendEmailHelper::sendEmail('Correo de verificación de cuenta.', TemplateHelper::emailVerify($data), $principal_email, array());
         if($send_email != 1){
             return response()->json(['response' => ['error' => [$send_email]]], 400);
-        }*/
+        }
 
         return response()->json(['response' => 'Success'], 200);
     }

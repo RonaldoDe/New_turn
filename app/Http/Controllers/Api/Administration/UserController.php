@@ -195,8 +195,9 @@ class UserController extends Controller
             );
             # We obtain the user's data to send the mail
             $principal_email = array((object)['email' => $user->email, 'name' => $user->name." ".$user->last_name]);
-
-            Mail::send("email_verify", $data, function($message) use ($user->name, $user->email) {
+            $to_name = $user->name;
+            $to_email = $user->email;
+            Mail::send("email_verify", $data, function($message) use ($to_name, $to_email) {
             $message->to($user->email, $user->name." ".$user->last_name)
             ->subject("Correo de verificación de cuenta");
             $message->from('tuturnocolapp@gmail.com',"App Tuturno");

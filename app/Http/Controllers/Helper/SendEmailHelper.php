@@ -41,11 +41,11 @@ class SendEmailHelper extends Controller
 
             // $mail->AuthType = "CRAM-MD5";
 
-            $mail->Username = "luisanacamacho25@gmail.com";
+            $mail->Username = "tuturnocolapp@gmail.com";
 
-            $mail->Password = "luchimeza25";
+            $mail->Password = "Tuturnocol2020";
 
-            $mail->setFrom('luisanacamacho25@gmail.com');
+            $mail->setFrom('tuturnocolapp@gmail.com');
             foreach ($principal as $principa) {
                 $mail->addAddress($principa->email, $principa->name);
             }
@@ -61,8 +61,8 @@ class SendEmailHelper extends Controller
             $mail->Body = $template;
 
             if (!$mail->send()) {
-                $response = 'No se pudo enviar el mensaje';
-                //$response = $mail->ErrorInfo;
+                //$response = 'No se pudo enviar el mensaje';
+                $response = $mail->ErrorInfo;
             } else {
                 $response = 1;
             }

@@ -31,13 +31,13 @@ class SendEmailHelper extends Controller
 
             $mail->CharSet = 'UTF-8';
 
-            $mail->Port = 465;
+            $mail->Port = 587;
 
             $mail->SMTPAuth = true;
 
             $mail->SMTPAutoTLS = false;
 
-            $mail->SMTPSecure = 'ssl'; // To enable TLS/SSL encryption change to 'tls'
+            $mail->SMTPSecure = 'tls'; // To enable TLS/SSL encryption change to 'tls'
 
             // $mail->AuthType = "CRAM-MD5";
 
